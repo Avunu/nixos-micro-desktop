@@ -24,7 +24,7 @@ Follow these steps to install NixOS Micro Desktop:
 2. **Download and customize the sample flake**
    - Once your system is up and running, download the sample flake to `/etc/nixos/`:
      ```
-     sudo curl -o /etc/nixos/flake.nix https://raw.githubusercontent.com/Avunu/nixos-micro-desktop/main/sample-flake.nix
+     sudo curl -o /etc/nixos/flake.nix https://raw.githubusercontent.com/Avunu/nixos-micro-desktop/main/local-flake.nix
      ```
    - Customize the flake according to your needs:
      ```
