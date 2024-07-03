@@ -48,7 +48,7 @@
         sane = {
           enable = mkDefault true;
           extraBackends = mkDefault (with pkgs; [
-            hplip
+            # hplip
             sane-airscan
           ]);
         };
@@ -190,7 +190,7 @@
           enable = mkDefault true;
           drivers = mkDefault (with pkgs; [
             gutenprint
-            hplip
+            # hplip
           ]);
           webInterface = mkDefault false;
         };
