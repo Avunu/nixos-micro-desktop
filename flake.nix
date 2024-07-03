@@ -21,6 +21,8 @@
           enable = true;
           extraPackages = with pkgs; [
             ocl-icd
+            libva1
+            libva-utils
             libvdpau
             libvdpau-va-gl
             libva-vdpau-driver
