@@ -46,7 +46,7 @@
         sane = {
           enable = mkDefault true;
           extraBackends = mkDefault (with pkgs; [
-            hplipWithPlugin
+            hplip
             sane-airscan
           ]);
         };
@@ -159,9 +159,6 @@
         fwupd.enable = mkDefault true;
 
         gnome = {
-          # core-os-services.enable = mkDefault true;
-          # core-shell.enable = mkDefault true;
-          # core-utilities.enable = mkDefault false;
           gnome-browser-connector.enable = mkDefault true;
           gnome-keyring.enable = mkDefault true;
           gnome-online-accounts.enable = mkDefault true;
@@ -188,7 +185,7 @@
           enable = mkDefault true;
           drivers = mkDefault (with pkgs; [
             gutenprint
-            hplipWithPlugin
+            hplip
           ]);
         };
 
@@ -201,6 +198,7 @@
         xserver = {
           displayManager.gdm.enable = mkDefault true;
           enable = mkDefault true;
+          excludePackages = [ pkgs.xterm ];
         };
 
       };
