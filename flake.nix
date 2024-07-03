@@ -174,6 +174,8 @@
 
         gvfs.enable = mkDefault true;
 
+        libinput.enable = mkDefault true;
+
         power-profiles-daemon.enable = mkDefault true;
 
         pipewire = {
