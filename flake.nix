@@ -304,7 +304,7 @@
       system.autoUpgrade = {
         allowReboot = mkDefault false;
         enable = mkDefault true;
-        flake = "/etc/nixos";
+        flake = "/etc/nixos#default";
         flags = mkDefault [
           "--update-input"
           "nixpkgs"
