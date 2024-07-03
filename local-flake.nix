@@ -21,13 +21,18 @@
 
           i18n.defaultLocale = "en_US.UTF-8"; # Replace with your locale
 
-          users.users.myuser = { # Replace 'myuser' with desired username
+          users.users.myuser = {
+            # Replace 'myuser' with desired username
             isNormalUser = true;
             extraGroups = [ "wheel" "networkmanager" ];
           };
 
           environment.systemPackages = with pkgs; [
             # Add any non-flatpak software you want on this particular machine
+            # for example, insync:
+            insync
+            insync-emblem-icons
+            insync-nautilus
           ];
 
           system.stateVersion = "24.05";
