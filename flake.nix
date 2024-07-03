@@ -203,6 +203,7 @@
           displayManager.gdm.enable = mkDefault true;
           enable = mkDefault true;
           excludePackages = [ pkgs.xterm ];
+          updateDbusEnvironment = mkDefault true;
         };
 
       };
