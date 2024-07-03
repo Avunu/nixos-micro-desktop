@@ -187,29 +187,50 @@
         source-serif-pro
       ]);
 
-      environment.systemPackages = with pkgs; lib.flatten [
-        (with gnome; [
-          adwaita-icon-theme
-          gnome-control-center
-          gnome-shell
-          gnome-themes-extra
-          networkmanager-l2tp
-          networkmanager-openconnect
-          networkmanager-openvpn
-          networkmanager-vpnc
-        ])
-        [
-          dnsmasq
-          gcr_4
-          gst_all_1.gst-libav
-          gst_all_1.gst-plugins-bad
-          gst_all_1.gst-plugins-base
-          gst_all_1.gst-plugins-good
-          gst_all_1.gst-plugins-ugly
-          gst_all_1.gst-vaapi
-          gst_all_1.gstreamer
-        ]
-      ];
+      environment = {
+        systemPackages = with pkgs; lib.flatten [
+          (with gnome; [
+            adwaita-icon-theme
+            gnome-control-center
+            gnome-shell
+            gnome-themes-extra
+            networkmanager-l2tp
+            networkmanager-openconnect
+            networkmanager-openvpn
+            networkmanager-vpnc
+          ])
+          [
+            dnsmasq
+            gcr_4
+            gst_all_1.gst-libav
+            gst_all_1.gst-plugins-bad
+            gst_all_1.gst-plugins-base
+            gst_all_1.gst-plugins-good
+            gst_all_1.gst-plugins-ugly
+            gst_all_1.gst-vaapi
+            gst_all_1.gstreamer
+          ]
+        ];
+        sessionVariables = {
+          SSH_ASKPASS_REQUIRE = "prefer";
+          NIXOS_OZONE_WL = "1";
+        };
+        variables = {
+          CLUTTER_BACKEND = "wayland";
+          EGL_PLATFORM = "wayland";
+          ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+          GDK_BACKEND = "wayland";
+          GDK_PLATFORM = "wayland";
+          GTK_BACKEND = "wayland";
+          MOZ_ENABLE_WAYLAND = "1";
+          OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
+          QML_DISABLE_DISK_CACHE = "1";
+          QT_QPA_PLATFORM = "wayland";
+          QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+          SDL_VIDEODRIVER = "wayland";
+          XDG_SESSION_TYPE = "wayland";
+        };
+      };
 
       system.autoUpgrade = {
         allowReboot = mkDefault false;
