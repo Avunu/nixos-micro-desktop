@@ -74,10 +74,13 @@
         settings.experimental-features = mkDefault [ "nix-command" "flakes" ];
       };
 
-      programs.gnupg.agent = {
-        enable = mkDefault true;
-        enableSSHSupport = mkDefault true;
-        pinentryPackage = mkDefault pkgs.pinentry-gnome3;
+      programs = {
+        dconf.enable = mkDefault true;
+        gnupg.agent = {
+          enable = mkDefault true;
+          enableSSHSupport = mkDefault true;
+          pinentryPackage = mkDefault pkgs.pinentry-gnome3;
+        };
       };
 
       services = {
@@ -101,8 +104,6 @@
         };
 
         dbus.implementation = mkDefault "broker";
-
-        dconf.enable = mkDefault true;
 
         flatpak = {
           enable = mkDefault true;
