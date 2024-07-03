@@ -28,7 +28,11 @@ Follow these steps to install NixOS Micro Desktop:
      ```
    - Customize the flake according to your needs:
      ```
-     sudo vi /etc/nixos/flake.nix
+     sudo nano /etc/nixos/flake.nix
+     ```
+   - Update the flake:
+     ```
+     sudo nix flake update /etc/nixos --extra-experimental-features nix-command flakes
      ```
 
 3. **Delete the old configuration.nix**
@@ -40,7 +44,7 @@ Follow these steps to install NixOS Micro Desktop:
 4. **Rebuild and reboot**
    - Rebuild your system using the new flake:
      ```
-     sudo nixos-rebuild switch --flake /etc/nixos
+     sudo nixos-rebuild switch --flake /etc/nixos#default
      ```
    - Reboot your system to apply all changes:
      ```
