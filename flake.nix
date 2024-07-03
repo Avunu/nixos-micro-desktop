@@ -294,6 +294,8 @@
         flags = mkDefault [
           "--update-input"
           "nixpkgs"
+          "--update-input"
+          "microdesktop"
           "-L"
         ];
       };
