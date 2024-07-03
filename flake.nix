@@ -110,7 +110,11 @@
           interval = mkDefault "daily";
         };
 
+        colord.enable = mkDefault true;
+
         dbus.implementation = mkDefault "broker";
+
+        displayManager.sessionPackages = [ pkgs.gnome.gnome-session.sessions ];
 
         flatpak = {
           enable = mkDefault true;
@@ -186,6 +190,8 @@
           ]);
         };
 
+        system-config-printer.enable = mkDefault true;
+
         udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 
         upower.enable = mkDefault true;
@@ -201,6 +207,11 @@
         polkit.enable = mkDefault true;
         tpm2.enable = mkDefault true;
       };
+
+      systemd.packages = with pkgs.gnome; [
+        gnome-session
+        gnome-shell
+      ];
 
       xdg = {
         mime.enable = mkDefault true;
