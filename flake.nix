@@ -64,7 +64,9 @@
       };
 
       services = {
+
         accounts-daemon.enable = mkDefault true;
+
         avahi = {
           enable = mkDefault true;
           nssmdns4 = mkDefault true;
@@ -74,19 +76,31 @@
             workstation = mkDefault true;
           };
         };
+
         btrfs.autoScrub = {
           enable = mkDefault true;
           fileSystems = mkDefault [ "/" ];
           interval = mkDefault "weekly";
         };
+
         dbus.implementation = mkDefault "broker";
+
         dconf.enable = mkDefault true;
+
         flatpak.enable = mkDefault true;
+
+        fprintd = {
+          enable = mkDefault true;
+          tod.enable = mkDefault true;
+        };
+
         fstrim = {
           enable = mkDefault true;
           interval = mkDefault "daily";
         };
+
         fwupd.enable = mkDefault true;
+
         gnome = {
           core-os-services.enable = mkDefault true;
           core-shell.enable = mkDefault true;
@@ -99,13 +113,17 @@
           tracker-miners.enable = mkDefault true;
           tracker.enable = mkDefault true;
         };
+
         gvfs.enable = mkDefault true;
+
         power-profiles-daemon.enable = mkDefault true;
+
         pipewire = {
           enable = mkDefault true;
           alsa.enable = mkDefault true;
           pulse.enable = mkDefault true;
         };
+
         printing = {
           enable = mkDefault true;
           drivers = mkDefault (with pkgs; [
@@ -113,12 +131,16 @@
             hplipWithPlugin
           ]);
         };
+
         udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+
         upower.enable = mkDefault true;
+
         xserver = {
           enable = mkDefault true;
           displayManager.gdm.enable = mkDefault true;
         };
+
       };
 
       security = {
@@ -138,6 +160,7 @@
               buildPortalsInGnome = false;
             })
           ];
+          xdgOpenUsePortal = mkDefault true;
         };
       };
 
@@ -151,9 +174,7 @@
         liberation_ttf
         noto-fonts
         noto-fonts-cjk
-        noto-fonts-color-emoji
         noto-fonts-emoji
-        noto-fonts-monochrome-emoji
         open-sans
         roboto
         roboto-mono
@@ -166,31 +187,32 @@
 
       environment.systemPackages = with pkgs; lib.flatten [
         (with gnome; [
-            adwaita-icon-theme
-            gnome-control-center
-            gnome-shell
-            gnome-themes-extra
-            networkmanager-l2tp
-            networkmanager-openconnect
-            networkmanager-openvpn
-            networkmanager-vpnc
+          adwaita-icon-theme
+          gnome-control-center
+          gnome-shell
+          gnome-themes-extra
+          networkmanager-l2tp
+          networkmanager-openconnect
+          networkmanager-openvpn
+          networkmanager-vpnc
         ])
         [
-            dnsmasq
-            gcr_4
-            gst_all_1.gst-libav
-            gst_all_1.gst-plugins-bad
-            gst_all_1.gst-plugins-base
-            gst_all_1.gst-plugins-good
-            gst_all_1.gst-plugins-ugly
-            gst_all_1.gst-vaapi
-            gst_all_1.gstreamer
+          dnsmasq
+          gcr_4
+          gst_all_1.gst-libav
+          gst_all_1.gst-plugins-bad
+          gst_all_1.gst-plugins-base
+          gst_all_1.gst-plugins-good
+          gst_all_1.gst-plugins-ugly
+          gst_all_1.gst-vaapi
+          gst_all_1.gstreamer
         ]
-    ];
+      ];
 
       system.autoUpgrade = {
-        allowReboot = mkDefault true;
+        allowReboot = mkDefault false;
         enable = mkDefault true;
+        flake = "/etc/nixos";
         flags = mkDefault [
           "--update-input"
           "nixpkgs"
