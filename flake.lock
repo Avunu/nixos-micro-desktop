@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "nix-flatpak": {
+      "locked": {
+        "lastModified": 1719848872,
+        "narHash": "sha256-H3+EC5cYuq+gQW8y0lSrrDZfH71LB4DAf+TDFyvwCNA=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "00d80d13810dbfea8ab4ed1009b09100cca86ba8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1719848872,
@@ -18,6 +34,7 @@
     },
     "root": {
       "inputs": {
+        "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs"
       }
     }
