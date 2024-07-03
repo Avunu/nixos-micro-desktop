@@ -270,6 +270,7 @@
             gnome-console
             gnome-control-center
             gnome-shell
+            gnome-shell-extensions
             gnome-software
             gnome-themes-extra
             nautilus
