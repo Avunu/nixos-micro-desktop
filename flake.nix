@@ -196,10 +196,7 @@
 
         upower.enable = mkDefault true;
 
-        xserver = {
-          enable = mkDefault true;
-          displayManager.gdm.enable = mkDefault true;
-        };
+        xserver.displayManager.gdm.enable = mkDefault true;
 
       };
 
