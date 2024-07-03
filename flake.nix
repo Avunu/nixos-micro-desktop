@@ -145,10 +145,6 @@
 
         fprintd = {
           enable = mkDefault true;
-          tod = {
-            driver = mkDefault pkgs.libfprint-tod;
-            enable = mkDefault true;
-          };
         };
 
         fstrim = {
