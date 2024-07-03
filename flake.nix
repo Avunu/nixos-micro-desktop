@@ -168,6 +168,7 @@
           gnome-remote-desktop.enable = mkDefault true;
           gnome-settings-daemon.enable = mkDefault true;
           gnome-user-share.enable = mkDefault true;
+          rygel.enable = mkDefault true;
           tracker-miners.enable = mkDefault true;
           tracker.enable = mkDefault true;
         };
