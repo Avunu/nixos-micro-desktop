@@ -124,7 +124,7 @@
             global = {
               # Force Wayland by default
               Context = {
-                sockets = [ "wayland" "fallback-x11" "!x11" ];
+                sockets = [ "wayland" "fallback-x11" "x11" ];
                 filesystems = [ "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro" ];
               };
 
