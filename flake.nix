@@ -254,10 +254,10 @@
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
             adwaita-icon-theme
+            gnome-console
             gnome-control-center
             gnome-shell
             gnome-software
-            gnome-terminal
             gnome-themes-extra
             nautilus
             networkmanager-l2tp
