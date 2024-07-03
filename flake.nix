@@ -114,6 +114,8 @@
 
         dbus.implementation = mkDefault "broker";
 
+        documentation.nixos.enable = mkDefault false;
+
         displayManager.sessionPackages = [ pkgs.gnome.gnome-session.sessions ];
 
         flatpak = {
@@ -159,6 +161,7 @@
         fwupd.enable = mkDefault true;
 
         gnome = {
+          core-shell.enable = mkDefault true;
           gnome-browser-connector.enable = mkDefault true;
           gnome-keyring.enable = mkDefault true;
           gnome-online-accounts.enable = mkDefault true;
