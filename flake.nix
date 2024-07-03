@@ -1,9 +1,18 @@
 {
   description = "NixOS Micro Desktop";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs = {
 
-  outputs = { self, nixpkgs }: {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    nix-flatpak = {
+      url = "github:NixOS/nixpkgs/nixos-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+  };
+
+  outputs = { self, nixpkgs, nix-flatpak }: {
     nixosModules.microDesktop = { config, lib, pkgs, ... }: with lib; {
       boot = {
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
@@ -16,16 +25,20 @@
 
       hardware = {
         bluetooth.enable = mkDefault true;
+        enableAllFirmware = mkDefault true;
         pulseaudio.enable = mkDefault false;
         graphics = {
           enable = true;
           extraPackages = with pkgs; [
-            ocl-icd
-            libva1
+            intel-media-driver
+            intel-vaapi-driver
             libva-utils
+            libva-vdpau-driver
+            libva1
             libvdpau
             libvdpau-va-gl
-            libva-vdpau-driver
+            nvidia-vaapi-driver
+            ocl-icd
             vulkan-loader
           ];
         };
@@ -37,6 +50,10 @@
           ]);
         };
       };
+
+      imports = [
+        nix-flatpak.nixosModules.nix-flatpak
+      ];
 
       networking = {
         networkmanager = {
@@ -53,7 +70,7 @@
       nix = {
         gc = {
           automatic = mkDefault true;
-          dates = mkDefault "daily";
+          dates = mkDefault "weekly";
           options = mkDefault "--delete-older-than 7d";
         };
         settings.experimental-features = mkDefault [ "nix-command" "flakes" ];
@@ -82,14 +99,43 @@
         btrfs.autoScrub = {
           enable = mkDefault true;
           fileSystems = mkDefault [ "/" ];
-          interval = mkDefault "weekly";
+          interval = mkDefault "daily";
         };
 
         dbus.implementation = mkDefault "broker";
 
         dconf.enable = mkDefault true;
 
-        flatpak.enable = mkDefault true;
+        flatpak = {
+          enable = mkDefault true;
+          overrides = {
+            global = {
+              # Force Wayland by default
+              Context = {
+                sockets = [ "wayland" "!x11" "!fallback-x11" ];
+                filesystems = [ "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro" ];
+              };
+
+              Environment = {
+                # Fix un-themed cursor in some Wayland apps
+                XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
+              };
+            };
+          };
+          packages = mkDefault [
+            "io.github.celluloid_player.Celluloid"
+            "org.freedesktop.Platform.ffmpeg-full"
+            "org.freedesktop.Platform.GStreamer.gstreamer-vaapi"
+            "org.gnome.Loupe"
+            "org.gnome.Papers"
+            "org.gtk.Gtk3theme.adw-gtk3-dark"
+            "org.gtk.Gtk3theme.adw-gtk3"
+          ];
+          update.auto = {
+            enable = mkDefault true;
+            onCalendar = mkDefault "daily";
+          };
+        };
 
         fprintd = {
           enable = mkDefault true;
@@ -104,9 +150,10 @@
         fwupd.enable = mkDefault true;
 
         gnome = {
-          core-os-services.enable = mkDefault true;
-          core-shell.enable = mkDefault true;
-          core-utilities.enable = mkDefault false;
+          # core-os-services.enable = mkDefault true;
+          # core-shell.enable = mkDefault true;
+          # core-utilities.enable = mkDefault false;
+          gnome-browser-connector.enable = mkDefault true;
           gnome-keyring.enable = mkDefault true;
           gnome-online-accounts.enable = mkDefault true;
           gnome-remote-desktop.enable = mkDefault true;
@@ -193,11 +240,19 @@
             adwaita-icon-theme
             gnome-control-center
             gnome-shell
+            gnome-software
+            gnome-terminal
             gnome-themes-extra
+            nautilus
             networkmanager-l2tp
             networkmanager-openconnect
             networkmanager-openvpn
             networkmanager-vpnc
+            sushi
+          ])
+          (with gnomeExtensions; [
+            another-window-session-manager
+            appindicator
           ])
           [
             dnsmasq
@@ -211,10 +266,6 @@
             gst_all_1.gstreamer
           ]
         ];
-        sessionVariables = {
-          SSH_ASKPASS_REQUIRE = "prefer";
-          NIXOS_OZONE_WL = "1";
-        };
         variables = {
           CLUTTER_BACKEND = "wayland";
           EGL_PLATFORM = "wayland";
@@ -223,11 +274,13 @@
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
           MOZ_ENABLE_WAYLAND = "1";
+          NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
           QT_QPA_PLATFORM = "wayland";
           QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
           SDL_VIDEODRIVER = "wayland";
+          SSH_ASKPASS_REQUIRE = "prefer";
           XDG_SESSION_TYPE = "wayland";
         };
       };
