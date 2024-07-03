@@ -77,6 +77,10 @@
         settings.experimental-features = mkDefault [ "nix-command" "flakes" ];
       };
 
+      nixpkgs.config = {
+        allowUnfree = mkDefault true;
+      };
+
       programs = {
         dconf.enable = mkDefault true;
         gnupg.agent = {
