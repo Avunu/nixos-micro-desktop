@@ -257,6 +257,7 @@
           [
             dnsmasq
             gcr_4
+            gnome-network-displays
             gst_all_1.gst-libav
             gst_all_1.gst-plugins-bad
             gst_all_1.gst-plugins-base
