@@ -135,7 +135,7 @@
           packages = mkDefault [
             "io.github.celluloid_player.Celluloid"
             "org.freedesktop.Platform.ffmpeg-full/x86_64/23.08"
-            "org.freedesktop.Platform.GStreamer.gstreamer-vaapi"
+            "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
             "org.gnome.Loupe"
             "org.gnome.Papers"
             "org.gtk.Gtk3theme.adw-gtk3-dark"
@@ -245,8 +245,11 @@
         roboto-mono
         roboto-serif
         roboto-slab
+        source-code
         source-code-pro
+        source-sans
         source-sans-pro
+        source-serif
         source-serif-pro
       ]);
 
