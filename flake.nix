@@ -5,7 +5,7 @@
 
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    nix-flatpak.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
 
   };
 
