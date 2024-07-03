@@ -24,6 +24,8 @@
         plymouth.enable = mkDefault true;
       };
 
+      documentation.nixos.enable = mkDefault false;
+
       hardware = {
         bluetooth.enable = mkDefault true;
         enableRedistributableFirmware = mkDefault true;
@@ -114,8 +116,6 @@
 
         dbus.implementation = mkDefault "broker";
 
-        documentation.nixos.enable = mkDefault false;
-
         displayManager.sessionPackages = [ pkgs.gnome.gnome-session.sessions ];
 
         flatpak = {
@@ -190,6 +190,7 @@
             gutenprint
             hplip
           ]);
+          webInterface = mkDefault false;
         };
 
         system-config-printer.enable = mkDefault true;
