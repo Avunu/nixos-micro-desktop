@@ -16,14 +16,17 @@
         kernelParams = mkDefault [ "mem_sleep_default=deep" ];
         loader = {
           efi.canTouchEfiVariables = mkDefault true;
-          systemd-boot.configurationLimit = mkDefault 10;
+          systemd-boot = {
+            configurationLimit = mkDefault 10;
+            enable = mkDefault true;
+          };
         };
         plymouth.enable = mkDefault true;
       };
 
       hardware = {
         bluetooth.enable = mkDefault true;
-        enableAllFirmware = mkDefault true;
+        enableRedistributableFirmware = mkDefault true;
         pulseaudio.enable = mkDefault false;
         graphics = {
           enable = true;
