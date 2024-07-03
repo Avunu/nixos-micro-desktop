@@ -134,7 +134,7 @@
           };
           packages = mkDefault [
             "io.github.celluloid_player.Celluloid"
-            "org.freedesktop.Platform.ffmpeg-full"
+            "org.freedesktop.Platform.ffmpeg-full/x86_64/23.08"
             "org.freedesktop.Platform.GStreamer.gstreamer-vaapi"
             "org.gnome.Loupe"
             "org.gnome.Papers"
