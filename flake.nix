@@ -9,7 +9,7 @@
 
   };
 
-  outputs = { self, nixpkgs, nix-flatpak }: {
+  outputs = inputs@{ self, nixpkgs, nix-flatpak, ... }: {
     nixosModules.microDesktop = { config, lib, pkgs, ... }: with lib; {
       boot = {
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
