@@ -260,6 +260,9 @@
       ]);
 
       environment = {
+        gnome.excludePackages = with pkgs; [
+          gnome-tour
+        ];
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
             adwaita-icon-theme
