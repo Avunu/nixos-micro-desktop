@@ -124,7 +124,7 @@
             global = {
               # Force Wayland by default
               Context = {
-                sockets = [ "wayland" "!x11" "!fallback-x11" ];
+                sockets = [ "wayland" "fallback-x11" "!x11" ];
                 filesystems = [ "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro" ];
               };
 
@@ -267,6 +267,7 @@
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
             adwaita-icon-theme
+            gnome-backgrounds
             gnome-console
             gnome-control-center
             gnome-shell
@@ -314,7 +315,7 @@
           MOZ_ENABLE_WAYLAND = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
-          QT_QPA_PLATFORM = "wayland";
+          #QT_QPA_PLATFORM = "wayland";
           QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
           SDL_VIDEODRIVER = "wayland";
           XDG_SESSION_TYPE = "wayland";
