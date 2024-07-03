@@ -16,6 +16,7 @@
     nixosModules.microDesktop = { config, lib, pkgs, ... }: with lib; {
       boot = {
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
+        kernelParams = mkDefault [ "mem_sleep_default=deep" ];
         loader = {
           efi.canTouchEfiVariables = mkDefault true;
           systemd-boot.configurationLimit = mkDefault 10;
