@@ -69,6 +69,7 @@
           ]);
         };
         firewall = {
+          enable = mkDefault false;
           allowedTCPPorts = [7236 7250];
           allowedUDPPorts = [7236 5353];
         };
