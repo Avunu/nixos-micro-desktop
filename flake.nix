@@ -277,7 +277,6 @@
         ];
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
-            adwaita-icon-theme
             gnome-backgrounds
             gnome-console
             gnome-control-center
@@ -297,6 +296,7 @@
             appindicator
           ])
           [
+            adwaita-icon-theme
             dnsmasq
             gcr_4
             glib
