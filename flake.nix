@@ -13,7 +13,8 @@
     nixosModules.microDesktop = { config, lib, pkgs, ... }: with lib; {
       boot = {
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
-        kernelParams = mkDefault [ "mem_sleep_default=deep" ];
+        # energy savings
+        kernelParams = ["mem_sleep_default=deep" "pcie_aspm.policy=powersupersave"];
         loader = {
           efi.canTouchEfiVariables = mkDefault true;
           systemd-boot = {
@@ -67,6 +68,11 @@
             networkmanager-openconnect
             networkmanager-l2tp
           ]);
+        };
+        firewall = {
+          enable = mkDefault false;
+          allowedTCPPorts = [7236 7250];
+          allowedUDPPorts = [7236 5353];
         };
       };
 
@@ -122,9 +128,9 @@
           enable = mkDefault true;
           overrides = {
             global = {
-              # Force Wayland by default
+              # Enable Wayland by default
               Context = {
-                sockets = [ "wayland" "!x11" "!fallback-x11" ];
+                sockets = [ "wayland" "!fallback-x11" "!x11" ];
                 filesystems = [ "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro" ];
               };
 
@@ -133,6 +139,11 @@
                 XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
               };
             };
+
+            # X11 only apps
+            "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
+            "com.synology.SynologyDrive".Context.sockets = ["x11"];
+
           };
           packages = mkDefault [
             "io.github.celluloid_player.Celluloid"
@@ -267,6 +278,7 @@
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
             adwaita-icon-theme
+            gnome-backgrounds
             gnome-console
             gnome-control-center
             gnome-shell
@@ -301,9 +313,6 @@
             xdg-user-dirs
           ]
         ];
-        sessionVariables = {
-          NIXOS_OZONE_WL = "1";
-        };
         variables = {
           CLUTTER_BACKEND = "wayland";
           EGL_PLATFORM = "wayland";
@@ -312,9 +321,10 @@
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
           MOZ_ENABLE_WAYLAND = "1";
+          NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
-          QT_QPA_PLATFORM = "wayland";
+          #QT_QPA_PLATFORM = "wayland";
           QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
           SDL_VIDEODRIVER = "wayland";
           XDG_SESSION_TYPE = "wayland";
