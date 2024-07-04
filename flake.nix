@@ -13,7 +13,8 @@
     nixosModules.microDesktop = { config, lib, pkgs, ... }: with lib; {
       boot = {
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
-        kernelParams = mkDefault [ "mem_sleep_default=deep" ];
+        # energy savings
+        kernelParams = ["mem_sleep_default=deep" "pcie_aspm.policy=powersupersave"];
         loader = {
           efi.canTouchEfiVariables = mkDefault true;
           systemd-boot = {
