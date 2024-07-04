@@ -313,9 +313,6 @@
             xdg-user-dirs
           ]
         ];
-        sessionVariables = {
-          NIXOS_OZONE_WL = "1";
-        };
         variables = {
           CLUTTER_BACKEND = "wayland";
           EGL_PLATFORM = "wayland";
@@ -324,6 +321,7 @@
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
           MOZ_ENABLE_WAYLAND = "1";
+          NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
           #QT_QPA_PLATFORM = "wayland";
