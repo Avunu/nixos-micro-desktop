@@ -128,9 +128,9 @@
           enable = mkDefault true;
           overrides = {
             global = {
-              # Force Wayland by default
+              # Enable Wayland by default
               Context = {
-                sockets = [ "wayland" "fallback-x11" "x11" ];
+                sockets = [ "wayland" "!fallback-x11" "!x11" ];
                 filesystems = [ "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro" ];
               };
 
@@ -139,6 +139,11 @@
                 XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
               };
             };
+
+            # X11 only apps
+            "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
+            "com.synology.SynologyDrive".Context.sockets = ["x11"];
+
           };
           packages = mkDefault [
             "io.github.celluloid_player.Celluloid"
