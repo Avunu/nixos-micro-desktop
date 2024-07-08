@@ -283,13 +283,10 @@
             gnome-shell
             gnome-shell-extensions
             gnome-software
-            gnome-themes-extra
-            nautilus
             networkmanager-l2tp
             networkmanager-openconnect
             networkmanager-openvpn
             networkmanager-vpnc
-            sushi
           ])
           (with gnomeExtensions; [
             another-window-session-manager
@@ -302,6 +299,7 @@
             glib
             gnome-menus
             gnome-network-displays
+            gnome-themes-extra
             gst_all_1.gst-libav
             gst_all_1.gst-plugins-bad
             gst_all_1.gst-plugins-base
@@ -310,6 +308,8 @@
             gst_all_1.gst-vaapi
             gst_all_1.gstreamer
             gtk3.out
+            nautilus
+            sushi
             xdg-user-dirs
           ]
         ];
