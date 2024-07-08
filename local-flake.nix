@@ -8,15 +8,19 @@
     };
   };
 
-  outputs = { self, nixpkgs, microdesktop }: {
+ outputs = { self, nixpkgs, microdesktop }:
+  let
+    hostName = "myhostname"; # Replace with desired hostname
+  in
+  {
     nixosConfigurations = {
-      "${nixos-hostname}" = nixpkgs.lib.nixosSystem {
+      "${hostName}" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           microdesktop.nixosModules.microDesktop
           ./hardware-configuration.nix
           ({ config, lib, pkgs, ... }: {
-            networking.hostName = "myhostname"; # Replace with desired hostname
+            networking.hostName = "${hostName}";
 
             time.timeZone = "America/New_York"; # Replace with your timezone
 
