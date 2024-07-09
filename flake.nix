@@ -160,9 +160,9 @@
           };
         };
 
-        fprintd = {
-          enable = mkDefault true;
-        };
+        # fprintd = {
+        #   enable = mkDefault true;
+        # };
 
         fstrim = {
           enable = mkDefault true;
