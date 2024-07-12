@@ -14,7 +14,7 @@
       boot = {
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
         # energy savings
-        kernelParams = ["mem_sleep_default=deep" "pcie_aspm.policy=powersupersave"];
+        kernelParams = [ "mem_sleep_default=deep" "pcie_aspm.policy=powersupersave" ];
         loader = {
           efi.canTouchEfiVariables = mkDefault true;
           systemd-boot = {
@@ -71,8 +71,8 @@
         };
         firewall = {
           enable = mkDefault false;
-          allowedTCPPorts = [7236 7250];
-          allowedUDPPorts = [7236 5353];
+          allowedTCPPorts = [ 7236 7250 ];
+          allowedUDPPorts = [ 7236 5353 ];
         };
       };
 
@@ -141,16 +141,16 @@
             };
 
             # X11 only apps
-            "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
-            "com.synology.SynologyDrive".Context.sockets = ["x11"];
+            "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
+            "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
 
           };
           packages = mkDefault [
-            "io.github.celluloid_player.Celluloid"
             "org.freedesktop.Platform.ffmpeg-full/x86_64/23.08"
             "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
             "org.gnome.Loupe"
             "org.gnome.Papers"
+            "org.gnome.Showtime"
             "org.gtk.Gtk3theme.adw-gtk3-dark"
             "org.gtk.Gtk3theme.adw-gtk3"
           ];
@@ -254,6 +254,8 @@
         dejavu_fonts
         fira-code
         fira-code-symbols
+        fira-mono
+        fira-sans
         liberation_ttf
         noto-fonts
         noto-fonts-cjk
@@ -324,7 +326,7 @@
           NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
-          #QT_QPA_PLATFORM = "wayland";
+          QT_QPA_PLATFORM = "wayland";
           QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
           SDL_VIDEODRIVER = "wayland";
           XDG_SESSION_TYPE = "wayland";
