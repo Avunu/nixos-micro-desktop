@@ -30,6 +30,7 @@
       hardware = {
         bluetooth.enable = mkDefault true;
         enableRedistributableFirmware = mkDefault true;
+        opentabletdriver.enable = mkDefault true;
         pulseaudio.enable = mkDefault false;
         graphics = {
           enable = true;
@@ -53,6 +54,7 @@
             sane-airscan
           ]);
         };
+        sensor.iio.enable = mkDefault true;
       };
 
       imports = [
