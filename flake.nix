@@ -143,8 +143,10 @@
             };
 
             # X11 only apps
-            "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
             "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
+            "net.xmind.XMind".Context.sockets = [ "x11" ];
+            "net.xmind.XMind8".Context.sockets = [ "x11" ];
+            "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
 
           };
           packages = mkDefault [
