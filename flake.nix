@@ -98,6 +98,7 @@
           enableSSHSupport = mkDefault true;
           pinentryPackage = mkDefault pkgs.pinentry-gnome3;
         };
+        regreet.enable = mkDefault true;
       };
 
       services = {
@@ -178,16 +179,20 @@
         gnome = {
           core-shell.enable = mkDefault true;
           glib-networking.enable = mkDefault true;
-          gnome-browser-connector.enable = mkDefault true;
+          gnome-browser-connector.enable = mkDefault false;
           gnome-keyring.enable = mkDefault true;
           gnome-online-accounts.enable = mkDefault true;
-          gnome-remote-desktop.enable = mkDefault true;
+          gnome-remote-desktop.enable = mkDefault false;
           gnome-settings-daemon.enable = mkDefault true;
           gnome-user-share.enable = mkDefault true;
-          rygel.enable = mkDefault true;
-          tracker-miners.enable = mkDefault true;
-          tracker.enable = mkDefault true;
+          rygel.enable = mkDefault false;
+          tracker-miners.enable = mkDefault false;
+          tracker.enable = mkDefault false;
         };
+
+        # greetd = {
+        #   enable = true;
+        # };
 
         gvfs.enable = mkDefault true;
 
@@ -216,12 +221,12 @@
 
         upower.enable = mkDefault true;
 
-        xserver = {
-          displayManager.gdm.enable = mkDefault true;
-          enable = mkDefault true;
-          excludePackages = [ pkgs.xterm ];
-          updateDbusEnvironment = mkDefault true;
-        };
+        # xserver = {
+        #   displayManager.gdm.enable = mkDefault true;
+        #   enable = mkDefault true;
+        #   excludePackages = [ pkgs.xterm ];
+        #   updateDbusEnvironment = mkDefault true;
+        # };
 
       };
 
