@@ -98,7 +98,12 @@
           enableSSHSupport = mkDefault true;
           pinentryPackage = mkDefault pkgs.pinentry-gnome3;
         };
-        regreet.enable = mkDefault true;
+        regreet = {
+          enable = mkDefault true;
+          settings = {
+            GTK.application_prefer_dark_theme = mkDefault true;
+          };
+        };
       };
 
       services = {
@@ -123,7 +128,10 @@
 
         colord.enable = mkDefault true;
 
-        dbus.implementation = mkDefault "broker";
+        dbus = {
+          implementation = mkDefault "broker";
+          packages = with pkgs; [ gcr gnome-keyring ];
+        };
 
         displayManager.sessionPackages = [ pkgs.gnome.gnome-session.sessions ];
 
@@ -190,9 +198,14 @@
           tracker.enable = mkDefault true;
         };
 
-        # greetd = {
-        #   enable = true;
-        # };
+        greetd = {
+          enable = true;
+          settings = {
+            terminal = {
+              vt = "7";
+            };
+          };
+        };
 
         gvfs.enable = mkDefault true;
 
@@ -231,6 +244,7 @@
       };
 
       security = {
+        pam.services.login.enableGnomeKeyring = mkDefault true;
         polkit.enable = mkDefault true;
         tpm2.enable = mkDefault true;
       };
