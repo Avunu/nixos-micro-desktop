@@ -179,15 +179,15 @@
         gnome = {
           core-shell.enable = mkDefault true;
           glib-networking.enable = mkDefault true;
-          gnome-browser-connector.enable = mkDefault false;
+          gnome-browser-connector.enable = mkForce false;
           gnome-keyring.enable = mkDefault true;
           gnome-online-accounts.enable = mkDefault true;
           gnome-remote-desktop.enable = mkDefault true;
           gnome-settings-daemon.enable = mkDefault true;
           gnome-user-share.enable = mkDefault true;
           rygel.enable = mkDefault true;
-          tracker-miners.enable = mkDefault false;
-          tracker.enable = mkDefault false;
+          tracker-miners.enable = mkForce false;
+          tracker.enable = mkDefault true;
         };
 
         # greetd = {
