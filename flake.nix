@@ -199,10 +199,11 @@
         };
 
         greetd = {
-          enable = true;
+          enable = mkDefault true;
           settings = {
-            terminal = {
-              vt = "7";
+            default_session = {
+              command = "${pkgs.regreet}/bin/regreet --cmd 'XDG_SESSION_TYPE=wayland dbus-run-session gnome-session'";
+              user = "greeter";
             };
           };
         };
