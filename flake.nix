@@ -202,7 +202,7 @@
           enable = mkDefault true;
           settings = {
             default_session = {
-              command = "${pkgs.regreet}/bin/regreet --cmd 'XDG_SESSION_TYPE=wayland dbus-run-session gnome-session'";
+              command = "${getExe pkgs.greetd.regreet} --cmd 'XDG_SESSION_TYPE=wayland dbus-run-session gnome-session'";
               user = "greeter";
             };
           };
