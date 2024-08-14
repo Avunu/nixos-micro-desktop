@@ -198,16 +198,6 @@
           tracker.enable = mkDefault true;
         };
 
-        greetd = {
-          enable = mkDefault true;
-          settings = {
-            default_session = {
-              command = "${getExe pkgs.greetd.regreet} --cmd 'XDG_SESSION_TYPE=wayland dbus-run-session gnome-session'";
-              user = "greeter";
-            };
-          };
-        };
-
         gvfs.enable = mkDefault true;
 
         libinput.enable = mkDefault true;
