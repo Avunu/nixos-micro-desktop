@@ -130,7 +130,12 @@
 
         dbus = {
           implementation = mkDefault "broker";
-          packages = with pkgs; [ gcr gnome-keyring ];
+          packages = with pkgs; [
+            gcr
+            gnome-keyring
+            gnome.gnome-session
+            gnome.gnome-shell
+          ];
         };
 
         displayManager.sessionPackages = [ pkgs.gnome.gnome-session.sessions ];
