@@ -223,7 +223,7 @@
           ]);
           webInterface = mkDefault false;
         };
-security
+        
         system-config-printer.enable = mkDefault true;
 
         udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
