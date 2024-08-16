@@ -30,7 +30,7 @@
         doc.enable = mkDefault false;
         man.enable = mkDefault false;
         nixos.enable = mkDefault false;
-      };        
+      };
 
       hardware = {
         bluetooth.enable = mkDefault true;
