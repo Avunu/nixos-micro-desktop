@@ -14,7 +14,7 @@
       boot = {
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
         # energy savings
-        kernelParams = [ "mem_sleep_default=deep" "pcie_aspm.policy=powersupersave" ];
+        kernelParams = [ "mem_sleep_default=deep" "pcie_aspm.policy=powersupersave" "quiet" "splash" "loglevel=0" ];
         loader = {
           efi.canTouchEfiVariables = mkDefault true;
           systemd-boot = {
