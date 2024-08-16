@@ -224,6 +224,8 @@
           webInterface = mkDefault false;
         };
 
+        rtkit.enable = mkDefault true;
+        
         system-config-printer.enable = mkDefault true;
 
         udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
@@ -256,12 +258,7 @@
         portal = {
           configPackages = mkDefault [ pkgs.gnome.gnome-session ];
           enable = mkDefault true;
-          extraPortals = [
-            pkgs.xdg-desktop-portal-gnome
-            (pkgs.xdg-desktop-portal-gtk.override {
-              buildPortalsInGnome = false;
-            })
-          ];
+          extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
           xdgOpenUsePortal = mkDefault true;
         };
       };
@@ -334,7 +331,7 @@
             xdg-user-dirs
           ]
         ];
-        variables = {
+        sessionVariables = {
           CLUTTER_BACKEND = "wayland";
           EGL_PLATFORM = "wayland";
           ELECTRON_OZONE_PLATFORM_HINT = "wayland";
