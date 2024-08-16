@@ -25,7 +25,11 @@
         plymouth.enable = mkDefault true;
       };
 
-      documentation.nixos.enable = mkDefault false;
+      documentation = {
+        enable = mkDefault false;
+        man.enable = mkDefault false;
+        nixos.enable = mkDefault false;
+      };        
 
       hardware = {
         bluetooth.enable = mkDefault true;
