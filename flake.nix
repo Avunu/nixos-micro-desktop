@@ -152,7 +152,7 @@
               # Enable Wayland by default
               Context = {
                 sockets = [ "wayland" "!fallback-x11" "!x11" ];
-                filesystems = [ "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro" ];
+                filesystems = [ "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw" ];
               };
 
               Environment = {
@@ -234,13 +234,6 @@
         udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 
         upower.enable = mkDefault true;
-
-        # xserver = {
-        #   displayManager.gdm.enable = mkDefault true;
-        #   enable = mkDefault true;
-        #   excludePackages = [ pkgs.xterm ];
-        #   updateDbusEnvironment = mkDefault true;
-        # };
 
       };
 
