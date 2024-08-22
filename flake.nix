@@ -35,7 +35,7 @@
       hardware = {
         bluetooth.enable = mkDefault true;
         enableRedistributableFirmware = mkDefault true;
-        opentabletdriver.enable = mkDefault true;
+        # opentabletdriver.enable = mkDefault true;
         pulseaudio.enable = mkDefault false;
         graphics = {
           enable = true;
@@ -138,8 +138,6 @@
           packages = with pkgs; [
             gcr
             gnome-keyring
-            gnome.gnome-session
-            gnome.gnome-shell
           ];
         };
 
@@ -166,6 +164,7 @@
             "net.xmind.XMind".Context.sockets = [ "x11" ];
             "net.xmind.XMind8".Context.sockets = [ "x11" ];
             "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
+            "com.logseq.Logseq".Context.sockets = [ "x11" ];
 
           };
           packages = mkDefault [
@@ -200,9 +199,9 @@
           gnome-browser-connector.enable = mkForce false;
           gnome-keyring.enable = mkDefault true;
           gnome-online-accounts.enable = mkDefault true;
-          gnome-remote-desktop.enable = mkDefault true;
+          gnome-remote-desktop.enable = mkDefault false;
           gnome-settings-daemon.enable = mkDefault true;
-          gnome-user-share.enable = mkDefault true;
+          gnome-user-share.enable = mkDefault false;
           rygel.enable = mkDefault true;
           tracker-miners.enable = mkForce false;
           tracker.enable = mkDefault true;
