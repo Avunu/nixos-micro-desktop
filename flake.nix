@@ -235,6 +235,8 @@
           mutter
         ];
 
+        udisks2.enable = true;
+
         upower.enable = mkDefault true;
 
       };
@@ -289,8 +291,8 @@
       ]);
 
       environment = {
-        gnome.excludePackages = with pkgs; [
-          gnome-tour
+        pathsToLink = [
+          "/share" # TODO: https://github.com/NixOS/nixpkgs/issues/47173
         ];
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
@@ -338,6 +340,7 @@
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
           MOZ_ENABLE_WAYLAND = "1";
+          NIX_GSETTINGS_OVERRIDES_DIR = "${nixos-gsettings-desktop-schemas}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
           NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
