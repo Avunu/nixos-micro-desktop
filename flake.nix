@@ -306,6 +306,7 @@
             networkmanager-openconnect
             networkmanager-openvpn
             networkmanager-vpnc
+            nixos-gsettings-overrides
           ])
           (with gnomeExtensions; [
             another-window-session-manager
@@ -340,7 +341,7 @@
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
           MOZ_ENABLE_WAYLAND = "1";
-          NIX_GSETTINGS_OVERRIDES_DIR = "${nixos-gsettings-desktop-schemas}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
+          NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
           NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
