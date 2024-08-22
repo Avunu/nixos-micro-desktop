@@ -194,7 +194,7 @@
         fwupd.enable = mkDefault true;
 
         gnome = {
-          core-shell.enable = mkDefault true;
+          # core-shell.enable = mkDefault true;
           glib-networking.enable = mkDefault true;
           gnome-browser-connector.enable = mkForce false;
           gnome-keyring.enable = mkDefault true;
