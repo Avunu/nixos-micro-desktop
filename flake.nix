@@ -230,7 +230,10 @@
         
         system-config-printer.enable = mkDefault true;
 
-        udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+        udev.packages = with pkgs.gnome; [
+          gnome-settings-daemon
+          mutter
+        ];
 
         upower.enable = mkDefault true;
 
