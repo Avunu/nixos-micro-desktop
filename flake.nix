@@ -296,12 +296,9 @@
         ];
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
-            gnome-backgrounds
             gnome-console
             gnome-control-center
             gnome-shell
-            gnome-shell-extensions
-            gnome-software
             networkmanager-l2tp
             networkmanager-openconnect
             networkmanager-openvpn
@@ -317,8 +314,11 @@
             dnsmasq
             gcr_4
             glib
+            gnome-backgrounds
             gnome-menus
             gnome-network-displays
+            gnome-shell-extensions
+            gnome-software
             gnome-themes-extra
             gst_all_1.gst-libav
             gst_all_1.gst-plugins-bad
