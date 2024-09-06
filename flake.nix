@@ -97,22 +97,27 @@
       };
 
       programs = {
+
         dconf.enable = mkDefault true;
+
         gnupg.agent = {
           enable = mkDefault true;
           enableSSHSupport = mkDefault true;
           pinentryPackage = mkDefault pkgs.pinentry-gnome3;
         };
+
         nix-ld = {
-          enable = true;
+          enable = mkDefault true;
           libraries = with pkgs; [ glib json-glib ];
         };
+
         regreet = {
           enable = mkDefault true;
           settings = {
             GTK.application_prefer_dark_theme = mkDefault true;
           };
         };
+
       };
 
       services = {
@@ -257,6 +262,12 @@
         gnome-shell
       ];
 
+      virtualisation.podman = {
+        dockerCompat = mkDefault true;
+        dockerSocket.enable = mkDefault true;
+        enable = mkDefault true;
+      };
+
       xdg = {
         mime.enable = mkDefault true;
         icons.enable = mkDefault true;
@@ -315,6 +326,7 @@
           ])
           [
             adwaita-icon-theme
+            distrobox
             dnsmasq
             gcr_4
             glib
