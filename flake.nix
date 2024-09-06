@@ -103,6 +103,10 @@
           enableSSHSupport = mkDefault true;
           pinentryPackage = mkDefault pkgs.pinentry-gnome3;
         };
+        nix-ld = {
+          enable = true;
+          libraries = with pkgs; [ glib json-glib ];
+        };
         regreet = {
           enable = mkDefault true;
           settings = {
