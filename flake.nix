@@ -239,7 +239,7 @@
         
         system-config-printer.enable = mkDefault true;
 
-        udev.packages = with pkgs.gnome; [
+        udev.packages = with pkgs; [
           gnome-settings-daemon
           mutter
         ];
