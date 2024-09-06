@@ -32,6 +32,90 @@
         nixos.enable = mkDefault false;
       };
 
+      environment = {
+        pathsToLink = [
+          "/share" # TODO: https://github.com/NixOS/nixpkgs/issues/47173
+        ];
+        systemPackages = with pkgs; lib.flatten [
+          (with gnome; [
+            gnome-console
+            nixos-gsettings-overrides
+          ])
+          (with gnomeExtensions; [
+            another-window-session-manager
+            appindicator
+          ])
+          [
+            adwaita-icon-theme
+            distrobox
+            dnsmasq
+            gcr_4
+            glib
+            gnome-backgrounds
+            gnome-control-center
+            gnome-menus
+            gnome-network-displays
+            gnome-shell-extensions
+            gnome-software
+            gnome-themes-extra
+            gst_all_1.gst-libav
+            gst_all_1.gst-plugins-bad
+            gst_all_1.gst-plugins-base
+            gst_all_1.gst-plugins-good
+            gst_all_1.gst-plugins-ugly
+            gst_all_1.gst-vaapi
+            gst_all_1.gstreamer
+            gtk3.out
+            nautilus
+            sushi
+            xdg-user-dirs
+          ]
+        ];
+        sessionVariables = {
+          CLUTTER_BACKEND = "wayland";
+          EGL_PLATFORM = "wayland";
+          ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+          GDK_BACKEND = "wayland";
+          GDK_PLATFORM = "wayland";
+          GTK_BACKEND = "wayland";
+          MOZ_ENABLE_WAYLAND = "1";
+          NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
+          NIXOS_OZONE_WL = "1";
+          OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
+          QML_DISABLE_DISK_CACHE = "1";
+          QT_QPA_PLATFORM = "wayland";
+          QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+          SDL_VIDEODRIVER = "wayland";
+          XDG_SESSION_TYPE = "wayland";
+        };
+      };
+
+      fonts.packages = mkDefault (with pkgs; [
+        caladea
+        cantarell-fonts
+        carlito
+        dejavu_fonts
+        fira-code
+        fira-code-symbols
+        fira-mono
+        fira-sans
+        liberation_ttf
+        noto-fonts
+        noto-fonts-cjk
+        noto-fonts-emoji
+        open-sans
+        roboto
+        roboto-mono
+        roboto-serif
+        roboto-slab
+        source-code
+        source-code-pro
+        source-sans
+        source-sans-pro
+        source-serif
+        source-serif-pro
+      ]);
+
       hardware = {
         bluetooth.enable = mkDefault true;
         enableRedistributableFirmware = mkDefault true;
@@ -279,90 +363,6 @@
         };
       };
 
-      fonts.packages = mkDefault (with pkgs; [
-        caladea
-        cantarell-fonts
-        carlito
-        dejavu_fonts
-        fira-code
-        fira-code-symbols
-        fira-mono
-        fira-sans
-        liberation_ttf
-        noto-fonts
-        noto-fonts-cjk
-        noto-fonts-emoji
-        open-sans
-        roboto
-        roboto-mono
-        roboto-serif
-        roboto-slab
-        source-code
-        source-code-pro
-        source-sans
-        source-sans-pro
-        source-serif
-        source-serif-pro
-      ]);
-
-      environment = {
-        pathsToLink = [
-          "/share" # TODO: https://github.com/NixOS/nixpkgs/issues/47173
-        ];
-        systemPackages = with pkgs; lib.flatten [
-          (with gnome; [
-            gnome-console
-            nixos-gsettings-overrides
-          ])
-          (with gnomeExtensions; [
-            another-window-session-manager
-            appindicator
-          ])
-          [
-            adwaita-icon-theme
-            distrobox
-            dnsmasq
-            gcr_4
-            glib
-            gnome-backgrounds
-            gnome-control-center
-            gnome-menus
-            gnome-network-displays
-            gnome-shell-extensions
-            gnome-software
-            gnome-themes-extra
-            gst_all_1.gst-libav
-            gst_all_1.gst-plugins-bad
-            gst_all_1.gst-plugins-base
-            gst_all_1.gst-plugins-good
-            gst_all_1.gst-plugins-ugly
-            gst_all_1.gst-vaapi
-            gst_all_1.gstreamer
-            gtk3.out
-            nautilus
-            sushi
-            xdg-user-dirs
-          ]
-        ];
-        sessionVariables = {
-          CLUTTER_BACKEND = "wayland";
-          EGL_PLATFORM = "wayland";
-          ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-          GDK_BACKEND = "wayland";
-          GDK_PLATFORM = "wayland";
-          GTK_BACKEND = "wayland";
-          MOZ_ENABLE_WAYLAND = "1";
-          NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
-          NIXOS_OZONE_WL = "1";
-          OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
-          QML_DISABLE_DISK_CACHE = "1";
-          QT_QPA_PLATFORM = "wayland";
-          QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
-          SDL_VIDEODRIVER = "wayland";
-          XDG_SESSION_TYPE = "wayland";
-        };
-      };
-
       system.autoUpgrade = {
         allowReboot = mkDefault false;
         enable = mkDefault true;
@@ -375,6 +375,8 @@
           "-L"
         ];
       };
+
+      users.defaultUserShell = pkgs.bashInteractive;
 
       zramSwap.enable = mkDefault true;
     };
