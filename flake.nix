@@ -150,7 +150,7 @@
           ];
         };
 
-        displayManager.sessionPackages = [ pkgs.gnome.gnome-session.sessions ];
+        displayManager.sessionPackages = [ pkgs.gnome-session.sessions ];
 
         flatpak = {
           enable = mkDefault true;
@@ -257,7 +257,7 @@
         tpm2.enable = mkDefault true;
       };
 
-      systemd.packages = with pkgs.gnome; [
+      systemd.packages = with pkgs; [
         gnome-session
         gnome-shell
       ];
@@ -272,7 +272,7 @@
         mime.enable = mkDefault true;
         icons.enable = mkDefault true;
         portal = {
-          configPackages = mkDefault [ pkgs.gnome.gnome-session ];
+          configPackages = mkDefault [ pkgs.gnome-session ];
           enable = mkDefault true;
           extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
           xdgOpenUsePortal = mkDefault true;
@@ -312,12 +312,6 @@
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
             gnome-console
-            gnome-control-center
-            gnome-shell
-            networkmanager-l2tp
-            networkmanager-openconnect
-            networkmanager-openvpn
-            networkmanager-vpnc
             nixos-gsettings-overrides
           ])
           (with gnomeExtensions; [
@@ -331,6 +325,7 @@
             gcr_4
             glib
             gnome-backgrounds
+            gnome-control-center
             gnome-menus
             gnome-network-displays
             gnome-shell-extensions
