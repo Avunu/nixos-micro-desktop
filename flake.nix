@@ -261,6 +261,7 @@
 
           };
           packages = mkDefault [
+            "io.missioncenter.MissionCenter"
             "org.freedesktop.Platform.ffmpeg-full/x86_64/23.08"
             "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
             "org.gnome.Loupe"
