@@ -67,6 +67,7 @@
             gst_all_1.gstreamer
             gtk3.out
             nautilus
+            podman-compose
             sushi
             xdg-user-dirs
           ]
@@ -348,6 +349,7 @@
       ];
 
       virtualisation.podman = {
+        defaultNetwork.settings.dns_enabled = true;
         dockerCompat = mkDefault true;
         dockerSocket.enable = mkDefault true;
         enable = mkDefault true;
