@@ -49,6 +49,7 @@
             adwaita-icon-theme
             distrobox
             dnsmasq
+            fcitx5
             gcr_4
             glib
             gnome-backgrounds
