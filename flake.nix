@@ -155,6 +155,7 @@
         type = mkDefault "fcitx5";
         fcitx5 = {
           addons = with pkgs; [
+            fcitx5-configtool
             fcitx5-gtk
             catppuccin-fcitx5
           ];
