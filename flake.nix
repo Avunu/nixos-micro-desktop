@@ -147,6 +147,14 @@
         sensor.iio.enable = mkDefault true;
       };
 
+      i18n.inputMethod = {
+        type = mkDefault "fcitx5";
+        fcitx5 = {
+          settings.addons = mkDefault { pinyin.globalSection.EmojiEnabled = "True"; };
+          waylandFrontend = mkDefault true;
+        };
+      };
+
       imports = [
         nix-flatpak.nixosModules.nix-flatpak
       ];
