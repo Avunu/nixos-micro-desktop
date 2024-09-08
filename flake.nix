@@ -80,15 +80,18 @@
           GDK_BACKEND = "wayland";
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
+          GTK_IM_MODULE = "fcitx";
           MOZ_ENABLE_WAYLAND = "1";
           NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
           NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
+          QT_IM_MODULE = "fcitx";
           QT_QPA_PLATFORM = "wayland";
           QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
           SDL_VIDEODRIVER = "wayland";
           XDG_SESSION_TYPE = "wayland";
+          XMODIFIERS = "@im=fcitx";
         };
       };
 
