@@ -150,6 +150,10 @@
       i18n.inputMethod = {
         type = mkDefault "fcitx5";
         fcitx5 = {
+          addons = with pkgs; [
+            fcitx5-gtk
+            catppuccin-fcitx5
+          ];
           settings.addons = mkDefault { pinyin.globalSection.EmojiEnabled = "True"; };
           waylandFrontend = mkDefault true;
         };
