@@ -12,6 +12,7 @@
   outputs = inputs@{ self, nixpkgs, nix-flatpak, ... }: {
     nixosModules.microDesktop = { config, lib, pkgs, ... }: with lib; {
       boot = {
+        initrd.kernelModules = mkDefault [ "fbcon" ];
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
         # energy savings
         kernelParams = [ "mem_sleep_default=deep" "pcie_aspm.policy=powersupersave" "quiet" "splash" "loglevel=0" ];
@@ -80,13 +81,13 @@
           GDK_BACKEND = "wayland";
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
-          GTK_IM_MODULE = "fcitx";
+          GTK_IM_MODULE = "wayland";
           MOZ_ENABLE_WAYLAND = "1";
           NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
           NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
           QML_DISABLE_DISK_CACHE = "1";
-          QT_IM_MODULE = "fcitx";
+          QT_IM_MODULE = "wayland";
           QT_QPA_PLATFORM = "wayland";
           QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
           SDL_VIDEODRIVER = "wayland";
@@ -318,6 +319,8 @@
           tracker-miners.enable = mkForce false;
           tracker.enable = mkDefault true;
         };
+
+        greetd.vt = mkDefault 7;
 
         gvfs.enable = mkDefault true;
 
