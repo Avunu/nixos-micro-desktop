@@ -320,7 +320,7 @@
           tracker.enable = mkDefault true;
         };
 
-        greetd.vt = mkDefault 7;
+        # greetd.vt = mkDefault 7;
 
         gvfs.enable = mkDefault true;
 
