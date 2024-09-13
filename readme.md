@@ -1,3 +1,5 @@
+WARNING: VERY MUCH A WORK IN PROGRESS
+
 # NixOS Micro Desktop
 
 NixOS Micro Desktop is an OpenSUSE Aeon-inspired desktop, but powered by NixOS. The goals is to create a NixOS configuration that's suitable for "family and friends".

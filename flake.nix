@@ -390,13 +390,7 @@
         allowReboot = mkDefault false;
         enable = mkDefault true;
         flake = "/etc/nixos";
-        flags = mkDefault [
-          "--update-input"
-          "nixpkgs"
-          "--update-input"
-          "microdesktop"
-          "-L"
-        ];
+        flags = mkDefault ["--refresh"];
       };
 
       users.defaultUserShell = pkgs.bashInteractive;
