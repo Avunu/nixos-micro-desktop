@@ -14,8 +14,19 @@
       boot = {
         initrd.kernelModules = mkDefault [ "fbcon" ];
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
-        # energy savings
-        kernelParams = [ "mem_sleep_default=deep" "pcie_aspm.policy=powersupersave" "quiet" "splash" "loglevel=0" ];
+        kernelParams = mkDefault [
+          "boot.shell_on_fail"
+          "loglevel=0"
+          "mem_sleep_default=deep"
+          "pcie_aspm.policy=powersupersave"
+          "quiet"
+          "rd.systemd.show_status=false"
+          "rd.udev.log_level=3"
+          "splash"
+          "udev.log_priority=3"
+        ];
+        consoleLogLevel = mkDefault 0;
+        initrd.verbose = mkDefault false;
         loader = {
           efi.canTouchEfiVariables = mkDefault true;
           systemd-boot = {
