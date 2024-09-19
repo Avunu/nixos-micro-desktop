@@ -20,13 +20,19 @@
           "mem_sleep_default=deep"
           "pcie_aspm.policy=powersupersave"
           "quiet"
-          "rd.systemd.show_status=false"
-          "rd.udev.log_level=3"
           "splash"
+          "systemd.show_status=false"
+          "udev.log_level=3"
           "udev.log_priority=3"
         ];
         consoleLogLevel = mkDefault 0;
-        initrd.verbose = mkDefault false;
+        initrd = {
+          systemd = {
+            enable = mkDefault true;
+            enableTpm2 = mkDefault true;
+          };
+          verbose = mkDefault false;
+        };
         loader = {
           efi.canTouchEfiVariables = mkDefault true;
           systemd-boot = {
@@ -189,6 +195,7 @@
             networkmanager-openconnect
             networkmanager-l2tp
           ]);
+          wifi.backend = mkDefault "iwd";
         };
         firewall = {
           enable = mkDefault false;
