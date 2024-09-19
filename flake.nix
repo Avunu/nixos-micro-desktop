@@ -88,6 +88,7 @@
             nautilus
             podman-compose
             sushi
+            uutils-coreutils-noprefix
             xdg-user-dirs
           ]
         ];
@@ -230,6 +231,7 @@
         nix-ld = {
           enable = mkDefault true;
           libraries = with pkgs; [ glib json-glib ];
+          package = pkgs.nix-ld-rs;
         };
 
         regreet = {
