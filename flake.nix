@@ -424,8 +424,8 @@
       system.autoUpgrade = {
         allowReboot = mkDefault false;
         enable = mkDefault true;
-        flake = "/etc/nixos";
-        flags = mkDefault ["--refresh"];
+        flake = mkDefault "/etc/nixos";
+        flags = mkDefault ["--recreate-lock-file"];
       };
 
       users.defaultUserShell = pkgs.bashInteractive;
