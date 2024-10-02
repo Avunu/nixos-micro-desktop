@@ -312,10 +312,11 @@
           };
           packages = mkDefault [
             "io.missioncenter.MissionCenter"
-            "org.freedesktop.Platform.ffmpeg-full/x86_64/23.08"
-            "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
+            "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
+            "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/24.08"
             "org.gnome.Loupe"
             "org.gnome.Papers"
+            "org.gnome.Platform/x86_64/47"
             "org.gnome.Showtime"
             "org.gtk.Gtk3theme.adw-gtk3-dark"
             "org.gtk.Gtk3theme.adw-gtk3"
