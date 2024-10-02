@@ -9,7 +9,20 @@
 
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-flatpak, ... }: {
+  outputs = inputs@{ self, nixpkgs, nix-flatpak, ... }:
+    let
+      pkgs = import nixpkgs { system = "x86_64-linux"; };
+      libraryDeps = with pkgs; [
+        alsa-lib
+        openssl
+        zstd
+        vulkan-loader
+        vulkan-validation-layers
+        wayland
+      ];
+      libPath = pkgs.lib.makeLibraryPath libraryDeps;
+    in
+  {
     nixosModules.microDesktop = { config, lib, pkgs, ... }: with lib; {
       boot = {
         initrd.kernelModules = mkDefault [ "fbcon" ];
@@ -21,15 +34,15 @@
           "pcie_aspm.policy=powersupersave"
           "quiet"
           "splash"
-          "systemd.show_status=false"
-          "udev.log_level=3"
+          "rd.systemd.show_status=false"
+          "rd.udev.log_level=3"
           "udev.log_priority=3"
         ];
         consoleLogLevel = mkDefault 0;
         initrd = {
           systemd = {
             enable = mkDefault true;
-            enableTpm2 = mkDefault true;
+            tpm2.enable = mkDefault true;
           };
           verbose = mkDefault false;
         };
@@ -56,7 +69,6 @@
         ];
         systemPackages = with pkgs; lib.flatten [
           (with gnome; [
-            gnome-console
             nixos-gsettings-overrides
           ])
           (with gnomeExtensions; [
@@ -71,6 +83,7 @@
             gcr_4
             glib
             gnome-backgrounds
+            gnome-console
             gnome-control-center
             gnome-menus
             gnome-network-displays
@@ -100,10 +113,12 @@
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
           GTK_IM_MODULE = "wayland";
+          LD_LIBRARY_PATH = "${libPath}:/run/opengl-driver/lib";
           MOZ_ENABLE_WAYLAND = "1";
           NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
           NIXOS_OZONE_WL = "1";
           OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
+          PROTOC = "${pkgs.protobuf}/bin/protoc";
           QML_DISABLE_DISK_CACHE = "1";
           QT_IM_MODULE = "wayland";
           QT_QPA_PLATFORM = "wayland";
