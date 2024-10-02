@@ -9,20 +9,7 @@
 
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-flatpak, ... }:
-    let
-      pkgs = import nixpkgs { system = "x86_64-linux"; };
-      libraryDeps = with pkgs; [
-        alsa-lib
-        openssl
-        zstd
-        vulkan-loader
-        vulkan-validation-layers
-        wayland
-      ];
-      libPath = pkgs.lib.makeLibraryPath libraryDeps;
-    in
-  {
+  outputs = inputs@{ self, nixpkgs, nix-flatpak, ... }: {
     nixosModules.microDesktop = { config, lib, pkgs, ... }: with lib; {
       boot = {
         initrd.kernelModules = mkDefault [ "fbcon" ];
@@ -113,7 +100,7 @@
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
           GTK_IM_MODULE = "wayland";
-          LD_LIBRARY_PATH = lib.mkForce "${libPath}:/run/opengl-driver/lib";
+          LD_LIBRARY_PATH = lib.mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
           MOZ_ENABLE_WAYLAND = "1";
           NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
           NIXOS_OZONE_WL = "1";
@@ -245,7 +232,16 @@
 
         nix-ld = {
           enable = mkDefault true;
-          libraries = with pkgs; [ glib json-glib ];
+          libraries = with pkgs; [
+            alsa-lib
+            glib
+            json-glib
+            openssl
+            vulkan-loader
+            vulkan-validation-layers
+            wayland
+            zstd
+          ];
           package = pkgs.nix-ld-rs;
         };
 
@@ -355,7 +351,7 @@
           tracker.enable = mkDefault true;
         };
 
-        greetd.vt = mkDefault 2;
+        # greetd.vt = mkDefault 2;
 
         gvfs.enable = mkDefault true;
 
