@@ -236,6 +236,7 @@
             alsa-lib
             glib
             json-glib
+            libxkbcommon
             openssl
             vulkan-loader
             vulkan-validation-layers
