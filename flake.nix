@@ -113,7 +113,7 @@
           GDK_PLATFORM = "wayland";
           GTK_BACKEND = "wayland";
           GTK_IM_MODULE = "wayland";
-          LD_LIBRARY_PATH = "${libPath}:/run/opengl-driver/lib";
+          LD_LIBRARY_PATH = lib.mkForce "${libPath}:/run/opengl-driver/lib";
           MOZ_ENABLE_WAYLAND = "1";
           NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
           NIXOS_OZONE_WL = "1";
@@ -355,7 +355,7 @@
           tracker.enable = mkDefault true;
         };
 
-        # greetd.vt = mkDefault 7;
+        greetd.vt = mkDefault 2;
 
         gvfs.enable = mkDefault true;
 
