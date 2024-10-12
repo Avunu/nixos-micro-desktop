@@ -2,11 +2,11 @@
   "nodes": {
     "nix-flatpak": {
       "locked": {
-        "lastModified": 1721549352,
-        "narHash": "sha256-nlXJa8RSOX0kykrIYW33ukoHYq+FOSNztHLLgqKwOp8=",
+        "lastModified": 1728416205,
+        "narHash": "sha256-t30gsrwiBc2oBsd89DwdsVZuEbMT5ed81PYY57CIOJE=",
         "owner": "gmodena",
         "repo": "nix-flatpak",
-        "rev": "dbce39ea8664820ba9037caaf1e2fad365ed6b4b",
+        "rev": "d65dbf59900de4beaaaba8b42a15994f8433c1bc",
         "type": "github"
       },
       "original": {
@@ -17,11 +17,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1727634051,
-        "narHash": "sha256-S5kVU7U82LfpEukbn/ihcyNt2+EvG7Z5unsKW9H/yFA=",
+        "lastModified": 1728492678,
+        "narHash": "sha256-9UTxR8eukdg+XZeHgxW5hQA9fIKHsKCdOIUycTryeVw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "06cf0e1da4208d3766d898b7fdab6513366d45b9",
+        "rev": "5633bcff0c6162b9e4b5f1264264611e950c8ec7",
         "type": "github"
       },
       "original": {

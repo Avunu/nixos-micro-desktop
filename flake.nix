@@ -16,13 +16,15 @@
         kernelPackages = mkDefault pkgs.linuxPackages_latest;
         kernelParams = mkDefault [
           "boot.shell_on_fail"
+          "console=tty0"
+          "fbcon=vc:2-6"
           "loglevel=0"
           "mem_sleep_default=deep"
           "pcie_aspm.policy=powersupersave"
           "quiet"
-          "splash"
           "rd.systemd.show_status=false"
           "rd.udev.log_level=3"
+          "splash"
           "udev.log_priority=3"
         ];
         consoleLogLevel = mkDefault 0;
