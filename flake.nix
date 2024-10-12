@@ -43,6 +43,14 @@
         plymouth.enable = mkDefault true;
       };
 
+      console = {
+        font = mkDefault "ter-132n";
+        keyMap = mkDefault "us";
+        packages = mkDefault [
+            pkgs.terminus_font
+        ];
+      };
+
       documentation = {
         enable = mkDefault false;
         doc.enable = mkDefault false;
@@ -126,6 +134,7 @@
         fira-mono
         fira-sans
         liberation_ttf
+        meslo-lgs-nf
         noto-fonts
         noto-fonts-cjk
         noto-fonts-emoji
@@ -356,6 +365,11 @@
         # greetd.vt = mkDefault 2;
 
         gvfs.enable = mkDefault true;
+
+        kmscon = {
+          enable = true;
+          hwRender = true;
+        };
 
         libinput.enable = mkDefault true;
 
