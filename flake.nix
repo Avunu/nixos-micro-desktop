@@ -99,6 +99,7 @@
             podman-compose
             sushi
             uutils-coreutils-noprefix
+            wpa_supplicant
             xdg-user-dirs
           ]
         ];
@@ -209,7 +210,7 @@
             networkmanager-openconnect
             networkmanager-l2tp
           ]);
-          wifi.backend = mkDefault "iwd";
+          wifi.backend = mkDefault "wpa_supplicant";
         };
         firewall = {
           enable = mkDefault false;
