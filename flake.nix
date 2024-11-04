@@ -360,9 +360,9 @@
           gnome-remote-desktop.enable = mkDefault false;
           gnome-settings-daemon.enable = mkDefault true;
           gnome-user-share.enable = mkDefault false;
+          localsearch.enable = mkForce false;
           rygel.enable = mkDefault true;
-          tracker-miners.enable = mkForce false;
-          tracker.enable = mkDefault true;
+          tinysparql.enable = mkDefault true;
         };
 
         # greetd.vt = mkDefault 2;
