@@ -371,7 +371,7 @@
 
         kmscon = {
           enable = true;
-          hwRender = true;
+          hwRender = false;
         };
 
         libinput.enable = mkDefault true;
