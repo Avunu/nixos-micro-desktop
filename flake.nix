@@ -46,6 +46,8 @@
       };
 
       console = {
+        earlySetup = mkDefault true;
+        font = mkDefault "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
         keyMap = mkDefault "us";
         packages = mkDefault [
             pkgs.terminus_font
