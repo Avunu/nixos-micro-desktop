@@ -46,7 +46,6 @@
       };
 
       console = {
-        font = mkDefault "ter-132n";
         keyMap = mkDefault "us";
         packages = mkDefault [
             pkgs.terminus_font
@@ -371,7 +370,7 @@
 
         kmscon = {
           enable = true;
-          hwRender = false;
+          hwRender = true;
         };
 
         libinput.enable = mkDefault true;
