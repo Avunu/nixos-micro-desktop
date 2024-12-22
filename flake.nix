@@ -467,11 +467,11 @@
         allowReboot = mkDefault false;
         enable = mkDefault true;
         flake = mkDefault "/etc/nixos";
-        flags = mkDefault [
-          "--recreate-lock-file"
-          "--update-input" "nixpkgs"
-          "--update-input" "microdesktop"
-        ];
+        # flags = mkDefault [
+        #   "--recreate-lock-file"
+        #   "--update-input" "nixpkgs"
+        #   "--update-input" "microdesktop"
+        # ];
       };
 
       users.defaultUserShell = pkgs.bashInteractive;
