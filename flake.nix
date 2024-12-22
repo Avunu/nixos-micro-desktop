@@ -235,6 +235,11 @@
 
         dconf.enable = mkDefault true;
 
+        git = {
+          config.safe.directory = [ "/etc/nixos" ];
+          enable = true;
+        };
+
         gnupg.agent = {
           enable = mkDefault true;
           enableSSHSupport = mkDefault true;
@@ -412,10 +417,33 @@
         tpm2.enable = mkDefault true;
       };
 
-      systemd.packages = with pkgs; [
-        gnome-session
-        gnome-shell
-      ];
+      systemd = {
+        packages = with pkgs; [
+          gnome-session
+          gnome-shell
+        ];
+        services = {
+          flake-update = {
+            unitConfig = {
+              Description = "Update flake inputs";
+              StartLimitIntervalSec = 300;
+              StartLimitBurst = 5;
+            };
+            serviceConfig = {
+              ExecStart = "${pkgs.nix}/bin/nix flake update --commit-lock-file --flake /etc/nixos";
+              Restart = "no";
+              Type = "oneshot";
+              User = "root";
+              Environment = "HOME=/root";
+            };
+            before = ["nixos-upgrade.service"];
+            after = ["network-online.target"];
+            wants = ["network-online.target"];
+            path = [pkgs.nix pkgs.git pkgs.host];
+            requiredBy = ["nixos-upgrade.service"];
+          };
+        };
+      };
 
       virtualisation.podman = {
         defaultNetwork.settings.dns_enabled = true;
