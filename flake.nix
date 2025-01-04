@@ -159,7 +159,6 @@
         bluetooth.enable = mkDefault true;
         enableRedistributableFirmware = mkDefault true;
         # opentabletdriver.enable = mkDefault true;
-        pulseaudio.enable = mkDefault false;
         graphics = {
           enable = true;
           extraPackages = with pkgs; [
