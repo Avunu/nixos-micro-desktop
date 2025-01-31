@@ -302,7 +302,10 @@
           ];
         };
 
-        displayManager.sessionPackages = [ pkgs.gnome-session.sessions ];
+        displayManager = {
+          defaultSession = "gnome";
+          sessionPackages = [ pkgs.gnome-session.sessions ];
+        };
 
         flatpak = {
           enable = mkDefault true;
