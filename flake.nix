@@ -448,15 +448,16 @@
             };
             serviceConfig = {
               ExecStart = "${pkgs.nix}/bin/nix flake update --commit-lock-file --flake /etc/nixos";
-              Restart = "no";
+              Restart = "on-failure";
+              RestartSec = "120s";
               Type = "oneshot";
               User = "root";
               Environment = "HOME=/root";
             };
-            before = ["nixos-upgrade.service"];
-            after = ["network-online.target"];
             wants = ["network-online.target"];
-            path = [pkgs.nix pkgs.git pkgs.host];
+            after = ["network-online.target"];
+            before = ["nixos-upgrade.service"];
+            path = with pkgs; [nix git host];
             requiredBy = ["nixos-upgrade.service"];
           };
         };
