@@ -80,6 +80,7 @@
             MOZ_ENABLE_WAYLAND = "1";
             NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
             NIXOS_OZONE_WL = "1";
+            NIXPKGS_ALLOW_UNFREE = "1";
             OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
             PROTOC = "${pkgs.protobuf}/bin/protoc";
             QML_DISABLE_DISK_CACHE = "1";
