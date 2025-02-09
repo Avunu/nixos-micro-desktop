@@ -29,11 +29,18 @@
             };
           };
 
-          imports = mkIf (cfg.variant == "flatpak") [
-            nix-flatpak.nixosModules.nix-flatpak
-          ];
+          # Use a list concatenation instead of mkIf for imports
+          imports = [] ++ optional (cfg.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak;
 
           config = {
+            nixpkgs.overlays = [
+              (self: super: {
+                gnome = super.gnome // {
+                  adwaita-icon-theme = super.adwaita-icon-theme;
+                };
+              })
+            ];
+
             boot.initrd.kernelModules = mkDefault [ "fbcon" ];
             boot.kernelPackages = mkDefault pkgs.linuxPackages_latest;
             boot.kernelParams = mkDefault [
@@ -394,44 +401,47 @@
                 ])
               ];
 
-            services.flatpak = mkIf (cfg.variant == "flatpak") {
-              enable = true;
-              overrides = {
-                global = {
-                  Context = {
-                    sockets = [
-                      "wayland"
-                      "!fallback-x11"
-                      "!x11"
-                    ];
-                    filesystems = [
-                      "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
-                    ];
+            services.flatpak = mkMerge [
+              { enable = mkDefault false; }  # Default to disabled
+              (mkIf (cfg.variant == "flatpak") {
+                enable = true;
+                overrides = {
+                  global = {
+                    Context = {
+                      sockets = [
+                        "wayland"
+                        "!fallback-x11"
+                        "!x11"
+                      ];
+                      filesystems = [
+                        "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
+                      ];
+                    };
+                    Environment = {
+                      XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
+                    };
                   };
-                  Environment = {
-                    XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
-                  };
+                  "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
+                  "net.xmind.XMind".Context.sockets = [ "x11" ];
+                  "net.xmind.XMind8".Context.sockets = [ "x11" ];
+                  "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
+                  "com.logseq.Logseq".Context.sockets = [ "x11" ];
                 };
-                "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
-                "net.xmind.XMind".Context.sockets = [ "x11" ];
-                "net.xmind.XMind8".Context.sockets = [ "x11" ];
-                "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
-                "com.logseq.Logseq".Context.sockets = [ "x11" ];
-              };
-              packages = mkDefault [
-                "io.missioncenter.MissionCenter"
-                "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
-                "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
-                "org.gnome.Loupe"
-                "org.gnome.Papers"
-                "org.gnome.Platform/x86_64/47"
-                "org.gnome.Showtime"
-                "org.gtk.Gtk3theme.adw-gtk3-dark"
-                "org.gtk.Gtk3theme.adw-gtk3"
-              ];
-              update.auto.enable = mkDefault true;
-              update.auto.onCalendar = mkDefault "daily";
-            };
+                packages = mkDefault [
+                  "io.missioncenter.MissionCenter"
+                  "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
+                  "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
+                  "org.gnome.Loupe"
+                  "org.gnome.Papers"
+                  "org.gnome.Platform/x86_64/47"
+                  "org.gnome.Showtime"
+                  "org.gtk.Gtk3theme.adw-gtk3-dark"
+                  "org.gtk.Gtk3theme.adw-gtk3"
+                ];
+                update.auto.enable = mkDefault true;
+                update.auto.onCalendar = mkDefault "daily";
+              })
+            ];
           };
         };
     };
