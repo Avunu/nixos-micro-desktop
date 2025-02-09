@@ -11,16 +11,17 @@
   };
 
   outputs = { self, nixpkgs, nix-flatpak, nix-software-center, ... }:
-    let
-      lib = nixpkgs.lib;
-    in
     {
-      nixosModules.microDesktop = { config, pkgs, ... }:
+      nixosModules.microDesktop = { config, lib, pkgs, ... }:
+        with lib;
         let
           cfg = config.microdesktop;
         in
-        with lib;
         {
+          imports = optionals (config.microdesktop.variant or "native" == "flatpak") [
+            nix-flatpak.nixosModules.nix-flatpak
+          ];
+
           options.microdesktop = {
             variant = mkOption {
               type = types.enum [ "native" "flatpak" ];
@@ -28,8 +29,6 @@
               description = "Select the variant: 'native' installs nix-software-center and disables flatpak while 'flatpak' enables flatpak with gnome-software.";
             };
           };
-
-          imports = lib.optional (cfg.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak;
 
           config = mkMerge [
             {
@@ -531,7 +530,14 @@
               zramSwap.enable = mkDefault true;
             }
 
+            (mkIf (cfg.variant == "native") {
+              environment.systemPackages = [
+                nix-software-center.packages.${pkgs.system}.nix-software-center
+              ];
+            })
+
             (mkIf (cfg.variant == "flatpak") {
+              environment.systemPackages = [ pkgs.gnome-software ];
               services.flatpak = {
                 enable = lib.mkDefault true;
                 overrides = {
