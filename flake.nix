@@ -16,18 +16,19 @@
         let
           cfg = config.microdesktop;
         in
+        with lib;
         {
           options.microdesktop = {
-            variant = lib.mkOption {
-              type = lib.types.enum [ "native" "flatpak" ];
+            variant = mkOption {
+              type = types.enum [ "native" "flatpak" ];
               default = "native";
               description = "Select the variant: 'native' installs nix-software-center and disables flatpak while 'flatpak' enables flatpak with gnome-software.";
             };
           };
 
-          imports = lib.optional (cfg.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak;
+          imports = optional (cfg.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak;
 
-          config = lib.mkMerge [
+          config = mkMerge [
             {
               nixpkgs.overlays = [
                 (self: super: {
@@ -139,7 +140,7 @@
                   GDK_PLATFORM = "wayland";
                   GTK_BACKEND = "wayland";
                   GTK_IM_MODULE = "wayland";
-                  LD_LIBRARY_PATH = lib.mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
+                  LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
                   MOZ_ENABLE_WAYLAND = "1";
                   NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
                   NIXOS_OZONE_WL = "1";
@@ -526,16 +527,16 @@
               zramSwap.enable = mkDefault true;
             }
 
-            (lib.mkIf (cfg.variant == "native") {
+            (mkIf (cfg.variant == "native") {
               environment.systemPackages = [
                 nix-software-center.packages.${config.system.system}.nix-software-center
               ];
             })
 
-            (lib.mkIf (cfg.variant == "flatpak") {
+            (mkIf (cfg.variant == "flatpak") {
               environment.systemPackages = [ pkgs.gnome-software ];
               services.flatpak = {
-                enable = lib.mkDefault true;
+                enable = mkDefault true;
                 overrides = {
                   global = {
                     Context = {
