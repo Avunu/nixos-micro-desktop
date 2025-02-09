@@ -24,15 +24,15 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1730517716,
-        "narHash": "sha256-hq3jlW5lyT2RkWhJ2/Oo+dt9FXtJ47zDDBBk8A8abMo=",
-        "owner": "snowfallorg",
+        "lastModified": 1739117341,
+        "narHash": "sha256-RshCLPaQplmM31FSYh36vLMZWSVU+AVOOEmNIndzcEk=",
+        "owner": "batonac",
         "repo": "nix-software-center",
-        "rev": "216eb549f1ec222c2877d2194f2987527954f2c4",
+        "rev": "0c73b1a05dc2d42b96c5003c74b1f4d3acde127e",
         "type": "github"
       },
       "original": {
-        "owner": "snowfallorg",
+        "owner": "batonac",
         "repo": "nix-software-center",
         "type": "github"
       }
@@ -106,11 +106,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1689068808,
-        "narHash": "sha256-6ixXo3wt24N/melDWjq70UuHQLxGV8jZvooRanIHXw0=",
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "919d646de7be200f3bf08cb76ae1f09402b6f9b4",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
         "type": "github"
       },
       "original": {
