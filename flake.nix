@@ -37,6 +37,10 @@
             description = "Select the variant: 'native' installs nix-software-center and disables flatpak while 'flatpak' enables flatpak with gnome-software.";
           };
 
+          imports = [
+            (optional (config.microdesktop.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak)
+          ];
+
           config = {
             nixpkgs.overlays = [
               (self: super: {
@@ -248,10 +252,6 @@
                 waylandFrontend = mkDefault true;
               };
             };
-
-            imports = [
-              (optional (config.microdesktop.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak)
-            ];
 
             networking = {
               networkmanager = {
