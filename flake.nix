@@ -19,6 +19,7 @@
         with lib;
         let
           cfg = config.microdesktop;
+          flatpakEnabled = cfg.variant == "flatpak";
         in
         {
           options.microdesktop = {
@@ -29,8 +30,7 @@
             };
           };
 
-          # Use a list concatenation instead of mkIf for imports
-          imports = [] ++ optional (cfg.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak;
+          imports = optional flatpakEnabled nix-flatpak.nixosModules.nix-flatpak;
 
           config = {
             nixpkgs.overlays = [
@@ -394,16 +394,15 @@
                   wpa_supplicant
                   xdg-user-dirs
                 ]
-                (if cfg.variant == "native" then [
-                  nix-software-center.packages.${pkgs.system}.nix-software-center
-                ] else [
-                  gnome-software
-                ])
+                (if flatpakEnabled
+                 then [ gnome-software ]
+                 else [ nix-software-center.packages.${pkgs.system}.nix-software-center ]
+                )
               ];
 
             services.flatpak = mkMerge [
               { enable = mkDefault false; }  # Default to disabled
-              (mkIf (cfg.variant == "flatpak") {
+              (mkIf flatpakEnabled {
                 enable = true;
                 overrides = {
                   global = {
