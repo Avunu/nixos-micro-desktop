@@ -3,35 +3,20 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
     nix-software-center = {
       url = "github:batonac/nix-software-center";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, nix-flatpak, nix-software-center, ... }:
+  outputs = { self, nixpkgs, nix-software-center, ... }:
     let
       lib = nixpkgs.lib;
     in
     {
       nixosModules.microDesktop = { config, lib, pkgs, ... }:
         with lib;
-        let
-          cfg = config.microdesktop;
-          flatpakEnabled = cfg.variant == "flatpak";
-        in
         {
-          options.microdesktop = {
-            variant = mkOption {
-              type = types.enum [ "native" "flatpak" ];
-              default = "native";
-              description = "Select the variant: 'native' installs nix-software-center and disables flatpak while 'flatpak' enables flatpak with gnome-software.";
-            };
-          };
-
-          imports = optional flatpakEnabled nix-flatpak.nixosModules.nix-flatpak;
-
           config = {
             nixpkgs.overlays = [
               (self: super: {
@@ -388,59 +373,14 @@
                   gst_all_1.gstreamer
                   gtk3.out
                   nautilus
+                  nix-software-center.packages.${pkgs.system}.nix-software-center
                   podman-compose
                   sushi
                   uutils-coreutils-noprefix
                   wpa_supplicant
                   xdg-user-dirs
                 ]
-                (if flatpakEnabled
-                 then [ gnome-software ]
-                 else [ nix-software-center.packages.${pkgs.system}.nix-software-center ]
-                )
               ];
-
-            services.flatpak = mkMerge [
-              { enable = mkDefault false; }  # Default to disabled
-              (mkIf flatpakEnabled {
-                enable = true;
-                overrides = {
-                  global = {
-                    Context = {
-                      sockets = [
-                        "wayland"
-                        "!fallback-x11"
-                        "!x11"
-                      ];
-                      filesystems = [
-                        "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
-                      ];
-                    };
-                    Environment = {
-                      XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
-                    };
-                  };
-                  "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
-                  "net.xmind.XMind".Context.sockets = [ "x11" ];
-                  "net.xmind.XMind8".Context.sockets = [ "x11" ];
-                  "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
-                  "com.logseq.Logseq".Context.sockets = [ "x11" ];
-                };
-                packages = mkDefault [
-                  "io.missioncenter.MissionCenter"
-                  "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
-                  "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
-                  "org.gnome.Loupe"
-                  "org.gnome.Papers"
-                  "org.gnome.Platform/x86_64/47"
-                  "org.gnome.Showtime"
-                  "org.gtk.Gtk3theme.adw-gtk3-dark"
-                  "org.gtk.Gtk3theme.adw-gtk3"
-                ];
-                update.auto.enable = mkDefault true;
-                update.auto.onCalendar = mkDefault "daily";
-              })
-            ];
           };
         };
     };
