@@ -11,8 +11,11 @@
   };
 
   outputs = { self, nixpkgs, nix-flatpak, nix-software-center, ... }:
+    let
+      lib = nixpkgs.lib;
+    in
     {
-      nixosModules.microDesktop = { config, lib, pkgs, ... }:
+      nixosModules.microDesktop = { config, pkgs, ... }:
         let
           cfg = config.microdesktop;
         in
@@ -26,7 +29,7 @@
             };
           };
 
-          imports = optional (cfg.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak;
+          imports = lib.optional (cfg.variant == "flatpak") nix-flatpak.nixosModules.nix-flatpak;
 
           config = mkMerge [
             {
@@ -36,6 +39,47 @@
                     adwaita-icon-theme = super.adwaita-icon-theme;
                   };
                 })
+              ];
+
+              environment.systemPackages = with pkgs; [
+                (with gnome; [
+                  nixos-gsettings-overrides
+                ])
+                (with gnomeExtensions; [
+                  another-window-session-manager
+                  appindicator
+                ])
+                adwaita-icon-theme
+                distrobox
+                dnsmasq
+                fcitx5
+                gcr_4
+                glib
+                gnome-backgrounds
+                gnome-console
+                gnome-control-center
+                gnome-menus
+                gnome-network-displays
+                gnome-shell-extensions
+                gnome-themes-extra
+                gst_all_1.gst-libav
+                gst_all_1.gst-plugins-bad
+                gst_all_1.gst-plugins-base
+                gst_all_1.gst-plugins-good
+                gst_all_1.gst-plugins-ugly
+                gst_all_1.gst-vaapi
+                gst_all_1.gstreamer
+                gtk3.out
+                nautilus
+                podman-compose
+                sushi
+                uutils-coreutils-noprefix
+                wpa_supplicant
+                xdg-user-dirs
+              ] ++ lib.optionals (cfg.variant == "native") [
+                nix-software-center.packages.${pkgs.system}.nix-software-center
+              ] ++ lib.optionals (cfg.variant == "flatpak") [
+                gnome-software
               ];
 
               boot = {
@@ -92,46 +136,6 @@
                 pathsToLink = [
                   "/share" # TODO: https://github.com/NixOS/nixpkgs/issues/47173
                 ];
-                systemPackages =
-                  with pkgs;
-                  lib.flatten [
-                    (with gnome; [
-                      nixos-gsettings-overrides
-                    ])
-                    (with gnomeExtensions; [
-                      another-window-session-manager
-                      appindicator
-                    ])
-                    [
-                      adwaita-icon-theme
-                      distrobox
-                      dnsmasq
-                      fcitx5
-                      gcr_4
-                      glib
-                      gnome-backgrounds
-                      gnome-console
-                      gnome-control-center
-                      gnome-menus
-                      gnome-network-displays
-                      gnome-shell-extensions
-                      gnome-themes-extra
-                      gst_all_1.gst-libav
-                      gst_all_1.gst-plugins-bad
-                      gst_all_1.gst-plugins-base
-                      gst_all_1.gst-plugins-good
-                      gst_all_1.gst-plugins-ugly
-                      gst_all_1.gst-vaapi
-                      gst_all_1.gstreamer
-                      gtk3.out
-                      nautilus
-                      podman-compose
-                      sushi
-                      uutils-coreutils-noprefix
-                      wpa_supplicant
-                      xdg-user-dirs
-                    ]
-                  ];
                 sessionVariables = {
                   CLUTTER_BACKEND = "wayland";
                   EGL_PLATFORM = "wayland";
@@ -527,16 +531,9 @@
               zramSwap.enable = mkDefault true;
             }
 
-            (mkIf (cfg.variant == "native") {
-              environment.systemPackages = [
-                nix-software-center.packages.${config.system.system}.nix-software-center
-              ];
-            })
-
             (mkIf (cfg.variant == "flatpak") {
-              environment.systemPackages = [ pkgs.gnome-software ];
               services.flatpak = {
-                enable = mkDefault true;
+                enable = lib.mkDefault true;
                 overrides = {
                   global = {
                     Context = {
