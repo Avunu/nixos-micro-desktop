@@ -29,67 +29,118 @@
         }:
         with lib;
         {
-          boot.initrd.kernelModules = mkDefault [ "fbcon" ];
-          boot.kernelPackages = mkDefault pkgs.linuxPackages_latest;
-          boot.kernelParams = mkDefault [
-            "boot.shell_on_fail"
-            "console=tty0"
-            "fbcon=vc:2-6"
-            "i915.enable_guc=3"
-            "i915.modeset=1"
-            "loglevel=3"
-            "mem_sleep_default=deep"
-            "pcie_aspm.policy=powersupersave"
-            "quiet"
-            "rd.systemd.show_status=false"
-            "rd.udev.log_level=3"
-            "splash"
-            "udev.log_priority=3"
-          ];
-          boot.consoleLogLevel = mkDefault 0;
-          boot.initrd.systemd.enable = mkDefault true;
-          boot.initrd.systemd.tpm2.enable = mkDefault true;
-          boot.initrd.verbose = mkDefault false;
-          boot.loader.efi.canTouchEfiVariables = mkDefault true;
-          boot.loader.systemd-boot.configurationLimit = mkDefault 10;
-          boot.loader.systemd-boot.enable = mkDefault true;
-          boot.plymouth.enable = mkDefault true;
+          boot = {
+            initrd = {
+              kernelModules = mkDefault [ "fbcon" ];
+              systemd = {
+                enable = mkDefault true;
+                tpm2.enable = mkDefault true;
+              };
+              verbose = mkDefault false;
+            };
+            kernelPackages = mkDefault pkgs.linuxPackages_latest;
+            kernelParams = mkDefault [
+              "boot.shell_on_fail"
+              "console=tty0"
+              "fbcon=vc:2-6"
+              "i915.enable_guc=3"
+              "i915.modeset=1"
+              "loglevel=3"
+              "mem_sleep_default=deep"
+              "pcie_aspm.policy=powersupersave"
+              "quiet"
+              "rd.systemd.show_status=false"
+              "rd.udev.log_level=3"
+              "splash"
+              "udev.log_priority=3"
+            ];
+            consoleLogLevel = mkDefault 0;
+            loader = {
+              efi.canTouchEfiVariables = mkDefault true;
+              systemd-boot = {
+                configurationLimit = mkDefault 10;
+                enable = mkDefault true;
+              };
+            };
+            plymouth.enable = mkDefault true;
+          };
 
-          console.keyMap = mkDefault "us";
-          console.packages = mkDefault [
-            pkgs.terminus_font
-          ];
+          console = {
+            keyMap = mkDefault "us";
+            packages = mkDefault [ pkgs.terminus_font ];
+          };
 
-          documentation.enable = mkDefault false;
-          documentation.doc.enable = mkDefault false;
-          documentation.man.enable = mkDefault false;
-          documentation.nixos.enable = mkDefault false;
+          documentation = {
+            enable = mkDefault false;
+            doc.enable = mkDefault false;
+            man.enable = mkDefault false;
+            nixos.enable = mkDefault false;
+          };
 
-          environment.pathsToLink = [
-            "/share" # TODO: https://github.com/NixOS/nixpkgs/issues/47173
-          ];
-          environment.sessionVariables = {
-            CLUTTER_BACKEND = "wayland";
-            EGL_PLATFORM = "wayland";
-            ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-            GDK_BACKEND = "wayland";
-            GDK_PLATFORM = "wayland";
-            GTK_BACKEND = "wayland";
-            GTK_IM_MODULE = "wayland";
-            LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
-            MOZ_ENABLE_WAYLAND = "1";
-            NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
-            NIXOS_OZONE_WL = "1";
-            NIXPKGS_ALLOW_UNFREE = "1";
-            OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
-            PROTOC = "${pkgs.protobuf}/bin/protoc";
-            QML_DISABLE_DISK_CACHE = "1";
-            QT_IM_MODULE = "wayland";
-            QT_QPA_PLATFORM = "wayland";
-            QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
-            SDL_VIDEODRIVER = "wayland";
-            XDG_SESSION_TYPE = "wayland";
-            XMODIFIERS = "@im=fcitx";
+          environment = {
+            pathsToLink = [ "/share" ];
+            sessionVariables = {
+              CLUTTER_BACKEND = "wayland";
+              EGL_PLATFORM = "wayland";
+              ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+              GDK_BACKEND = "wayland";
+              GDK_PLATFORM = "wayland";
+              GTK_BACKEND = "wayland";
+              GTK_IM_MODULE = "wayland";
+              LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
+              MOZ_ENABLE_WAYLAND = "1";
+              NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
+              NIXOS_OZONE_WL = "1";
+              NIXPKGS_ALLOW_UNFREE = "1";
+              OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
+              PROTOC = "${pkgs.protobuf}/bin/protoc";
+              QML_DISABLE_DISK_CACHE = "1";
+              QT_IM_MODULE = "wayland";
+              QT_QPA_PLATFORM = "wayland";
+              QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+              SDL_VIDEODRIVER = "wayland";
+              XDG_SESSION_TYPE = "wayland";
+              XMODIFIERS = "@im=fcitx";
+            };
+            systemPackages =
+              with pkgs;
+              lib.flatten [
+                (with gnome; [ nixos-gsettings-overrides ])
+                (with gnomeExtensions; [
+                  another-window-session-manager
+                  appindicator
+                ])
+                [
+                  adwaita-icon-theme
+                  distrobox
+                  dnsmasq
+                  fcitx5
+                  gcr_4
+                  glib
+                  gnome-backgrounds
+                  gnome-console
+                  gnome-control-center
+                  gnome-menus
+                  gnome-network-displays
+                  gnome-shell-extensions
+                  gnome-themes-extra
+                  gst_all_1.gst-libav
+                  gst_all_1.gst-plugins-bad
+                  gst_all_1.gst-plugins-base
+                  gst_all_1.gst-plugins-good
+                  gst_all_1.gst-plugins-ugly
+                  gst_all_1.gst-vaapi
+                  gst_all_1.gstreamer
+                  gtk3.out
+                  nautilus
+                  nix-software-center.packages.${pkgs.system}.nix-software-center
+                  podman-compose
+                  sushi
+                  uutils-coreutils-noprefix
+                  wpa_supplicant
+                  xdg-user-dirs
+                ]
+              ];
           };
 
           fonts.packages = mkDefault (
@@ -122,270 +173,284 @@
             ]
           );
 
-          hardware.bluetooth.enable = mkDefault true;
-          hardware.enableRedistributableFirmware = mkDefault true;
-          hardware.graphics.enable = true;
-          hardware.graphics.extraPackages = with pkgs; [
-            intel-media-driver
-            intel-vaapi-driver
-            libva-utils
-            libva-vdpau-driver
-            libva1
-            libvdpau
-            libvdpau-va-gl
-            nvidia-vaapi-driver
-            ocl-icd
-            vulkan-loader
-          ];
-          hardware.sane.enable = mkDefault true;
-          hardware.sane.extraBackends = mkDefault (
-            with pkgs;
-            [
-              sane-airscan
-            ]
-          );
-          hardware.sensor.iio.enable = mkDefault true;
+          hardware = {
+            bluetooth.enable = mkDefault true;
+            enableRedistributableFirmware = mkDefault true;
+            graphics = {
+              enable = true;
+              extraPackages = with pkgs; [
+                intel-media-driver
+                intel-vaapi-driver
+                libva-utils
+                libva-vdpau-driver
+                libva1
+                libvdpau
+                libvdpau-va-gl
+                nvidia-vaapi-driver
+                ocl-icd
+                vulkan-loader
+              ];
+            };
+            sane = {
+              enable = mkDefault true;
+              extraBackends = mkDefault (with pkgs; [ sane-airscan ]);
+            };
+            sensor.iio.enable = mkDefault true;
+          };
 
-          i18n.inputMethod.type = mkDefault "fcitx5";
-          i18n.inputMethod.fcitx5.addons = with pkgs; [
-            fcitx5-configtool
-            fcitx5-gtk
-            catppuccin-fcitx5
-          ];
-          i18n.inputMethod.fcitx5.settings.addons = mkDefault { pinyin.globalSection.EmojiEnabled = "True"; };
-          i18n.inputMethod.fcitx5.waylandFrontend = mkDefault true;
+          i18n.inputMethod = {
+            type = mkDefault "fcitx5";
+            fcitx5 = {
+              addons = with pkgs; [
+                fcitx5-configtool
+                fcitx5-gtk
+                catppuccin-fcitx5
+              ];
+              settings.addons = mkDefault { pinyin.globalSection.EmojiEnabled = "True"; };
+              waylandFrontend = mkDefault true;
+            };
+          };
 
-          networking.networkmanager.enable = mkDefault true;
-          networking.networkmanager.plugins = mkDefault (
-            with pkgs;
-            [
-              networkmanager-openvpn
-              networkmanager-vpnc
-              networkmanager-openconnect
-              networkmanager-l2tp
-            ]
-          );
-          networking.networkmanager.wifi.backend = mkDefault "wpa_supplicant";
-          networking.firewall.enable = mkDefault false;
-          networking.firewall.allowedTCPPorts = [
-            7236
-            7250
-          ];
-          networking.firewall.allowedUDPPorts = [
-            7236
-            5353
-          ];
+          networking = {
+            networkmanager = {
+              enable = mkDefault true;
+              plugins = mkDefault (
+                with pkgs;
+                [
+                  networkmanager-openvpn
+                  networkmanager-vpnc
+                  networkmanager-openconnect
+                  networkmanager-l2tp
+                ]
+              );
+              wifi.backend = mkDefault "wpa_supplicant";
+            };
+            firewall = {
+              enable = mkDefault false;
+              allowedTCPPorts = [
+                7236
+                7250
+              ];
+              allowedUDPPorts = [
+                7236
+                5353
+              ];
+            };
+          };
 
-          nix.gc.automatic = mkDefault true;
-          nix.gc.dates = mkDefault "weekly";
-          nix.gc.options = mkDefault "--delete-older-than 7d";
-          nix.settings.experimental-features = [
-            "nix-command"
-            "flakes"
-          ];
-          nix.settings.substituters = [
-            "https://cache.nixos.org?priority=40"
-            "https://nix-community.cachix.org?priority=41"
-          ];
-          nix.settings.trusted-public-keys = [
-            "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-          ];
-          nix.settings.trusted-users = [
-            "root"
-            "nixos"
-            "@wheel"
-          ];
+          nix = {
+            gc = {
+              automatic = mkDefault true;
+              dates = mkDefault "weekly";
+              options = mkDefault "--delete-older-than 7d";
+            };
+            settings = {
+              experimental-features = [
+                "nix-command"
+                "flakes"
+              ];
+              substituters = [
+                "https://cache.nixos.org?priority=40"
+                "https://nix-community.cachix.org?priority=41"
+              ];
+              trusted-public-keys = [
+                "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+                "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+              ];
+              trusted-users = [
+                "root"
+                "nixos"
+                "@wheel"
+              ];
+            };
+          };
 
           nixpkgs.config.allowUnfree = mkDefault true;
 
-          programs.dconf.enable = mkDefault true;
-          programs.git.config.safe.directory = [ "/etc/nixos" ];
-          programs.git.enable = true;
-          programs.gnupg.agent.enable = mkDefault true;
-          programs.gnupg.agent.enableSSHSupport = mkDefault true;
-          programs.gnupg.agent.pinentryPackage = mkDefault pkgs.pinentry-gnome3;
-          programs.nix-ld.enable = mkDefault true;
-          programs.nix-ld.libraries = with pkgs; [
-            alsa-lib
-            glib
-            json-glib
-            libxkbcommon
-            openssl
-            vulkan-loader
-            vulkan-validation-layers
-            wayland
-            zstd
-          ];
-          programs.nix-ld.package = pkgs.nix-ld-rs;
-          programs.regreet.enable = mkDefault true;
-          programs.regreet.settings = {
-            GTK.application_prefer_dark_theme = mkDefault true;
-          };
-
-          services.accounts-daemon.enable = mkDefault true;
-          services.avahi.enable = mkDefault true;
-          services.avahi.nssmdns4 = mkDefault true;
-          services.avahi.publish.addresses = mkDefault true;
-          services.avahi.publish.enable = mkDefault true;
-          services.avahi.publish.workstation = mkDefault true;
-          services.btrfs.autoScrub.enable = mkDefault true;
-          services.btrfs.autoScrub.fileSystems = mkDefault [ "/" ];
-          services.btrfs.autoScrub.interval = mkDefault "daily";
-          services.colord.enable = mkDefault true;
-          services.dbus.implementation = mkDefault "broker";
-          services.dbus.packages = with pkgs; [
-            gcr
-            gnome-keyring
-          ];
-          services.displayManager.defaultSession = "gnome";
-          services.displayManager.sessionPackages = [ pkgs.gnome-session.sessions ];
-          services.fstrim.enable = mkDefault true;
-          services.fstrim.interval = mkDefault "daily";
-          services.fwupd.enable = mkDefault true;
-          services.gnome.glib-networking.enable = mkDefault true;
-          services.gnome.gnome-browser-connector.enable = mkForce false;
-          services.gnome.gnome-keyring.enable = mkDefault true;
-          services.gnome.gnome-online-accounts.enable = mkDefault true;
-          services.gnome.gnome-remote-desktop.enable = mkDefault false;
-          services.gnome.gnome-settings-daemon.enable = mkDefault true;
-          services.gnome.gnome-user-share.enable = mkDefault false;
-          services.gnome.localsearch.enable = mkForce false;
-          services.gnome.rygel.enable = mkDefault true;
-          services.gnome.tinysparql.enable = mkDefault true;
-          services.gvfs.enable = mkDefault true;
-          services.kmscon.enable = true;
-          services.kmscon.hwRender = true;
-          services.libinput.enable = mkDefault true;
-          services.power-profiles-daemon.enable = mkDefault true;
-          services.pipewire.enable = mkDefault true;
-          services.pipewire.alsa.enable = mkDefault true;
-          services.pipewire.pulse.enable = mkDefault true;
-          services.pipewire.wireplumber.enable = true;
-          services.pipewire.wireplumber.extraConfig = {
-            "10-bluez" = {
-              "monitor.bluez.properties" = {
-                "bluez5.enable-sbc-xq" = true;
-                "bluez5.enable-msbc" = true;
-                "bluez5.enable-hw-volume" = true;
-                "bluez5.codecs" = [
-                  "sbc"
-                  "sbc_xq"
-                  "aac"
-                  "ldac"
-                  "aptx"
-                  "aptx_hd"
-                ];
-              };
+          programs = {
+            dconf.enable = mkDefault true;
+            git = {
+              enable = true;
+              config.safe.directory = [ "/etc/nixos" ];
+            };
+            gnupg.agent = {
+              enable = mkDefault true;
+              enableSSHSupport = mkDefault true;
+              pinentryPackage = mkDefault pkgs.pinentry-gnome3;
+            };
+            nix-ld = {
+              enable = mkDefault true;
+              package = pkgs.nix-ld-rs;
+              libraries = with pkgs; [
+                alsa-lib
+                glib
+                json-glib
+                libxkbcommon
+                openssl
+                vulkan-loader
+                vulkan-validation-layers
+                wayland
+                zstd
+              ];
+            };
+            regreet = {
+              enable = mkDefault true;
+              settings.GTK.application_prefer_dark_theme = mkDefault true;
             };
           };
-          services.printing.enable = mkDefault true;
-          services.printing.drivers = mkDefault (
-            with pkgs;
-            [
-              gutenprint
-            ]
-          );
-          services.printing.webInterface = mkDefault false;
-          services.system-config-printer.enable = mkDefault true;
-          services.udev.packages = with pkgs; [
-            gnome-settings-daemon
-            mutter
-          ];
-          services.udisks2.enable = true;
-          services.upower.enable = mkDefault true;
 
-          security.pam.services.login.enableGnomeKeyring = mkDefault true;
-          security.polkit.enable = mkDefault true;
-          security.rtkit.enable = mkDefault true;
-          security.tpm2.enable = mkDefault true;
-
-          systemd.packages = with pkgs; [
-            gnome-session
-            gnome-shell
-          ];
-          systemd.services.flake-update.unitConfig = {
-            Description = "Update flake inputs";
-            StartLimitIntervalSec = 300;
-            StartLimitBurst = 5;
+          services = {
+            accounts-daemon.enable = mkDefault true;
+            avahi = {
+              enable = mkDefault true;
+              nssmdns4 = mkDefault true;
+              publish = {
+                addresses = mkDefault true;
+                enable = mkDefault true;
+                workstation = mkDefault true;
+              };
+            };
+            btrfs.autoScrub = {
+              enable = mkDefault true;
+              fileSystems = mkDefault [ "/" ];
+              interval = mkDefault "daily";
+            };
+            colord.enable = mkDefault true;
+            dbus = {
+              implementation = mkDefault "broker";
+              packages = with pkgs; [
+                gcr
+                gnome-keyring
+              ];
+            };
+            displayManager = {
+              defaultSession = "gnome";
+              sessionPackages = [ pkgs.gnome-session.sessions ];
+            };
+            fstrim = {
+              enable = mkDefault true;
+              interval = mkDefault "daily";
+            };
+            fwupd.enable = mkDefault true;
+            gnome = {
+              glib-networking.enable = mkDefault true;
+              gnome-browser-connector.enable = mkForce false;
+              gnome-keyring.enable = mkDefault true;
+              gnome-online-accounts.enable = mkDefault true;
+              gnome-remote-desktop.enable = mkDefault false;
+              gnome-settings-daemon.enable = mkDefault true;
+              gnome-user-share.enable = mkDefault false;
+              localsearch.enable = mkForce false;
+              rygel.enable = mkDefault true;
+              tinysparql.enable = mkDefault true;
+            };
+            gvfs.enable = mkDefault true;
+            kmscon = {
+              enable = true;
+              hwRender = true;
+            };
+            libinput.enable = mkDefault true;
+            power-profiles-daemon.enable = mkDefault true;
+            pipewire = {
+              enable = mkDefault true;
+              alsa.enable = mkDefault true;
+              pulse.enable = mkDefault true;
+              wireplumber = {
+                enable = true;
+                extraConfig."10-bluez".monitor.bluez.properties = {
+                  "bluez5.enable-sbc-xq" = true;
+                  "bluez5.enable-msbc" = true;
+                  "bluez5.enable-hw-volume" = true;
+                  "bluez5.codecs" = [
+                    "sbc"
+                    "sbc_xq"
+                    "aac"
+                    "ldac"
+                    "aptx"
+                    "aptx_hd"
+                  ];
+                };
+              };
+            };
+            printing = {
+              enable = mkDefault true;
+              drivers = mkDefault (with pkgs; [ gutenprint ]);
+              webInterface = mkDefault false;
+            };
+            system-config-printer.enable = mkDefault true;
+            udev.packages = with pkgs; [
+              gnome-settings-daemon
+              mutter
+            ];
+            udisks2.enable = true;
+            upower.enable = mkDefault true;
           };
-          systemd.services.flake-update.serviceConfig = {
-            ExecStart = "${pkgs.nix}/bin/nix flake update --commit-lock-file --flake /etc/nixos";
-            Restart = "on-failure";
-            RestartSec = "120s";
-            Type = "oneshot";
-            User = "root";
-            Environment = "HOME=/root";
+
+          security = {
+            pam.services.login.enableGnomeKeyring = mkDefault true;
+            polkit.enable = mkDefault true;
+            rtkit.enable = mkDefault true;
+            tpm2.enable = mkDefault true;
           };
-          systemd.services.flake-update.wants = [ "network-online.target" ];
-          systemd.services.flake-update.after = [ "network-online.target" ];
-          systemd.services.flake-update.before = [ "nixos-upgrade.service" ];
-          systemd.services.flake-update.path = with pkgs; [
-            nix
-            git
-            host
-          ];
-          systemd.services.flake-update.requiredBy = [ "nixos-upgrade.service" ];
 
-          virtualisation.podman.defaultNetwork.settings.dns_enabled = true;
-          virtualisation.podman.dockerCompat = mkDefault true;
-          virtualisation.podman.dockerSocket.enable = mkDefault true;
-          virtualisation.podman.enable = mkDefault true;
+          systemd = {
+            packages = with pkgs; [
+              gnome-session
+              gnome-shell
+            ];
+            services.flake-update = {
+              unitConfig = {
+                Description = "Update flake inputs";
+                StartLimitIntervalSec = 300;
+                StartLimitBurst = 5;
+              };
+              serviceConfig = {
+                ExecStart = "${pkgs.nix}/bin/nix flake update --commit-lock-file --flake /etc/nixos";
+                Restart = "on-failure";
+                RestartSec = "120s";
+                Type = "oneshot";
+                User = "root";
+                Environment = "HOME=/root";
+              };
+              wants = [ "network-online.target" ];
+              after = [ "network-online.target" ];
+              before = [ "nixos-upgrade.service" ];
+              path = with pkgs; [
+                nix
+                git
+                host
+              ];
+              requiredBy = [ "nixos-upgrade.service" ];
+            };
+          };
 
-          xdg.mime.enable = mkDefault true;
-          xdg.icons.enable = mkDefault true;
-          xdg.portal.configPackages = mkDefault [ pkgs.gnome-session ];
-          xdg.portal.enable = mkDefault true;
-          xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
-          xdg.portal.xdgOpenUsePortal = mkDefault true;
+          virtualisation.podman = {
+            defaultNetwork.settings.dns_enabled = true;
+            dockerCompat = mkDefault true;
+            dockerSocket.enable = mkDefault true;
+            enable = mkDefault true;
+          };
 
-          system.autoUpgrade.allowReboot = mkDefault false;
-          system.autoUpgrade.enable = mkDefault true;
-          system.autoUpgrade.flake = mkDefault "/etc/nixos";
+          xdg = {
+            mime.enable = mkDefault true;
+            icons.enable = mkDefault true;
+            portal = {
+              configPackages = mkDefault [ pkgs.gnome-session ];
+              enable = mkDefault true;
+              extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+              xdgOpenUsePortal = mkDefault true;
+            };
+          };
+
+          system.autoUpgrade = {
+            allowReboot = mkDefault false;
+            enable = mkDefault true;
+            flake = mkDefault "/etc/nixos";
+          };
 
           users.defaultUserShell = pkgs.bashInteractive;
 
           zramSwap.enable = mkDefault true;
-
-          environment.systemPackages =
-            with pkgs;
-            lib.flatten [
-              (with gnome; [ nixos-gsettings-overrides ])
-              (with gnomeExtensions; [
-                another-window-session-manager
-                appindicator
-              ])
-              [
-                adwaita-icon-theme
-                distrobox
-                dnsmasq
-                fcitx5
-                gcr_4
-                glib
-                gnome-backgrounds
-                gnome-console
-                gnome-control-center
-                gnome-menus
-                gnome-network-displays
-                gnome-shell-extensions
-                gnome-themes-extra
-                gst_all_1.gst-libav
-                gst_all_1.gst-plugins-bad
-                gst_all_1.gst-plugins-base
-                gst_all_1.gst-plugins-good
-                gst_all_1.gst-plugins-ugly
-                gst_all_1.gst-vaapi
-                gst_all_1.gstreamer
-                gtk3.out
-                nautilus
-                nix-software-center.packages.${pkgs.system}.nix-software-center
-                podman-compose
-                sushi
-                uutils-coreutils-noprefix
-                wpa_supplicant
-                xdg-user-dirs
-              ]
-            ];
         };
     };
 }
