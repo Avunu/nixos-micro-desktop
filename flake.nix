@@ -375,7 +375,7 @@
             };
             printing = {
               enable = mkDefault true;
-              browsed = mkDefault true;
+              browsed.enable = mkDefault true;
               drivers = mkDefault (with pkgs; [ gutenprint hplip ]);
               webInterface = mkDefault false;
             };
