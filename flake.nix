@@ -319,6 +319,7 @@
             dbus = {
               implementation = mkDefault "broker";
               packages = with pkgs; [
+                dconf
                 gcr
                 gnome-keyring
               ];
@@ -374,7 +375,8 @@
             };
             printing = {
               enable = mkDefault true;
-              drivers = mkDefault (with pkgs; [ gutenprint ]);
+              browsed = mkDefault true;
+              drivers = mkDefault (with pkgs; [ gutenprint hplip ]);
               webInterface = mkDefault false;
             };
             system-config-printer.enable = mkDefault true;
