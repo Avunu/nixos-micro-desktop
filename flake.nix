@@ -376,7 +376,13 @@
             printing = {
               enable = mkDefault true;
               browsed.enable = mkDefault true;
-              drivers = mkDefault (with pkgs; [ gutenprint hplip ]);
+              drivers = mkDefault (
+                with pkgs;
+                [
+                  gutenprint
+                  hplip
+                ]
+              );
               webInterface = mkDefault false;
             };
             system-config-printer.enable = mkDefault true;
@@ -439,7 +445,13 @@
             portal = {
               configPackages = mkDefault [ pkgs.gnome-session ];
               enable = mkDefault true;
-              extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+              extraPortals = (
+                with pkgs;
+                [
+                  xdg-desktop-portal-gnome
+                  xdg-desktop-portal-gtk
+                ]
+              );
               xdgOpenUsePortal = mkDefault true;
             };
           };
