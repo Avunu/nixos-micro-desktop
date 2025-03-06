@@ -268,6 +268,7 @@
           nixpkgs.config.allowUnfree = mkDefault true;
 
           programs = {
+            appimage.enable = mkDefault true;
             dconf.enable = mkDefault true;
             git = {
               enable = true;
