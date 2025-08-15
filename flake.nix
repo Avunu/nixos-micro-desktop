@@ -406,8 +406,6 @@
                     layer = "overlay";
                     anchor = "top-right";
                   };
-
-                  home.stateVersion = mkDefault "25.11";
                 }
               )
             ];
