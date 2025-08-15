@@ -102,11 +102,11 @@
                       content = {
                         type = "filesystem";
                         format = "vfat";
-                        # mountpoint = "/boot";
-                        # mountOptions = [
-                        #   "noatime"
-                        #   "umask=0077"
-                        # ];
+                        mountpoint = "/boot";
+                        mountOptions = [
+                          "noatime"
+                          "umask=0077"
+                        ];
                         extraArgs = [
                           "-n"
                           "ESP"
@@ -118,14 +118,14 @@
                       content = {
                         type = "filesystem";
                         format = "f2fs";
-                        # mountpoint = "/";
-                        # mountOptions = [
-                        #   "atgc"
-                        #   "compress_algorithm=zstd"
-                        #   "compress_chksum"
-                        #   "gc_merge"
-                        #   "noatime"
-                        # ];
+                        mountpoint = "/";
+                        mountOptions = [
+                          "atgc"
+                          "compress_algorithm=zstd"
+                          "compress_chksum"
+                          "gc_merge"
+                          "noatime"
+                        ];
                         extraArgs = [
                           "-l"
                           "root"
@@ -205,7 +205,7 @@
               ];
           };
 
-          fileSystems = {
+          fileSystems = mkForce {
             "/" = {
               device = "/dev/disk/by-label/root";
               fsType = "f2fs";
