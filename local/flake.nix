@@ -15,11 +15,11 @@
  outputs = { self, nixpkgs, home-manager, microdesktop }:
   let
     # Configuration variables
-    hostName = "nixos"; # Replace with desired hostname
-    diskDevice = "/dev/sda"; # Replace with your disk device
+    hostName = "hannah-laptop"; # Replace with desired hostname
+    diskDevice = "/dev/nvme0n1"; # Replace with your disk device
     timeZone = "America/New_York"; # Replace with your timezone
     locale = "en_US.UTF-8"; # Replace with your locale
-    username = "nixos"; # Replace with desired username
+    username = "hannah"; # Replace with desired username
     initialPassword = "password"; # Replace with a secure password
     stateVersion = "25.11"; # NixOS state version
     extraPackages = with nixpkgs.legacyPackages.x86_64-linux; [

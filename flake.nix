@@ -180,7 +180,6 @@
                 [
                   adwaita-icon-theme
                   dnsmasq
-                  firefox
                   gcr_4
                   glib
                   gnome-backgrounds
@@ -188,6 +187,7 @@
                   gnome-menus
                   gnome-network-displays
                   gnome-shell-extensions
+                  gnome-software
                   gnome-themes-extra
                   gst_all_1.gst-libav
                   gst_all_1.gst-plugins-bad
@@ -198,7 +198,6 @@
                   gst_all_1.gstreamer
                   gtk3.out
                   nautilus
-                  gnome-software
                   sushi
                   uutils-coreutils-noprefix
                   wpa_supplicant
@@ -409,7 +408,6 @@
                 zstd
               ];
             };
-            nm-applet.enable = true;
             regreet = {
               enable = mkDefault true;
               settings.GTK.application_prefer_dark_theme = mkDefault true;
