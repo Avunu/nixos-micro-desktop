@@ -309,7 +309,6 @@
             useGlobalPkgs = mkDefault true;
             useUserPackages = mkDefault true;
             sharedModules = [
-              niri.homeModules.niri
               (
                 {
                   config,
