@@ -120,10 +120,11 @@
                         format = "f2fs";
                         mountpoint = "/";
                         mountOptions = [
-                          "noatime"
+                          "atgc"
                           "compress_algorithm=zstd"
-                          "compress_mode=default"
-                          "compress_force"
+                          "compress_chksum"
+                          "gc_merge"
+                          "noatime"
                         ];
                         extraArgs = [
                           "-l"
@@ -624,6 +625,8 @@
           };
 
           xdg = {
+            autostart.enable = mkDefault true;
+            menus.enable = mkDefault true;
             mime.enable = mkDefault true;
             icons.enable = mkDefault true;
             portal = {
