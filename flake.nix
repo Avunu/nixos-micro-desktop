@@ -49,6 +49,15 @@
           ];
           boot = {
             initrd = {
+              availableKernelModules = mkDefault [
+                "ahci"
+                "ehci_pci"
+                "nvme"
+                "uhci_hcd"
+                "virtio_blk"
+                "virtio_pci"
+                "virtio_scsi"
+              ];
               kernelModules = mkDefault [ "fbcon" ];
               systemd = {
                 enable = mkDefault true;
