@@ -392,19 +392,21 @@
 
                   services.mako = {
                     enable = mkDefault true;
-                    backgroundColor = "#2b303b";
-                    textColor = "#ffffff";
-                    borderColor = "#64727d";
-                    borderRadius = 8;
-                    borderSize = 2;
-                    defaultTimeout = 5000;
-                    font = "Roboto 11";
-                    height = 100;
-                    margin = "10";
-                    padding = "15";
-                    width = 350;
-                    layer = "overlay";
-                    anchor = "top-right";
+                    settings = {
+                      backgroundColor = "#2b303b";
+                      textColor = "#ffffff";
+                      borderColor = "#64727d";
+                      borderRadius = 8;
+                      borderSize = 2;
+                      defaultTimeout = 5000;
+                      font = "Roboto 11";
+                      height = 100;
+                      margin = "10";
+                      padding = "15";
+                      width = 350;
+                      layer = "overlay";
+                      anchor = "top-right";
+                    };
                   };
                 }
               )

@@ -24,7 +24,6 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
-          "microdesktop",
           "nixpkgs"
         ]
       },
@@ -45,7 +44,9 @@
     "microdesktop": {
       "inputs": {
         "disko": "disko",
-        "home-manager": "home-manager",
+        "home-manager": [
+          "home-manager"
+        ],
         "niri": "niri",
         "nix-flatpak": "nix-flatpak",
         "nixpkgs": [
@@ -53,11 +54,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1755275045,
-        "narHash": "sha256-gtop50QX1jPNxccMBkePREBp2l2WYg7OkCBzTyOrnWM=",
+        "lastModified": 1755275114,
+        "narHash": "sha256-Q8abFo4Z3l6uuUYJZdZs9thXAlC05/I5Dq0Y+fg37HQ=",
         "owner": "Avunu",
         "repo": "nixos-micro-desktop",
-        "rev": "f322ba071dd3a8a7243363d6152d7099c6ea363b",
+        "rev": "ca12d259e210008b2950c3622f8f9740cbbbf954",
         "type": "github"
       },
       "original": {
@@ -174,6 +175,7 @@
     },
     "root": {
       "inputs": {
+        "home-manager": "home-manager",
         "microdesktop": "microdesktop",
         "nixpkgs": "nixpkgs"
       }
