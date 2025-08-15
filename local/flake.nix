@@ -20,13 +20,15 @@
           microdesktop.nixosModules.microDesktop
           ./hardware-configuration.nix
           ({ config, lib, pkgs, ... }: {
+            disko.devices.disk.main.device = "/dev/sda"; # Replace with your disk device
+
             networking.hostName = "${hostName}";
 
             time.timeZone = "America/New_York"; # Replace with your timezone
 
             i18n.defaultLocale = "en_US.UTF-8"; # Replace with your locale
 
-            users.users.myuser = {
+            users.users.batonac = {
               # Replace 'myuser' with desired username
               isNormalUser = true;
               extraGroups = [ "wheel" "networkmanager" ];

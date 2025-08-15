@@ -90,6 +90,7 @@
           disko.devices = {
             disk = {
               main = {
+                device = mkDefault "/dev/sda";
                 type = "disk";
                 content = {
                   type = "gpt";
