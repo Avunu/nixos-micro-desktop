@@ -427,7 +427,7 @@
             };
             colord.enable = mkDefault true;
             dbus = {
-              implementation = mkDefault "broker";
+              implementation = mkDefault "dbus";
               packages = with pkgs; [
                 dconf
                 gcr
