@@ -204,14 +204,24 @@
                   gst_all_1.gst-vaapi
                   gst_all_1.gstreamer
                   gtk3.out
-                  mako
                   nautilus
                   gnome-software
                   sushi
                   uutils-coreutils-noprefix
-                  waybar
                   wpa_supplicant
                   xdg-user-dirs
+                  # NWG Shell components
+                  nwg-panel
+                  nwg-dock
+                  nwg-drawer
+                  nwg-launchers
+                  nwg-menu
+                  nwg-bar
+                  nwg-clipman
+                  nwg-displays
+                  nwg-look
+                  nwg-wrapper
+                  nwg-icon-picker
                 ]
               ];
           };
@@ -335,11 +345,6 @@
                         };
                       };
                     };
-                    waybar = {
-                      enable = mkDefault true;
-                      settings = builtins.fromJSON (builtins.readFile ./config/waybar.json);
-                      style = builtins.readFile ./config/waybar.css;
-                    };
                   };
 
                   wayland.windowManager.niri = {
@@ -372,13 +377,19 @@
                         
                         # Basic shortcuts
                         "Mod+Q".action = "close-window";
-                        "Mod+Space".action = { spawn = "fuzzel"; };
+                        "Mod+Space".action = { spawn = "nwg-drawer"; };
                         "Mod+T".action = { spawn = "gnome-console"; };
                         "Mod+E".action = { spawn = "nautilus"; };
+                        
+                        # NWG Shell shortcuts
+                        "Mod+D".action = { spawn = "nwg-dock"; };
+                        "Mod+B".action = { spawn = "nwg-bar"; };
+                        "Mod+V".action = { spawn = "nwg-clipman"; };
                       };
 
                       spawn-at-startup = [
-                        { command = [ "waybar" ]; }
+                        { command = [ "nwg-panel" ]; }
+                        { command = [ "nwg-dock" ]; }
                       ];
                     };
                   };
