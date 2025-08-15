@@ -3,17 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nix-software-center = {
-      url = "github:batonac/nix-software-center";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      nix-software-center,
+      nix-flatpak,
       ...
     }:
     let
@@ -29,6 +26,7 @@
         }:
         with lib;
         {
+          imports = [ nix-flatpak.nixosModules.nix-flatpak ];
           boot = {
             initrd = {
               kernelModules = mkDefault [ "fbcon" ];
@@ -133,7 +131,7 @@
                   gst_all_1.gstreamer
                   gtk3.out
                   nautilus
-                  nix-software-center.packages.${pkgs.system}.nix-software-center
+                  gnome-software
                   podman-compose
                   sushi
                   uutils-coreutils-noprefix
@@ -466,6 +464,45 @@
           users.defaultUserShell = pkgs.bashInteractive;
 
           zramSwap.enable = mkDefault true;
+
+          services.flatpak = {
+            enable = true;
+            overrides = {
+              global = {
+                Context = {
+                  sockets = [
+                    "wayland"
+                    "!fallback-x11"
+                    "!x11"
+                  ];
+                  filesystems = [
+                    "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
+                  ];
+                };
+                Environment = {
+                  XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
+                };
+              };
+              "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
+              "net.xmind.XMind".Context.sockets = [ "x11" ];
+              "net.xmind.XMind8".Context.sockets = [ "x11" ];
+              "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
+              "com.logseq.Logseq".Context.sockets = [ "x11" ];
+            };
+            packages = mkDefault [
+              "io.missioncenter.MissionCenter"
+              "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
+              "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
+              "org.gnome.Loupe"
+              "org.gnome.Papers"
+              "org.gnome.Platform/x86_64/47"
+              "org.gnome.Showtime"
+              "org.gtk.Gtk3theme.adw-gtk3-dark"
+              "org.gtk.Gtk3theme.adw-gtk3"
+            ];
+            update.auto.enable = mkDefault true;
+            update.auto.onCalendar = mkDefault "daily";
+          };
         };
     };
 }
