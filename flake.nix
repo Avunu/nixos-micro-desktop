@@ -188,7 +188,6 @@
                   dnsmasq
                   fcitx5
                   firefox
-                  fuzzel
                   gcr_4
                   glib
                   gnome-calculator
@@ -310,6 +309,7 @@
             useGlobalPkgs = mkDefault true;
             useUserPackages = mkDefault true;
             sharedModules = [
+              niri.homeModules.niri
               (
                 {
                   config,
@@ -319,36 +319,7 @@
                 }:
                 {
                   programs = {
-                    fuzzel = {
-                      enable = mkDefault true;
-                      settings = {
-                        main = {
-                          terminal = "gnome-console";
-                          layer = "overlay";
-                          font = "Roboto:size=12";
-                          width = 30;
-                          horizontal-pad = 20;
-                          vertical-pad = 8;
-                          inner-pad = 8;
-                        };
-                        colors = {
-                          background = "2b303bcc";
-                          text = "ffffffff";
-                          match = "0078d4ff";
-                          selection = "64727dff";
-                          selection-text = "ffffffff";
-                          border = "64727dff";
-                        };
-                        border = {
-                          width = 2;
-                          radius = 8;
-                        };
-                      };
-                    };
-                  };
-
-                  wayland.windowManager.niri = {
-                    settings = {
+                    niri.settings = {
                       input = {
                         keyboard.xkb.layout = "us";
                       };
@@ -365,26 +336,26 @@
                         default-column-width = { proportion = 0.5; };
                       };
 
-                      binds = {
+                      binds = with config.lib.niri.actions; {
                         # Windows-like maximize
-                        "Mod+Up".action = "maximize-column";
-                        "Mod+Return".action = "maximize-column";
+                        "Mod+Up".action = maximize-column;
+                        "Mod+Return".action = maximize-column;
                         
                         # Resize shortcuts
-                        "Mod+Ctrl+Left".action = { set-column-width = "-10%"; };
-                        "Mod+Ctrl+Right".action = { set-column-width = "+10%"; };
-                        "Mod+Ctrl+Up".action = { set-column-width = "100%"; };
+                        "Mod+Ctrl+Left".action = set-column-width "-10%";
+                        "Mod+Ctrl+Right".action = set-column-width "+10%";
+                        "Mod+Ctrl+Up".action = set-column-width "100%";
                         
                         # Basic shortcuts
-                        "Mod+Q".action = "close-window";
-                        "Mod+Space".action = { spawn = "nwg-drawer"; };
-                        "Mod+T".action = { spawn = "gnome-console"; };
-                        "Mod+E".action = { spawn = "nautilus"; };
+                        "Mod+Q".action = close-window;
+                        "Mod+Space".action = spawn "nwg-drawer";
+                        "Mod+T".action = spawn "gnome-console";
+                        "Mod+E".action = spawn "nautilus";
                         
                         # NWG Shell shortcuts
-                        "Mod+D".action = { spawn = "nwg-dock"; };
-                        "Mod+B".action = { spawn = "nwg-bar"; };
-                        "Mod+V".action = { spawn = "nwg-clipman"; };
+                        "Mod+D".action = spawn "nwg-dock";
+                        "Mod+B".action = spawn "nwg-bar";
+                        "Mod+V".action = spawn "nwg-clipman";
                       };
 
                       spawn-at-startup = [
