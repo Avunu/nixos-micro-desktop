@@ -31,7 +31,7 @@
 
             users.users.nixos = { # Replace 'nixos' with desired username
               extraGroups = [ "wheel" "networkmanager" ];
-              home.stateVersion = mkDefault "25.11";
+              home.stateVersion = "25.11";
               initialPassword = "password"; # Replace with a secure password
               isNormalUser = true;
             };
