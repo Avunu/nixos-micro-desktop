@@ -486,9 +486,9 @@
           nixpkgs = {
             config = {
               allowUnfree = mkDefault true;
-              packageOverrides = pkgs: {
-                niri = self.inputs.niri.packages.${pkgs.system}.niri-stable;
-              };
+              # packageOverrides = pkgs: {
+              #   niri = self.inputs.niri.packages.${pkgs.system}.niri-stable;
+              # };
             };
             overlays = [ self.inputs.niri.overlays.niri ];
           };
