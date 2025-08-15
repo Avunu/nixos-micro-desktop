@@ -204,26 +204,26 @@
               ];
           };
 
-          fileSystems = {
-            "/" = {
-              device = "/dev/disk/by-label/root";
-              fsType = "f2fs";
-              options = [
-                "noatime"
-                "compress_algorithm=zstd"
-                "compress_mode=default"
-                "compress_force"
-              ];
-            };
-            "/boot" = {
-              device = "/dev/disk/by-label/ESP";
-              fsType = "vfat";
-              options = [
-                "noatime"
-                "umask=0077"
-              ];
-            };
-          };
+          # fileSystems = {
+          #   "/" = {
+          #     device = "/dev/disk/by-label/root";
+          #     fsType = "f2fs";
+          #     options = [
+          #       "noatime"
+          #       "compress_algorithm=zstd"
+          #       "compress_mode=default"
+          #       "compress_force"
+          #     ];
+          #   };
+          #   "/boot" = {
+          #     device = "/dev/disk/by-label/ESP";
+          #     fsType = "vfat";
+          #     options = [
+          #       "noatime"
+          #       "umask=0077"
+          #     ];
+          #   };
+          # };
 
           fonts.packages = mkDefault (
             with pkgs;
