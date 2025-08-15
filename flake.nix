@@ -187,9 +187,11 @@
                   adwaita-icon-theme
                   dnsmasq
                   fcitx5
+                  firefox
                   fuzzel
                   gcr_4
                   glib
+                  gnome-calculator
                   gnome-console
                   gnome-control-center
                   gnome-menus

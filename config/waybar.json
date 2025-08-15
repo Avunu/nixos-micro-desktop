@@ -9,14 +9,14 @@
 		"passthrough": false,
 		"height": 48,
 		"modules-left": [
-			"niri/workspaces"
-		],
-		"modules-center": [
 			"custom/os_button",
 			"custom/terminal",
 			"custom/thunar",
+			"custom/browser",
+			"custom/calculator",
 			"wlr/taskbar"
 		],
+		"modules-center": [],
 		"modules-right": [
 			"network",
 			"pulseaudio",
@@ -138,12 +138,17 @@
 			"on-click": "swaync-client -t -sw",
 			"on-click-right": "swaync-client -d -sw"
 		},
-		"niri/workspaces": {
-			"icon-size": 32,
-			"spacing": 16,
-			"persistent-workspaces": {
-				"*": 4
-			}
+		"custom/browser": {
+			"format": "🌐",
+			"spacing": 3,
+			"tooltip-format": "Launch Browser",
+			"on-click": "firefox"
+		},
+		"custom/calculator": {
+			"format": "🧮",
+			"spacing": 3,
+			"tooltip-format": "Launch Calculator",
+			"on-click": "gnome-calculator"
 		}
 	}
 }
