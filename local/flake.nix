@@ -10,7 +10,7 @@
 
  outputs = { self, nixpkgs, microdesktop }:
   let
-    hostName = "myhostname"; # Replace with desired hostname
+    hostName = "nixos"; # Replace with desired hostname
   in
   {
     nixosConfigurations = {
@@ -28,8 +28,9 @@
 
             i18n.defaultLocale = "en_US.UTF-8"; # Replace with your locale
 
-            users.users.batonac = {
-              # Replace 'myuser' with desired username
+            users.users.nixos = {
+              # Replace 'nixos' with desired username
+              initialPassword = "password"; # Replace with a secure password
               isNormalUser = true;
               extraGroups = [ "wheel" "networkmanager" ];
             };
