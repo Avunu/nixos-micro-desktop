@@ -8,10 +8,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    niri = {
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,7 +20,6 @@
       nixpkgs,
       nix-flatpak,
       home-manager,
-      niri,
       disko,
       ...
     }:
@@ -44,7 +39,6 @@
           imports = [
             disko.nixosModules.disko
             nix-flatpak.nixosModules.nix-flatpak
-            niri.nixosModules.niri
             home-manager.nixosModules.home-manager
           ];
           boot = {
@@ -190,11 +184,12 @@
                   firefox
                   gcr_4
                   glib
-                  gnome-calculator
-                  gnome-console
+                  gnome-backgrounds
                   gnome-control-center
                   gnome-menus
                   gnome-network-displays
+                  gnome-shell-extensions
+                  gnome-themes-extra
                   gst_all_1.gst-libav
                   gst_all_1.gst-plugins-bad
                   gst_all_1.gst-plugins-base
@@ -209,18 +204,6 @@
                   uutils-coreutils-noprefix
                   wpa_supplicant
                   xdg-user-dirs
-                  # NWG Shell components
-                  nwg-panel
-                  nwg-dock
-                  nwg-drawer
-                  nwg-launchers
-                  nwg-menu
-                  nwg-bar
-                  nwg-clipman
-                  nwg-displays
-                  nwg-look
-                  nwg-wrapper
-                  nwg-icon-picker
                 ]
               ];
           };
@@ -274,9 +257,6 @@
               source-sans-pro
               source-serif
               source-serif-pro
-              # Add JetBrains Mono Nerd Font for waybar icons
-              jetbrains-mono
-              (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" ]; })
             ]
           );
 
@@ -318,70 +298,11 @@
                 }:
                 {
                   programs = {
-                    niri.settings = {
-                      input = {
-                        keyboard.xkb.layout = "us";
-                      };
-                      
-                      layout = {
-                        gaps = 8;
-                        center-focused-column = "never";
-                        preset-column-widths = [
-                          { proportion = 0.33333; }
-                          { proportion = 0.5; }
-                          { proportion = 0.66667; }
-                          { proportion = 1.0; }
-                        ];
-                        default-column-width = { proportion = 0.5; };
-                      };
-
-                      binds = with config.lib.niri.actions; {
-                        # Windows-like maximize
-                        "Mod+Up".action = maximize-column;
-                        "Mod+Return".action = maximize-column;
-                        
-                        # Resize shortcuts
-                        "Mod+Ctrl+Left".action = set-column-width "-10%";
-                        "Mod+Ctrl+Right".action = set-column-width "+10%";
-                        "Mod+Ctrl+Up".action = set-column-width "100%";
-                        
-                        # Basic shortcuts
-                        "Mod+Q".action = close-window;
-                        "Mod+Space".action = spawn "nwg-drawer";
-                        "Mod+T".action = spawn "gnome-console";
-                        "Mod+E".action = spawn "nautilus";
-                        
-                        # NWG Shell shortcuts
-                        "Mod+D".action = spawn "nwg-dock";
-                        "Mod+B".action = spawn "nwg-bar";
-                        "Mod+V".action = spawn "nwg-clipman";
-                      };
-
-                      spawn-at-startup = [
-                        { command = [ "nwg-panel" ]; }
-                        { command = [ "nwg-dock" ]; }
-                      ];
-                    };
+                    gnome-shell.extensions = [
+                      { package = pkgs.gnomeExtensions.appindicator; }
+                    ];
                   };
-
-                  services.mako = {
-                    enable = mkDefault true;
-                    settings = {
-                      backgroundColor = "#2b303b";
-                      textColor = "#ffffff";
-                      borderColor = "#64727d";
-                      borderRadius = 8;
-                      borderSize = 2;
-                      defaultTimeout = 5000;
-                      font = "Roboto 11";
-                      height = 100;
-                      margin = "10";
-                      padding = "15";
-                      width = 350;
-                      layer = "overlay";
-                      anchor = "top-right";
-                    };
-                  };
+                  services.polkit-gnome.enable = true;
                 }
               )
             ];
@@ -526,8 +447,8 @@
               ];
             };
             displayManager = {
-              sessionPackages = [ pkgs.niri ];
-              defaultSession = "niri";
+              sessionPackages = [ pkgs.gnome-session.sessions ];
+              defaultSession = "gnome";
             };
             fstrim = {
               enable = mkDefault true;
@@ -540,7 +461,7 @@
               gnome-online-accounts.enable = mkDefault true;
               gnome-settings-daemon.enable = mkDefault true;
               gnome-user-share.enable = mkDefault false;
-              localsearch.enable = mkForce true;
+              localsearch.enable = mkDefault true;
               rygel.enable = mkDefault true;
               tinysparql.enable = mkDefault true;
             };
@@ -587,13 +508,16 @@
 
           security = {
             pam.services.login.enableGnomeKeyring = mkDefault true;
-            soteria.enable = mkDefault true;
             polkit.enable = mkDefault true;
             rtkit.enable = mkDefault true;
             tpm2.enable = mkDefault true;
           };
 
           systemd = {
+            packages = with pkgs; [
+              gnome-session
+              gnome-shell
+            ];
             services.flake-update = {
               unitConfig = {
                 Description = "Update flake inputs";
@@ -627,7 +551,7 @@
             mime.enable = mkDefault true;
             icons.enable = mkDefault true;
             portal = {
-              configPackages = mkDefault [ pkgs.niri ];
+              configPackages = mkDefault [ pkgs.gnome-session ];
               enable = mkDefault true;
               extraPortals = (
                 with pkgs;
