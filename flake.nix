@@ -342,6 +342,47 @@
                     };
                   };
 
+                  wayland.windowManager.niri = {
+                    settings = {
+                      input = {
+                        keyboard.xkb.layout = "us";
+                      };
+                      
+                      layout = {
+                        gaps = 8;
+                        center-focused-column = "never";
+                        preset-column-widths = [
+                          { proportion = 0.33333; }
+                          { proportion = 0.5; }
+                          { proportion = 0.66667; }
+                          { proportion = 1.0; }
+                        ];
+                        default-column-width = { proportion = 0.5; };
+                      };
+
+                      binds = {
+                        # Windows-like maximize
+                        "Mod+Up".action = "maximize-column";
+                        "Mod+Return".action = "maximize-column";
+                        
+                        # Resize shortcuts
+                        "Mod+Ctrl+Left".action = { set-column-width = "-10%"; };
+                        "Mod+Ctrl+Right".action = { set-column-width = "+10%"; };
+                        "Mod+Ctrl+Up".action = { set-column-width = "100%"; };
+                        
+                        # Basic shortcuts
+                        "Mod+Q".action = "close-window";
+                        "Mod+Space".action = { spawn = "fuzzel"; };
+                        "Mod+T".action = { spawn = "gnome-console"; };
+                        "Mod+E".action = { spawn = "nautilus"; };
+                      };
+
+                      spawn-at-startup = [
+                        { command = [ "waybar" ]; }
+                      ];
+                    };
+                  };
+
                   services.mako = {
                     enable = mkDefault true;
                     settings = {
