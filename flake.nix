@@ -332,61 +332,8 @@
                     };
                     waybar = {
                       enable = mkDefault true;
-                      settings = {
-                        mainBar = {
-                          layer = "top";
-                          position = "bottom";
-                          height = 40;
-                          spacing = 4;
-                          modules-left = [
-                            "custom/menu"
-                          ];
-                          modules-center = [ "niri/window" ];
-                          modules-right = [
-                            "tray"
-                            "network"
-                            "bluetooth"
-                            "pulseaudio"
-                            "battery"
-                            "clock"
-                          ];
-
-                          "custom/menu" = {
-                            format = "⊞";
-                            tooltip = false;
-                            on-click = "fuzzel";
-                          };
-
-                          "niri/window" = {
-                            max-length = 50;
-                          };
-
-                          "network" = {
-                            on-click = "gnome-control-center wifi";
-                          };
-
-                          "bluetooth" = {
-                            on-click = "gnome-control-center bluetooth";
-                          };
-
-                          "pulseaudio" = {
-                            on-click = "gnome-control-center sound";
-                          };
-
-                          "battery" = {
-                            states = {
-                              warning = 30;
-                              critical = 15;
-                            };
-                          };
-
-                          "clock" = {
-                            format = "{:%H:%M}";
-                            format-alt = "{:%A, %B %d, %Y}";
-                            tooltip-format = "<tt><small>{calendar}</small></tt>";
-                          };
-                        };
-                      };
+                      settings = builtins.fromJSON (builtins.readFile ./config/waybar.json);
+                      style = builtins.readFile ./config/waybar.css;
                     };
                   };
 
@@ -566,7 +513,7 @@
               gnome-online-accounts.enable = mkDefault true;
               gnome-settings-daemon.enable = mkDefault true;
               gnome-user-share.enable = mkDefault false;
-              localsearch.enable = mkForce false;
+              localsearch.enable = mkForce true;
               rygel.enable = mkDefault true;
               tinysparql.enable = mkDefault true;
             };
