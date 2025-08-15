@@ -1,0 +1,1 @@
+nix run github:nix-community/nixos-anywhere -- --flake .#myhostname --target-host root@<ip address>

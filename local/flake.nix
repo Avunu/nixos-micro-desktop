@@ -35,9 +35,9 @@
             environment.systemPackages = with pkgs; [
               # Add any non-flatpak software you want on this particular machine
               # for example, insync:
-              insync
-              insync-emblem-icons
-              insync-nautilus
+              # insync
+              # insync-emblem-icons
+              # insync-nautilus
             ];
 
             system.stateVersion = "25.11";
