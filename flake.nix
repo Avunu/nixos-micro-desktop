@@ -484,11 +484,13 @@
           };
 
           nixpkgs = {
-            config.allowUnfree = mkDefault true;
-            overlays = [ self.inputs.niri.overlays.niri ];
-            packageOverrides = pkgs: {
-              niri = self.inputs.niri.packages.${pkgs.system}.niri-stable;
+            config = {
+              allowUnfree = mkDefault true;
+              packageOverrides = pkgs: {
+                niri = self.inputs.niri.packages.${pkgs.system}.niri-stable;
+              };
             };
+            overlays = [ self.inputs.niri.overlays.niri ];
           };
 
           programs = {
