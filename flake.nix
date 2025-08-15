@@ -489,6 +489,7 @@
             system-config-printer.enable = mkDefault true;
             udev.packages = with pkgs; [
               gnome-settings-daemon
+              mutter
             ];
             udisks2.enable = true;
             upower.enable = mkDefault true;
