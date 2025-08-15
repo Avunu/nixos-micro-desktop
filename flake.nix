@@ -8,7 +8,14 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    niri.url = "github:sodiboo/niri-flake";
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -18,6 +25,7 @@
       nix-flatpak,
       home-manager,
       niri,
+      disko,
       ...
     }:
     let
@@ -33,8 +41,8 @@
         }:
         with lib;
         {
-          imports = [ 
-            nix-flatpak.nixosModules.nix-flatpak 
+          imports = [
+            nix-flatpak.nixosModules.nix-flatpak
             niri.nixosModules.niri
             home-manager.nixosModules.home-manager
           ];
@@ -79,6 +87,54 @@
             packages = mkDefault [ pkgs.terminus_font ];
           };
 
+          disko.devices = {
+            disk = {
+              main = {
+                type = "disk";
+                content = {
+                  type = "gpt";
+                  partitions = {
+                    ESP = {
+                      size = "1G";
+                      type = "EF00";
+                      content = {
+                        type = "filesystem";
+                        format = "vfat";
+                        mountpoint = "/boot";
+                        mountOptions = [
+                          "noatime"
+                          "umask=0077"
+                        ];
+                        extraArgs = [
+                          "-n"
+                          "ESP"
+                        ];
+                      };
+                    };
+                    root = {
+                      size = "100%";
+                      content = {
+                        type = "filesystem";
+                        format = "f2fs";
+                        mountpoint = "/";
+                        mountOptions = [
+                          "noatime"
+                          "compress_algorithm=zstd"
+                          "compress_mode=default"
+                          "compress_force"
+                        ];
+                        extraArgs = [
+                          "-l"
+                          "root"
+                        ];
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
+
           documentation = {
             enable = mkDefault false;
             doc.enable = mkDefault false;
@@ -117,18 +173,15 @@
                 (with gnome; [ nixos-gsettings-overrides ])
                 [
                   adwaita-icon-theme
-                  distrobox
                   dnsmasq
                   fcitx5
                   fuzzel
                   gcr_4
                   glib
-                  gnome-backgrounds
                   gnome-console
                   gnome-control-center
                   gnome-menus
                   gnome-network-displays
-                  gnome-themes-extra
                   gst_all_1.gst-libav
                   gst_all_1.gst-plugins-bad
                   gst_all_1.gst-plugins-base
@@ -140,7 +193,6 @@
                   mako
                   nautilus
                   gnome-software
-                  podman-compose
                   sushi
                   uutils-coreutils-noprefix
                   waybar
@@ -148,6 +200,27 @@
                   xdg-user-dirs
                 ]
               ];
+          };
+
+          fileSystems = {
+            "/" = {
+              device = "/dev/disk/by-label/root";
+              fsType = "f2fs";
+              options = [
+                "noatime"
+                "compress_algorithm=zstd"
+                "compress_mode=default"
+                "compress_force"
+              ];
+            };
+            "/boot" = {
+              device = "/dev/disk/by-label/ESP";
+              fsType = "vfat";
+              options = [
+                "noatime"
+                "umask=0077"
+              ];
+            };
           };
 
           fonts.packages = mkDefault (
@@ -203,6 +276,128 @@
               extraBackends = mkDefault (with pkgs; [ sane-airscan ]);
             };
             sensor.iio.enable = mkDefault true;
+          };
+
+          home-manager = {
+            useGlobalPkgs = mkDefault true;
+            useUserPackages = mkDefault true;
+            sharedModules = [
+              (
+                {
+                  config,
+                  lib,
+                  pkgs,
+                  ...
+                }:
+                {
+                  programs = {
+                    fuzzel = {
+                      enable = mkDefault true;
+                      settings = {
+                        main = {
+                          terminal = "gnome-console";
+                          layer = "overlay";
+                          font = "Roboto:size=12";
+                          width = 30;
+                          horizontal-pad = 20;
+                          vertical-pad = 8;
+                          inner-pad = 8;
+                        };
+                        colors = {
+                          background = "2b303bcc";
+                          text = "ffffffff";
+                          match = "0078d4ff";
+                          selection = "64727dff";
+                          selection-text = "ffffffff";
+                          border = "64727dff";
+                        };
+                        border = {
+                          width = 2;
+                          radius = 8;
+                        };
+                      };
+                    };
+                    waybar = {
+                      enable = mkDefault true;
+                      settings = {
+                        mainBar = {
+                          layer = "top";
+                          position = "bottom";
+                          height = 40;
+                          spacing = 4;
+                          modules-left = [
+                            "custom/menu"
+                          ];
+                          modules-center = [ "niri/window" ];
+                          modules-right = [
+                            "tray"
+                            "network"
+                            "bluetooth"
+                            "pulseaudio"
+                            "battery"
+                            "clock"
+                          ];
+
+                          "custom/menu" = {
+                            format = "⊞";
+                            tooltip = false;
+                            on-click = "fuzzel";
+                          };
+
+                          "niri/window" = {
+                            max-length = 50;
+                          };
+
+                          "network" = {
+                            on-click = "gnome-control-center wifi";
+                          };
+
+                          "bluetooth" = {
+                            on-click = "gnome-control-center bluetooth";
+                          };
+
+                          "pulseaudio" = {
+                            on-click = "gnome-control-center sound";
+                          };
+
+                          "battery" = {
+                            states = {
+                              warning = 30;
+                              critical = 15;
+                            };
+                          };
+
+                          "clock" = {
+                            format = "{:%H:%M}";
+                            format-alt = "{:%A, %B %d, %Y}";
+                            tooltip-format = "<tt><small>{calendar}</small></tt>";
+                          };
+                        };
+                      };
+                    };
+                  };
+
+                  services.mako = {
+                    enable = mkDefault true;
+                    backgroundColor = "#2b303b";
+                    textColor = "#ffffff";
+                    borderColor = "#64727d";
+                    borderRadius = 8;
+                    borderSize = 2;
+                    defaultTimeout = 5000;
+                    font = "Roboto 11";
+                    height = 100;
+                    margin = "10";
+                    padding = "15";
+                    width = 350;
+                    layer = "overlay";
+                    anchor = "top-right";
+                  };
+
+                  home.stateVersion = mkDefault "25.11";
+                }
+              )
+            ];
           };
 
           i18n.inputMethod = {
@@ -288,7 +483,7 @@
             };
             niri = {
               enable = true;
-              package = pkgs.niri-unstable;
+              package = pkgs.niri;
             };
             nix-ld = {
               enable = mkDefault true;
@@ -322,11 +517,6 @@
                 workstation = mkDefault true;
               };
             };
-            btrfs.autoScrub = {
-              enable = mkDefault true;
-              fileSystems = mkDefault [ "/" ];
-              interval = mkDefault "daily";
-            };
             colord.enable = mkDefault true;
             dbus = {
               implementation = mkDefault "broker";
@@ -346,10 +536,8 @@
             fwupd.enable = mkDefault true;
             gnome = {
               glib-networking.enable = mkDefault true;
-              gnome-browser-connector.enable = mkForce false;
               gnome-keyring.enable = mkDefault true;
               gnome-online-accounts.enable = mkDefault true;
-              gnome-remote-desktop.enable = mkDefault false;
               gnome-settings-daemon.enable = mkDefault true;
               gnome-user-share.enable = mkDefault false;
               localsearch.enable = mkForce false;
@@ -387,13 +575,6 @@
             printing = {
               enable = mkDefault true;
               browsed.enable = mkDefault true;
-              drivers = mkDefault (
-                with pkgs;
-                [
-                  gutenprint
-                  hplip
-                ]
-              );
               webInterface = mkDefault false;
             };
             system-config-printer.enable = mkDefault true;
@@ -406,15 +587,13 @@
 
           security = {
             pam.services.login.enableGnomeKeyring = mkDefault true;
+            soteria.enable = mkDefault true;
             polkit.enable = mkDefault true;
             rtkit.enable = mkDefault true;
             tpm2.enable = mkDefault true;
           };
 
           systemd = {
-            packages = with pkgs; [
-              gnome-session
-            ];
             services.flake-update = {
               unitConfig = {
                 Description = "Update flake inputs";
@@ -439,20 +618,14 @@
               ];
               requiredBy = [ "nixos-upgrade.service" ];
             };
-          };
-
-          virtualisation.podman = {
-            defaultNetwork.settings.dns_enabled = true;
-            dockerCompat = mkDefault true;
-            dockerSocket.enable = mkDefault true;
-            enable = mkDefault true;
+            user.services.niri-flake-polkit.enable = mkDefault false;
           };
 
           xdg = {
             mime.enable = mkDefault true;
             icons.enable = mkDefault true;
             portal = {
-              configPackages = mkDefault [ pkgs.gnome-session ];
+              configPackages = mkDefault [ pkgs.niri ];
               enable = mkDefault true;
               extraPortals = (
                 with pkgs;
@@ -474,239 +647,6 @@
           users.defaultUserShell = pkgs.bashInteractive;
 
           zramSwap.enable = mkDefault true;
-
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            users.nixos = { config, lib, pkgs, ... }: {
-              programs.waybar = {
-                enable = true;
-                settings = {
-                  mainBar = {
-                    layer = "top";
-                    position = "bottom";
-                    height = 40;
-                    spacing = 4;
-                    modules-left = [ "custom/menu" "niri/workspaces" ];
-                    modules-center = [ "custom/media" ];
-                    modules-right = [ "network" "bluetooth" "pulseaudio" "battery" "clock" "tray" ];
-                    
-                    "custom/menu" = {
-                      format = "⊞";
-                      tooltip = false;
-                      on-click = "fuzzel";
-                    };
-                    
-                    "niri/workspaces" = {
-                      format = "{name}";
-                      on-click = "activate";
-                    };
-                    
-                    "network" = {
-                      format-wifi = "{icon} {essid}";
-                      format-ethernet = "🌐 Connected";
-                      format-disconnected = "❌ Disconnected";
-                      format-icons = ["📶" "📶" "📶" "📶" "📶"];
-                      tooltip-format = "{ifname}: {ipaddr}";
-                    };
-                    
-                    "bluetooth" = {
-                      format = "🔵";
-                      format-connected = "🔵 {num_connections}";
-                      format-disabled = "⚪";
-                      on-click = "gnome-control-center bluetooth";
-                    };
-                    
-                    "pulseaudio" = {
-                      format = "{icon} {volume}%";
-                      format-muted = "🔇";
-                      format-icons = {
-                        default = ["🔈" "🔉" "🔊"];
-                      };
-                      on-click = "gnome-control-center sound";
-                    };
-                    
-                    "battery" = {
-                      format = "{icon} {capacity}%";
-                      format-icons = ["🪫" "🔋" "🔋" "🔋" "🔋" "🔋" "🔋" "🔋" "🔋" "🔋"];
-                      states = {
-                        warning = 30;
-                        critical = 15;
-                      };
-                    };
-                    
-                    "clock" = {
-                      format = "{:%H:%M}";
-                      format-alt = "{:%A, %B %d, %Y}";
-                      tooltip-format = "<tt><small>{calendar}</small></tt>";
-                      calendar = {
-                        mode = "year";
-                        mode-mon-col = 3;
-                        weeks-pos = "right";
-                        on-scroll = 1;
-                        format = {
-                          months = "<span color='#ffead3'><b>{}</b></span>";
-                          days = "<span color='#ecc6d9'><b>{}</b></span>";
-                          weeks = "<span color='#99ffdd'><b>W{}</b></span>";
-                          weekdays = "<span color='#ffcc66'><b>{}</b></span>";
-                          today = "<span color='#ff6699'><b><u>{}</u></b></span>";
-                        };
-                      };
-                    };
-                    
-                    "tray" = {
-                      icon-size = 21;
-                      spacing = 10;
-                    };
-                  };
-                };
-                style = ''
-                  * {
-                    border: none;
-                    border-radius: 0;
-                    font-family: "Roboto", "Font Awesome 6 Free";
-                    font-size: 13px;
-                    min-height: 0;
-                  }
-
-                  window#waybar {
-                    background-color: rgba(43, 48, 59, 0.95);
-                    border-top: 3px solid rgba(100, 114, 125, 0.5);
-                    color: #ffffff;
-                    transition-property: background-color;
-                    transition-duration: .5s;
-                  }
-
-                  button {
-                    box-shadow: inset 0 -3px transparent;
-                    border: none;
-                    border-radius: 0;
-                  }
-
-                  button:hover {
-                    background: inherit;
-                    box-shadow: inset 0 -3px #ffffff;
-                  }
-
-                  #workspaces button {
-                    padding: 0 5px;
-                    background-color: transparent;
-                    color: #ffffff;
-                  }
-
-                  #workspaces button:hover {
-                    background: rgba(0, 0, 0, 0.2);
-                  }
-
-                  #workspaces button.focused {
-                    background-color: #64727d;
-                    box-shadow: inset 0 -3px #ffffff;
-                  }
-
-                  #workspaces button.urgent {
-                    background-color: #eb4d4b;
-                  }
-
-                  #custom-menu,
-                  #network,
-                  #bluetooth,
-                  #pulseaudio,
-                  #battery,
-                  #clock,
-                  #tray {
-                    padding: 0 10px;
-                    color: #ffffff;
-                  }
-
-                  #custom-menu {
-                    font-size: 18px;
-                    padding: 0 15px;
-                    background-color: #0078d4;
-                  }
-
-                  #custom-menu:hover {
-                    background-color: #106ebe;
-                  }
-
-                  #network.disconnected {
-                    color: #f53c3c;
-                  }
-
-                  #pulseaudio.muted {
-                    color: #90b1b1;
-                  }
-
-                  #battery.charging,
-                  #battery.plugged {
-                    color: #26a65b;
-                  }
-
-                  #battery.critical:not(.charging) {
-                    background-color: #f53c3c;
-                    color: #ffffff;
-                    animation-name: blink;
-                    animation-duration: 0.5s;
-                    animation-timing-function: linear;
-                    animation-iteration-count: infinite;
-                    animation-direction: alternate;
-                  }
-
-                  @keyframes blink {
-                    to {
-                      background-color: #ffffff;
-                      color: #000000;
-                    }
-                  }
-                '';
-              };
-              
-              programs.fuzzel = {
-                enable = true;
-                settings = {
-                  main = {
-                    terminal = "gnome-console";
-                    layer = "overlay";
-                    font = "Roboto:size=12";
-                    width = 30;
-                    horizontal-pad = 20;
-                    vertical-pad = 8;
-                    inner-pad = 8;
-                  };
-                  colors = {
-                    background = "2b303bcc";
-                    text = "ffffffff";
-                    match = "0078d4ff";
-                    selection = "64727dff";
-                    selection-text = "ffffffff";
-                    border = "64727dff";
-                  };
-                  border = {
-                    width = 2;
-                    radius = 8;
-                  };
-                };
-              };
-              
-              services.mako = {
-                enable = true;
-                backgroundColor = "#2b303b";
-                textColor = "#ffffff";
-                borderColor = "#64727d";
-                borderRadius = 8;
-                borderSize = 2;
-                defaultTimeout = 5000;
-                font = "Roboto 11";
-                height = 100;
-                margin = "10";
-                padding = "15";
-                width = 350;
-                layer = "overlay";
-                anchor = "top-right";
-              };
-              
-              home.stateVersion = "25.11";
-            };
-          };
 
           services.flatpak = {
             enable = true;
