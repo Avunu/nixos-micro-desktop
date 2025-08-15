@@ -42,6 +42,7 @@
         with lib;
         {
           imports = [
+            disko.nixosModules.disko
             nix-flatpak.nixosModules.nix-flatpak
             niri.nixosModules.niri
             home-manager.nixosModules.home-manager
