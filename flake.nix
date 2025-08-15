@@ -171,7 +171,7 @@
               QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
               SDL_VIDEODRIVER = "wayland";
               XDG_SESSION_TYPE = "wayland";
-              XMODIFIERS = "@im=fcitx";
+              # XMODIFIERS = "@im=fcitx";
             };
             systemPackages =
               with pkgs;
@@ -180,7 +180,6 @@
                 [
                   adwaita-icon-theme
                   dnsmasq
-                  fcitx5
                   firefox
                   gcr_4
                   glib
@@ -308,18 +307,18 @@
             ];
           };
 
-          i18n.inputMethod = {
-            type = mkDefault "fcitx5";
-            fcitx5 = {
-              addons = with pkgs; [
-                fcitx5-configtool
-                fcitx5-gtk
-                catppuccin-fcitx5
-              ];
-              settings.addons = mkDefault { pinyin.globalSection.EmojiEnabled = "True"; };
-              waylandFrontend = mkDefault true;
-            };
-          };
+          # i18n.inputMethod = {
+          #   type = mkDefault "fcitx5";
+          #   fcitx5 = {
+          #     addons = with pkgs; [
+          #       fcitx5-configtool
+          #       fcitx5-gtk
+          #       catppuccin-fcitx5
+          #     ];
+          #     settings.addons = mkDefault { pinyin.globalSection.EmojiEnabled = "True"; };
+          #     waylandFrontend = mkDefault true;
+          #   };
+          # };
 
           networking = {
             networkmanager = {
