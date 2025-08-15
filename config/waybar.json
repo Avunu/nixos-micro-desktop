@@ -78,7 +78,7 @@
 			"on-click": "gnome-control-center sound"
 		},
 		"custom/os_button": {
-			"format": "",
+			"format": "⊞",
 			"on-click": "fuzzel",
 			"tooltip": false
 		},
@@ -117,7 +117,7 @@
 			"on-click": "activate"
 		},
 		"custom/thunar": {
-			"format": "",
+			"format": "📁",
 			"spacing": 3,
 			"on-click-middle": "pkill nautilus",
 			"tooltip-format": "Launch File Manager",
@@ -125,7 +125,7 @@
 			"on-click": "nautilus"
 		},
 		"custom/terminal": {
-			"format": "",
+			"format": "⬛",
 			"spacing": 3,
 			"on-click-middle": "pkill gnome-console",
 			"tooltip-format": "Launch Terminal",
@@ -134,23 +134,9 @@
 		},
 		"custom/swaync": {
 			"tooltip": false,
-			"format": "{icon}",
-			"format-icons": {
-				"notification": "<span foreground='red'><sup></sup></span>",
-				"none": "",
-				"dnd-notification": "<span foreground='red'><sup></sup></span>",
-				"dnd-none": "",
-				"inhibited-notification": "<span foreground='red'><sup></sup></span>",
-				"inhibited-none": "",
-				"dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
-				"dnd-inhibited-none": ""
-			},
-			"return-type": "json",
-			"exec-if": "which swaync-client",
-			"exec": "swaync-client -swb",
+			"format": "🔔",
 			"on-click": "swaync-client -t -sw",
-			"on-click-right": "swaync-client -d -sw",
-			"escape": true
+			"on-click-right": "swaync-client -d -sw"
 		},
 		"niri/workspaces": {
 			"icon-size": 32,

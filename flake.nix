@@ -263,6 +263,9 @@
               source-sans-pro
               source-serif
               source-serif-pro
+              # Add JetBrains Mono Nerd Font for waybar icons
+              jetbrains-mono
+              (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" ]; })
             ]
           );
 
