@@ -102,11 +102,11 @@
                       content = {
                         type = "filesystem";
                         format = "vfat";
-                        mountpoint = "/boot";
-                        mountOptions = [
-                          "noatime"
-                          "umask=0077"
-                        ];
+                        # mountpoint = "/boot";
+                        # mountOptions = [
+                        #   "noatime"
+                        #   "umask=0077"
+                        # ];
                         extraArgs = [
                           "-n"
                           "ESP"
@@ -118,14 +118,14 @@
                       content = {
                         type = "filesystem";
                         format = "f2fs";
-                        mountpoint = "/";
-                        mountOptions = [
-                          "atgc"
-                          "compress_algorithm=zstd"
-                          "compress_chksum"
-                          "gc_merge"
-                          "noatime"
-                        ];
+                        # mountpoint = "/";
+                        # mountOptions = [
+                        #   "atgc"
+                        #   "compress_algorithm=zstd"
+                        #   "compress_chksum"
+                        #   "gc_merge"
+                        #   "noatime"
+                        # ];
                         extraArgs = [
                           "-l"
                           "root"
@@ -205,26 +205,27 @@
               ];
           };
 
-          # fileSystems = {
-          #   "/" = {
-          #     device = "/dev/disk/by-label/root";
-          #     fsType = "f2fs";
-          #     options = [
-          #       "noatime"
-          #       "compress_algorithm=zstd"
-          #       "compress_mode=default"
-          #       "compress_force"
-          #     ];
-          #   };
-          #   "/boot" = {
-          #     device = "/dev/disk/by-label/ESP";
-          #     fsType = "vfat";
-          #     options = [
-          #       "noatime"
-          #       "umask=0077"
-          #     ];
-          #   };
-          # };
+          fileSystems = {
+            "/" = {
+              device = "/dev/disk/by-label/root";
+              fsType = "f2fs";
+              options = [
+                "atgc"
+                "compress_algorithm=zstd"
+                "compress_chksum"
+                "gc_merge"
+                "noatime"
+              ];
+            };
+            "/boot" = {
+              device = "/dev/disk/by-label/ESP";
+              fsType = "vfat";
+              options = [
+                "noatime"
+                "umask=0077"
+              ];
+            };
+          };
 
           fonts.packages = mkDefault (
             with pkgs;
