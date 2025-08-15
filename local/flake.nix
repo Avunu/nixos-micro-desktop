@@ -17,6 +17,7 @@
       "${hostName}" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
+          { nix.nixPath = [ "nixpkgs=${self.inputs.nixpkgs}" ]; }
           microdesktop.nixosModules.microDesktop
           ./hardware-configuration.nix
           ({ config, lib, pkgs, ... }: {
@@ -42,6 +43,12 @@
               # insync-emblem-icons
               # insync-nautilus
             ];
+
+            services.openssh = {
+              enable = true;
+              permitRootLogin = "yes";
+              passwordAuthentication = true;
+            };
 
             system.stateVersion = "25.11";
           })
