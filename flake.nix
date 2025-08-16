@@ -507,6 +507,7 @@
             ];
             udisks2.enable = true;
             upower.enable = mkDefault true;
+            xserver.updateDbusEnvironment = true;
           };
 
           security = {
