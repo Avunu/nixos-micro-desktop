@@ -304,6 +304,9 @@
                   ...
                 }:
                 {
+                  home.sessionVariables = {
+                    DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/1000/bus";
+                  };
                   programs = {
                     gnome-shell.extensions = [
                       { package = pkgs.gnomeExtensions.appindicator; }
