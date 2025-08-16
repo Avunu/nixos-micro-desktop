@@ -201,6 +201,7 @@
                   sushi
                   uutils-coreutils-noprefix
                   wpa_supplicant
+                  wsdd
                   xdg-user-dirs
                 ]
               ];
