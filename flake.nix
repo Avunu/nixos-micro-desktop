@@ -152,7 +152,6 @@
             pathsToLink = [ "/share" ];
             sessionVariables = {
               CLUTTER_BACKEND = "wayland";
-              DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/1000/bus";
               DESKTOP_SESSION = "gnome";
               EGL_PLATFORM = "wayland";
               ELECTRON_OZONE_PLATFORM_HINT = "wayland";
@@ -304,9 +303,6 @@
                   ...
                 }:
                 {
-                  home.sessionVariables = {
-                    DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/1000/bus";
-                  };
                   programs = {
                     gnome-shell.extensions = [
                       { package = pkgs.gnomeExtensions.appindicator; }
@@ -615,8 +611,8 @@
               "org.gtk.Gtk3theme.adw-gtk3-dark"
               "org.gtk.Gtk3theme.adw-gtk3"
             ];
-            update.auto.enable = mkDefault true;
-            update.auto.onCalendar = mkDefault "daily";
+            # update.auto.enable = mkDefault true;
+            # update.auto.onCalendar = mkDefault "daily";
           };
         };
     };
