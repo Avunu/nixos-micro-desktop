@@ -309,6 +309,23 @@
                     ];
                   };
                   services.polkit-gnome.enable = true;
+
+                  # Add D-Bus environment update
+                  systemd.user.services.dbus-update-env = {
+                    Unit = {
+                      Description = "Update D-Bus activation environment";
+                      After = [ "graphical-session.target" ];
+                      PartOf = [ "graphical-session.target" ];
+                    };
+                    Service = {
+                      Type = "oneshot";
+                      ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all";
+                      RemainAfterExit = true;
+                    };
+                    Install = {
+                      WantedBy = [ "graphical-session.target" ];
+                    };
+                  };
                 }
               )
             ];
@@ -507,7 +524,6 @@
             ];
             udisks2.enable = true;
             upower.enable = mkDefault true;
-            xserver.updateDbusEnvironment = true;
           };
 
           security = {
