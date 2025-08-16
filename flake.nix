@@ -152,6 +152,8 @@
             pathsToLink = [ "/share" ];
             sessionVariables = {
               CLUTTER_BACKEND = "wayland";
+              DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/1000/bus";
+              DESKTOP_SESSION = "gnome";
               EGL_PLATFORM = "wayland";
               ELECTRON_OZONE_PLATFORM_HINT = "wayland";
               GDK_BACKEND = "wayland";
