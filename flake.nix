@@ -177,6 +177,9 @@
               with pkgs;
               lib.flatten [
                 (with gnome; [ nixos-gsettings-overrides ])
+                (with gnomeExtensions; [
+                  appindicator
+                ])
                 [
                   adwaita-icon-theme
                   dnsmasq
