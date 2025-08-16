@@ -495,6 +495,7 @@
               browsed.enable = mkDefault true;
               webInterface = mkDefault false;
             };
+            samba-wsdd.discovery = mkDefault true;
             system-config-printer.enable = mkDefault true;
             udev.packages = with pkgs; [
               gnome-settings-daemon
