@@ -319,7 +319,7 @@
                     };
                     Service = {
                       Type = "oneshot";
-                      ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all";
+                      ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP PATH";
                       RemainAfterExit = true;
                     };
                     Install = {
