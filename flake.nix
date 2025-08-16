@@ -176,7 +176,10 @@
             systemPackages =
               with pkgs;
               lib.flatten [
-                (with gnome; [ nixos-gsettings-overrides ])
+                (with gnome; [
+                  gvfs
+                  nixos-gsettings-overrides
+                ])
                 (with gnomeExtensions; [
                   appindicator
                 ])
@@ -202,7 +205,6 @@
                   gst_all_1.gstreamer
                   gtk3.out
                   nautilus
-                  sushi
                   uutils-coreutils-noprefix
                   wpa_supplicant
                   wsdd
@@ -457,6 +459,7 @@
               gnome-user-share.enable = mkDefault false;
               localsearch.enable = mkDefault true;
               rygel.enable = mkDefault true;
+              sushi.enable = mkDefault true;
               tinysparql.enable = mkDefault true;
             };
             gvfs = {
