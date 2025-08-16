@@ -408,10 +408,10 @@
                 zstd
               ];
             };
-            regreet = {
-              enable = mkDefault true;
-              settings.GTK.application_prefer_dark_theme = mkDefault true;
-            };
+            # regreet = {
+            #   enable = mkDefault true;
+            #   settings.GTK.application_prefer_dark_theme = mkDefault true;
+            # };
           };
 
           services = {
@@ -435,8 +435,9 @@
               ];
             };
             displayManager = {
-              sessionPackages = [ pkgs.gnome-session.sessions ];
               defaultSession = "gnome";
+              gdm.enable = true;
+              sessionPackages = [ pkgs.gnome-session.sessions ];
             };
             fstrim = {
               enable = mkDefault true;
