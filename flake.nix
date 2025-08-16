@@ -429,7 +429,7 @@
             };
             colord.enable = mkDefault true;
             dbus = {
-              implementation = mkDefault "dbus";
+              implementation = mkDefault "broker";
               packages = with pkgs; [
                 dconf
                 gcr
@@ -456,7 +456,10 @@
               rygel.enable = mkDefault true;
               tinysparql.enable = mkDefault true;
             };
-            gvfs.enable = mkDefault true;
+            gvfs = {
+              enable = mkDefault true;
+              package = mkDefault pkgs.gnome.gvfs;
+            };
             kmscon = {
               enable = true;
               hwRender = true;
