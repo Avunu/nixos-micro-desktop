@@ -182,10 +182,11 @@
                   dnsmasq
                   gcr_4
                   glib
-                  gnome-backgrounds
                   gnome-control-center
+                  gnome-extensions-cli
                   gnome-menus
                   gnome-network-displays
+                  gnome-shell
                   gnome-shell-extensions
                   gnome-software
                   gnome-themes-extra
