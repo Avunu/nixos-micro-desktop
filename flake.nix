@@ -211,6 +211,7 @@
                   wpa_supplicant
                   wsdd
                   xdg-user-dirs
+                  xdg-user-dirs-gtk
                 ]
               ];
           };
