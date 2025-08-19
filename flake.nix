@@ -168,10 +168,12 @@
               QT_QPA_PLATFORM = "wayland";
               QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
               SDL_VIDEODRIVER = "wayland";
-              XDG_DATA_DIRS = "$XDG_DATA_DIRS:${pkgs.shared-mime-info}/share";
               XDG_SESSION_TYPE = "wayland";
               # XMODIFIERS = "@im=fcitx";
             };
+            sessionVariables.XDG_DATA_DIRS = [
+              "${pkgs.shared-mime-info}/share"
+            ];
             systemPackages =
               with pkgs;
               lib.flatten [
