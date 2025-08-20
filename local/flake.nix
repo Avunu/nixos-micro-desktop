@@ -6,7 +6,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     microdesktop = {
-      url = "github:Avunu/nixos-micro-desktop";
+      url = "github:Avunu/nixos-micro-desktop/niri";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
