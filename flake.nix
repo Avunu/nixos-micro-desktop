@@ -438,13 +438,14 @@
                 zstd
               ];
             };
-            programs = {
-              niri.enable = mkDefault true;
+            niri = {
+              enable = true;
+              package = pkgs.niri;
             };
-            # regreet = {
-            #   enable = mkDefault true;
-            #   settings.GTK.application_prefer_dark_theme = mkDefault true;
-            # };
+            regreet = {
+              enable = mkDefault true;
+              settings.GTK.application_prefer_dark_theme = mkDefault true;
+            };
           };
 
           services = {
@@ -469,7 +470,6 @@
             };
             displayManager = {
               defaultSession = "niri";
-              gdm.enable = true;
               sessionPackages = [ pkgs.niri ];
             };
             fstrim = {
