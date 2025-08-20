@@ -294,6 +294,7 @@
             useGlobalPkgs = mkDefault true;
             useUserPackages = mkDefault true;
             sharedModules = [
+              niri.nixosModules.niri
               dankmaterialshell.homeModules.dankMaterialShell
               (
                 {
@@ -304,7 +305,10 @@
                 }:
                 {
                   programs = {
-                    niri.enable = mkDefault true;
+                    niri = {
+                      enable = true;
+                      package = pkgs.niri;
+                    };
                     dankMaterialShell = {
                       enable = mkDefault true;
                       enableKeybinds = mkDefault true;
@@ -437,10 +441,6 @@
                 wayland
                 zstd
               ];
-            };
-            niri = {
-              enable = true;
-              package = pkgs.niri;
             };
             regreet = {
               enable = mkDefault true;
