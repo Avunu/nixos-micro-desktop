@@ -196,8 +196,8 @@
                   gammastep
                   gcr_4
                   glib
-                  gnome-control-center
                   gnome-menus
+                  gnome-software
                   gnome-themes-extra
                   gst_all_1.gst-libav
                   gst_all_1.gst-plugins-bad
