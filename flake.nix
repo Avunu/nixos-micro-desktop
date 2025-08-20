@@ -300,6 +300,7 @@
                   config,
                   lib,
                   pkgs,
+                  system,
                   ...
                 }:
                 {
