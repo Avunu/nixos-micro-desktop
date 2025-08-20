@@ -313,7 +313,7 @@
                       enable = true;
                       package = pkgs.quickshell;
                       configs.DankMaterialShell = "${
-                        dankMaterialShell.packages.${system}.dankMaterialShell
+                        dankmaterialshell.packages.${system}.dankMaterialShell
                       }/etc/xdg/quickshell/DankMaterialShell";
                       activeConfig = "DankMaterialShell";
                       systemd = {
