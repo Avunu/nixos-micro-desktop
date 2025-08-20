@@ -309,6 +309,18 @@
                       enableKeybinds = mkDefault true;
                       enableSystemd = mkDefault true;
                     };
+                    quickshell = {
+                      enable = true;
+                      package = pkgs.quickshell;
+                      configs.DankMaterialShell = "${
+                        dankMaterialShell.packages.${system}.dankMaterialShell
+                      }/etc/xdg/quickshell/DankMaterialShell";
+                      activeConfig = "DankMaterialShell";
+                      systemd = {
+                        enable = true;
+                        target = "graphical-session.target";
+                      };
+                    };
                   };
                   services.polkit-gnome.enable = true;
 
@@ -423,8 +435,8 @@
               pinentryPackage = mkDefault pkgs.pinentry-gnome3;
             };
             niri = {
-              enable = true;
-              package = pkgs.niri;
+              enable = mkDefault true;
+              package = mkDefault pkgs.niri;
             };
             nix-ld = {
               enable = mkDefault true;
