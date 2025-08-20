@@ -12,6 +12,15 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    dankmaterialshell = {
+      url = "github:Avunu/DankMaterialShell";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.quickshell.follows = "";
+    };
   };
 
   outputs =
@@ -21,6 +30,8 @@
       nix-flatpak,
       home-manager,
       disko,
+      niri,
+      dankmaterialshell,
       ...
     }:
     let
@@ -40,6 +51,7 @@
             disko.nixosModules.disko
             nix-flatpak.nixosModules.nix-flatpak
             home-manager.nixosModules.home-manager
+            niri.nixosModules.niri
           ];
           boot = {
             initrd = {
@@ -149,7 +161,6 @@
             pathsToLink = [ "/share" ];
             sessionVariables = {
               CLUTTER_BACKEND = "wayland";
-              DESKTOP_SESSION = "gnome";
               EGL_PLATFORM = "wayland";
               ELECTRON_OZONE_PLATFORM_HINT = "wayland";
               GDK_BACKEND = "wayland";
@@ -158,7 +169,6 @@
               GTK_IM_MODULE = "wayland";
               LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
               MOZ_ENABLE_WAYLAND = "1";
-              NIX_GSETTINGS_OVERRIDES_DIR = "${pkgs.gnome.nixos-gsettings-overrides}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
               NIXOS_OZONE_WL = "1";
               NIXPKGS_ALLOW_UNFREE = "1";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
@@ -169,7 +179,6 @@
               QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
               SDL_VIDEODRIVER = "wayland";
               XDG_SESSION_TYPE = "wayland";
-              # XMODIFIERS = "@im=fcitx";
             };
             sessionVariables.XDG_DATA_DIRS = [
               "${pkgs.shared-mime-info}/share"
@@ -177,25 +186,13 @@
             systemPackages =
               with pkgs;
               lib.flatten [
-                (with gnome; [
-                  gvfs
-                  nixos-gsettings-overrides
-                ])
-                (with gnomeExtensions; [
-                  appindicator
-                ])
                 [
                   adwaita-icon-theme
                   dnsmasq
                   gcr_4
                   glib
                   gnome-control-center
-                  gnome-extensions-cli
                   gnome-menus
-                  gnome-network-displays
-                  gnome-shell
-                  gnome-shell-extensions
-                  gnome-software
                   gnome-themes-extra
                   gst_all_1.gst-libav
                   gst_all_1.gst-plugins-bad
@@ -297,6 +294,7 @@
             useGlobalPkgs = mkDefault true;
             useUserPackages = mkDefault true;
             sharedModules = [
+              dankmaterialshell.homeModules.dankMaterialShell
               (
                 {
                   config,
@@ -306,9 +304,12 @@
                 }:
                 {
                   programs = {
-                    gnome-shell.extensions = [
-                      { package = pkgs.gnomeExtensions.appindicator; }
-                    ];
+                    niri.enable = mkDefault true;
+                    dankMaterialShell = {
+                      enable = mkDefault true;
+                      enableKeybinds = mkDefault true;
+                      enableSystemd = mkDefault true;
+                    };
                   };
                   services.polkit-gnome.enable = true;
 
@@ -388,10 +389,12 @@
               substituters = [
                 "https://cache.nixos.org?priority=40"
                 "https://nix-community.cachix.org?priority=41"
+                "https://niri.cachix.org?priority=42"
               ];
               trusted-public-keys = [
                 "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
                 "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+                "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
               ];
               trusted-users = [
                 "root"
@@ -405,7 +408,7 @@
             config = {
               allowUnfree = mkDefault true;
             };
-            # overlays = [ self.inputs.niri.overlays.niri ];
+            overlays = [ niri.overlays.niri ];
           };
 
           programs = {
@@ -435,6 +438,9 @@
                 zstd
               ];
             };
+            programs = {
+              niri.enable = mkDefault true;
+            };
             # regreet = {
             #   enable = mkDefault true;
             #   settings.GTK.application_prefer_dark_theme = mkDefault true;
@@ -462,9 +468,9 @@
               ];
             };
             displayManager = {
-              defaultSession = "gnome";
+              defaultSession = "niri";
               gdm.enable = true;
-              sessionPackages = [ pkgs.gnome-session.sessions ];
+              sessionPackages = [ pkgs.niri ];
             };
             fstrim = {
               enable = mkDefault true;
@@ -565,7 +571,6 @@
               requiredBy = [ "nixos-upgrade.service" ];
             };
           };
-
           xdg = {
             autostart.enable = mkDefault true;
             menus.enable = mkDefault true;
@@ -584,7 +589,6 @@
               xdgOpenUsePortal = mkDefault true;
             };
           };
-
           system.autoUpgrade = {
             allowReboot = mkDefault false;
             enable = mkDefault true;
