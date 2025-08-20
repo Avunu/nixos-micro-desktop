@@ -187,7 +187,9 @@
               lib.flatten [
                 [
                   adwaita-icon-theme
+                  alacritty
                   dnsmasq
+                  fuzzel
                   gcr_4
                   glib
                   gnome-control-center
@@ -307,6 +309,7 @@
                       enable = mkDefault true;
                       enableKeybinds = mkDefault true;
                       enableSystemd = mkDefault true;
+                      enableSpawn = mkDefault true;
                     };
                     quickshell = {
                       enable = true;
