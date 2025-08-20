@@ -190,6 +190,7 @@
                   alacritty
                   dnsmasq
                   fuzzel
+                  gammastep
                   gcr_4
                   glib
                   gnome-control-center
