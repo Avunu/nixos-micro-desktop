@@ -11,7 +11,7 @@ If you really care about declarative systems, you probably want to use Nix direc
 * Latest kernel for optimal hardware support
 * GNOME desktop environment with essential applications
 * Network Manager with VPN support
-* ~~Flatpak integration for easy application management~~ Update: Moved to [nix-software-center](https://github.com/snowfallorg/nix-software-center)
+* Flatpak integration for easy application management
 * Optimized audio setup with PipeWire
 * Printer and scanner support out of the box
 * Automatic system maintenance (TRIM, BTRFS scrubbing)
