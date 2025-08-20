@@ -188,6 +188,9 @@
                 [
                   adwaita-icon-theme
                   alacritty
+                  brightnessctl
+                  cava
+                  cliphist
                   dnsmasq
                   fuzzel
                   gammastep
@@ -204,9 +207,11 @@
                   gst_all_1.gst-vaapi
                   gst_all_1.gstreamer
                   gtk3.out
+                  matugen
                   nautilus
                   shared-mime-info
                   uutils-coreutils-noprefix
+                  wl-clipboard
                   wpa_supplicant
                   wsdd
                   xdg-user-dirs
