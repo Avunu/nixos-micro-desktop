@@ -294,7 +294,6 @@
             useGlobalPkgs = mkDefault true;
             useUserPackages = mkDefault true;
             sharedModules = [
-              niri.nixosModules.niri
               dankmaterialshell.homeModules.dankMaterialShell
               (
                 {
@@ -305,10 +304,6 @@
                 }:
                 {
                   programs = {
-                    niri = {
-                      enable = true;
-                      package = pkgs.niri;
-                    };
                     dankMaterialShell = {
                       enable = mkDefault true;
                       enableKeybinds = mkDefault true;
@@ -426,6 +421,10 @@
               enable = mkDefault true;
               enableSSHSupport = mkDefault true;
               pinentryPackage = mkDefault pkgs.pinentry-gnome3;
+            };
+            niri = {
+              enable = true;
+              package = pkgs.niri;
             };
             nix-ld = {
               enable = mkDefault true;
