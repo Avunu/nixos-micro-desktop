@@ -309,7 +309,6 @@
                       enable = mkDefault true;
                       enableKeybinds = mkDefault true;
                       enableSystemd = mkDefault true;
-                      enableSpawn = mkDefault true;
                     };
                     quickshell = {
                       enable = true;
