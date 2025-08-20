@@ -19,7 +19,6 @@
     dankmaterialshell = {
       url = "github:AvengeMedia/DankMaterialShell";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.quickshell.follows = "";
     };
   };
 
@@ -311,7 +310,7 @@
                     };
                     quickshell = {
                       enable = true;
-                      package = pkgs.quickshell;
+                      package = mkForce pkgs.quickshell;
                       configs.DankMaterialShell = "${
                         dankmaterialshell.packages.x86_64-linux.dankMaterialShell
                       }/etc/xdg/quickshell/DankMaterialShell";
