@@ -314,23 +314,23 @@
                   ...
                 }:
                 {
-                  gtk = {
-                    enable = mkDefault true;
-                    cursorTheme = {
-                      package = mkDefault pkgs.adwaita-icon-theme;
-                      name = mkDefault "Adwaita";
-                    };
-                    iconTheme = {
-                      name = mkDefault "Adwaita";
-                      package = mkDefault pkgs.adwaita-icon-theme;
-                    };
-                  };
-                  home.pointerCursor = {
-                    gtk.enable = mkDefault true;
-                    x11.enable = mkDefault true;
-                    name = mkDefault "Adwaita";
-                    package = mkDefault pkgs.adwaita-icon-theme;
-                  };
+                  # gtk = {
+                  #   enable = mkDefault true;
+                  #   cursorTheme = {
+                  #     package = mkDefault pkgs.adwaita-icon-theme;
+                  #     name = mkDefault "Adwaita";
+                  #   };
+                  #   iconTheme = {
+                  #     name = mkDefault "Adwaita";
+                  #     package = mkDefault pkgs.adwaita-icon-theme;
+                  #   };
+                  # };
+                  # home.pointerCursor = {
+                  #   gtk.enable = mkDefault true;
+                  #   x11.enable = mkDefault true;
+                  #   name = mkDefault "Adwaita";
+                  #   package = mkDefault pkgs.adwaita-icon-theme;
+                  # };
                   programs = {
                     niri.settings = lib.mkMerge [
                       # Add default niri keybindings
@@ -510,11 +510,11 @@
                       };
                     };
                   };
-                  qt = {
-                    enable = mkDefault true;
-                    platformTheme.name = mkDefault "qtct";
-                    style.package = mkDefault pkgs.adwaita-qt6;
-                  };
+                  # qt = {
+                  #   enable = mkDefault true;
+                  #   platformTheme.name = mkDefault "qtct";
+                  #   style.package = mkDefault pkgs.adwaita-qt6;
+                  # };
                   services.polkit-gnome.enable = true;
 
                   # Add D-Bus environment update
