@@ -500,12 +500,12 @@
                       enableSystemd = mkDefault true;
                     };
                     quickshell = {
-                      enable = mkDefault true;
+                      enable = true;
                       package = mkForce pkgs.quickshell;
                       configs.DankMaterialShell = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/DankMaterialShell";
                       activeConfig = "DankMaterialShell";
                       systemd = {
-                        enable = mkDefault true;
+                        enable = true;
                         target = "graphical-session.target";
                       };
                     };
@@ -685,7 +685,7 @@
               glib-networking.enable = mkDefault true;
               gnome-keyring.enable = mkDefault true;
               gnome-online-accounts.enable = mkDefault true;
-              # gnome-settings-daemon.enable = mkDefault true;
+              gnome-settings-daemon.enable = mkDefault true;
               # gnome-user-share.enable = mkDefault false;
               # localsearch.enable = mkDefault true;
               # rygel.enable = mkDefault true;
