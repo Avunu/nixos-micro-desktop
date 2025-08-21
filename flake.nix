@@ -490,11 +490,6 @@
                       enableKeybinds = mkDefault true;
                       enableSystemd = mkDefault true;
                     };
-                    qt = {
-                      enable = mkDefault true;
-                      platformTheme.name = mkDefault "qtct";
-                      style.package = mkDefault pkgs.adwaita-qt6;
-                    };
                     quickshell = {
                       enable = mkDefault true;
                       package = mkForce pkgs.quickshell;
@@ -505,6 +500,11 @@
                         target = "graphical-session.target";
                       };
                     };
+                  };
+                  qt = {
+                    enable = mkDefault true;
+                    platformTheme.name = mkDefault "qtct";
+                    style.package = mkDefault pkgs.adwaita-qt6;
                   };
                   services.polkit-gnome.enable = true;
 
