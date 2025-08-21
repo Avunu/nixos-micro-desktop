@@ -183,7 +183,7 @@
               XDG_DATA_DIRS = [
                 "${pkgs.shared-mime-info}/share"
               ];
-              GIO_EXTRA_MODULES = "${pkgs.gvfs}/lib/gio/modules";
+              # GIO_EXTRA_MODULES = "${pkgs.gvfs}/lib/gio/modules";
             };
             systemPackages =
               with pkgs;
