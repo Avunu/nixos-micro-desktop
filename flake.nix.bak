@@ -168,28 +168,25 @@
               GTK_IM_MODULE = "wayland";
               LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
               MOZ_ENABLE_WAYLAND = "1";
-              MOZ_USE_XINPUT2 = "1";
               NIXOS_OZONE_WL = "1";
               NIXPKGS_ALLOW_UNFREE = "1";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
               PROTOC = "${pkgs.protobuf}/bin/protoc";
               QML_DISABLE_DISK_CACHE = "1";
               QT_IM_MODULE = "wayland";
-              QT_QPA_PLATFORM = "wayland-egl";
+              QT_QPA_PLATFORM = "wayland";
               QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
               SDL_VIDEODRIVER = "wayland";
-              XCURSOR_THEME = "Adwaita";
               XDG_SESSION_TYPE = "wayland";
             };
-            sessionVariables = {
-              XDG_DATA_DIRS = [
-                "${pkgs.shared-mime-info}/share"
-              ];
-            };
+            sessionVariables.XDG_DATA_DIRS = [
+              "${pkgs.shared-mime-info}/share"
+            ];
             systemPackages =
               with pkgs;
               lib.flatten [
                 [
+                  adwaita-icon-theme
                   alacritty
                   brightnessctl
                   cava
@@ -214,7 +211,6 @@
                   nautilus
                   shared-mime-info
                   uutils-coreutils-noprefix
-                  wdisplays
                   wl-clipboard
                   wpa_supplicant
                   wsdd
@@ -314,22 +310,9 @@
                   ...
                 }:
                 {
-                  gtk = {
-                    enable = mkDefault true;
-                    cursorTheme = {
-                      package = mkDefault pkgs.adwaita-icon-theme;
-                      name = mkDefault "Adwaita";
-                    };
-                    iconTheme = {
-                      name = mkDefault "Adwaita";
-                      package = mkDefault pkgs.adwaita-icon-theme;
-                    };
-                  };
-                  home.pointerCursor = {
-                    gtk.enable = mkDefault true;
-                    x11.enable = mkDefault true;
-                    name = mkDefault "Adwaita";
-                    package = mkDefault pkgs.adwaita-icon-theme;
+                  gtk.iconTheme = {
+                    name = "Adwaita";
+                    package = adwaita-icon-theme;
                   };
                   programs = {
                     niri.settings = lib.mkMerge [
@@ -483,15 +466,6 @@
                             "Mod+T".action = spawn "alacritty";
                             "Mod+D".action = spawn "fuzzel";
                           };
-                        # layout = {
-                        #   gaps = 1;
-
-                        #   focus-ring = {
-                        #     width = 1;
-                        #     active.color = "#7fc8ff";
-                        #     inactive.color = "#505050";
-                        #   };
-                        # };
                       }
                     ];
                     dankMaterialShell = {
@@ -500,20 +474,15 @@
                       enableSystemd = mkDefault true;
                     };
                     quickshell = {
-                      enable = mkDefault true;
+                      enable = true;
                       package = mkForce pkgs.quickshell;
                       configs.DankMaterialShell = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/DankMaterialShell";
                       activeConfig = "DankMaterialShell";
                       systemd = {
-                        enable = mkDefault true;
+                        enable = true;
                         target = "graphical-session.target";
                       };
                     };
-                  };
-                  qt = {
-                    enable = mkDefault true;
-                    platformTheme.name = mkDefault "qtct";
-                    style.package = mkDefault pkgs.adwaita-qt6;
                   };
                   services.polkit-gnome.enable = true;
 
@@ -685,12 +654,12 @@
               glib-networking.enable = mkDefault true;
               gnome-keyring.enable = mkDefault true;
               gnome-online-accounts.enable = mkDefault true;
-              # gnome-settings-daemon.enable = mkDefault true;
-              # gnome-user-share.enable = mkDefault false;
-              # localsearch.enable = mkDefault true;
-              # rygel.enable = mkDefault true;
-              # sushi.enable = mkDefault true;
-              # tinysparql.enable = mkDefault true;
+              gnome-settings-daemon.enable = mkDefault true;
+              gnome-user-share.enable = mkDefault false;
+              localsearch.enable = mkDefault true;
+              rygel.enable = mkDefault true;
+              sushi.enable = mkDefault true;
+              tinysparql.enable = mkDefault true;
             };
             gvfs = {
               enable = mkDefault true;
@@ -747,7 +716,8 @@
 
           systemd = {
             packages = with pkgs; [
-              niri
+              gnome-session
+              gnome-shell
             ];
             services.flake-update = {
               unitConfig = {
@@ -780,7 +750,7 @@
             mime.enable = mkDefault true;
             icons.enable = mkDefault true;
             portal = {
-              configPackages = mkDefault [ pkgs.niri ];
+              configPackages = mkDefault [ pkgs.gnome-session ];
               enable = mkDefault true;
               extraPortals = (
                 with pkgs;
