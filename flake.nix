@@ -168,28 +168,28 @@
               GTK_IM_MODULE = "wayland";
               LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
               MOZ_ENABLE_WAYLAND = "1";
+              MOZ_USE_XINPUT2 = "1";
               NIXOS_OZONE_WL = "1";
               NIXPKGS_ALLOW_UNFREE = "1";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
               PROTOC = "${pkgs.protobuf}/bin/protoc";
               QML_DISABLE_DISK_CACHE = "1";
               QT_IM_MODULE = "wayland";
-              QT_QPA_PLATFORM = "wayland";
+              QT_QPA_PLATFORM = "wayland-egl";
               QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
               SDL_VIDEODRIVER = "wayland";
+              XCURSOR_THEME = "Adwaita";
               XDG_SESSION_TYPE = "wayland";
             };
             sessionVariables = {
               XDG_DATA_DIRS = [
                 "${pkgs.shared-mime-info}/share"
               ];
-              # GIO_EXTRA_MODULES = "${pkgs.gvfs}/lib/gio/modules";
             };
             systemPackages =
               with pkgs;
               lib.flatten [
                 [
-                  adwaita-icon-theme
                   alacritty
                   brightnessctl
                   cava
@@ -214,6 +214,7 @@
                   nautilus
                   shared-mime-info
                   uutils-coreutils-noprefix
+                  wdisplays
                   wl-clipboard
                   wpa_supplicant
                   wsdd
@@ -313,9 +314,22 @@
                   ...
                 }:
                 {
-                  gtk.iconTheme = {
-                    name = "Adwaita";
-                    package = adwaita-icon-theme;
+                  gtk = {
+                    enable = mkDefault true;
+                    cursorTheme = {
+                      package = mkDefault pkgs.adwaita-icon-theme;
+                      name = mkDefault "Adwaita";
+                    };
+                    iconTheme = {
+                      name = mkDefault "Adwaita";
+                      package = mkDefault pkgs.adwaita-icon-theme;
+                    };
+                  };
+                  home.pointerCursor = {
+                    gtk.enable = mkDefault true;
+                    x11.enable = mkDefault true;
+                    name = mkDefault "Adwaita";
+                    package = mkDefault pkgs.adwaita-icon-theme;
                   };
                   programs = {
                     niri.settings = lib.mkMerge [
@@ -476,13 +490,18 @@
                       enableKeybinds = mkDefault true;
                       enableSystemd = mkDefault true;
                     };
+                    qt = {
+                      enable = mkDefault true;
+                      platformTheme.name = mkDefault "qtct";
+                      style.package = mkDefault pkgs.adwaita-qt6;
+                    };
                     quickshell = {
-                      enable = true;
+                      enable = mkDefault true;
                       package = mkForce pkgs.quickshell;
                       configs.DankMaterialShell = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/DankMaterialShell";
                       activeConfig = "DankMaterialShell";
                       systemd = {
-                        enable = true;
+                        enable = mkDefault true;
                         target = "graphical-session.target";
                       };
                     };
