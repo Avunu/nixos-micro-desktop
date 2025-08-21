@@ -179,9 +179,12 @@
               SDL_VIDEODRIVER = "wayland";
               XDG_SESSION_TYPE = "wayland";
             };
-            sessionVariables.XDG_DATA_DIRS = [
-              "${pkgs.shared-mime-info}/share"
-            ];
+            sessionVariables = {
+              XDG_DATA_DIRS = [
+                "${pkgs.shared-mime-info}/share"
+              ];
+              GIO_EXTRA_MODULES = "${pkgs.gvfs}/lib/gio/modules";
+            };
             systemPackages =
               with pkgs;
               lib.flatten [
@@ -654,12 +657,12 @@
               glib-networking.enable = mkDefault true;
               gnome-keyring.enable = mkDefault true;
               gnome-online-accounts.enable = mkDefault true;
-              gnome-settings-daemon.enable = mkDefault true;
-              gnome-user-share.enable = mkDefault false;
-              localsearch.enable = mkDefault true;
-              rygel.enable = mkDefault true;
-              sushi.enable = mkDefault true;
-              tinysparql.enable = mkDefault true;
+              # gnome-settings-daemon.enable = mkDefault true;
+              # gnome-user-share.enable = mkDefault false;
+              # localsearch.enable = mkDefault true;
+              # rygel.enable = mkDefault true;
+              # sushi.enable = mkDefault true;
+              # tinysparql.enable = mkDefault true;
             };
             gvfs = {
               enable = mkDefault true;
@@ -716,8 +719,7 @@
 
           systemd = {
             packages = with pkgs; [
-              gnome-session
-              gnome-shell
+              niri
             ];
             services.flake-update = {
               unitConfig = {
@@ -750,7 +752,7 @@
             mime.enable = mkDefault true;
             icons.enable = mkDefault true;
             portal = {
-              configPackages = mkDefault [ pkgs.gnome-session ];
+              configPackages = mkDefault [ pkgs.niri ];
               enable = mkDefault true;
               extraPortals = (
                 with pkgs;
