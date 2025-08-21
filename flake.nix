@@ -310,6 +310,10 @@
                   ...
                 }:
                 {
+                  gtk.iconTheme = {
+                    name = "Adwaita";
+                    package = adwaita-icon-theme;
+                  };
                   programs = {
                     niri.settings = lib.mkMerge [
                       # Add default niri keybindings
