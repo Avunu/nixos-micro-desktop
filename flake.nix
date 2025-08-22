@@ -175,7 +175,7 @@
               with pkgs;
               lib.flatten [
                 [
-                  # Essential system packages only
+                  # Essential system packages
                   dnsmasq
                   gcr_4
                   glib
@@ -195,9 +195,58 @@
                   uutils-coreutils-noprefix
                   wpa_supplicant
                   wsdd
+
+                  # Desktop applications
+                  alacritty
+                  brightnessctl
+                  cava
+                  cliphist
+                  fuzzel
+                  gammastep
+                  matugen
+                  nautilus
+                  wl-clipboard
+                  wlr-randr
+                  xdg-user-dirs
+                  xdg-user-dirs-gtk
                 ]
               ];
           };
+
+          fonts.packages = mkDefault (
+            with pkgs;
+            [
+              # Modern GNOME 48 fonts
+              adwaita-fonts # Adwaita Sans & Adwaita Mono
+
+              # Essential font families
+              dejavu_fonts
+              liberation_ttf
+              noto-fonts
+              noto-fonts-cjk
+              noto-fonts-emoji
+
+              # Developer fonts
+              fira-code
+              fira-code-symbols
+              fira-mono
+              fira-sans
+              meslo-lgs-nf
+              source-code
+              source-code-pro
+              source-sans
+              source-sans-pro
+              source-serif
+              source-serif-pro
+
+              # Popular system fonts
+              open-sans
+              roboto
+              roboto-mono
+              roboto-serif
+              roboto-slab
+            ]
+          );
 
           fileSystems = mkForce {
             "/" = {
@@ -247,8 +296,6 @@
           };
 
           home-manager = {
-            useGlobalPkgs = mkDefault true;
-            useUserPackages = mkDefault true;
             sharedModules = [
               nix-flatpak.homeManagerModules.nix-flatpak
               dankmaterialshell.homeModules.dankMaterialShell
@@ -268,49 +315,6 @@
                       name = mkDefault "Adwaita";
                       package = mkDefault pkgs.adwaita-icon-theme;
                     };
-
-                    packages = mkDefault (
-                      with pkgs;
-                      [
-                        # Fonts
-                        adwaita-fonts # GNOME 48 default: Adwaita Sans & Adwaita Mono
-                        dejavu_fonts
-                        fira-code
-                        fira-code-symbols
-                        fira-mono
-                        fira-sans
-                        liberation_ttf
-                        meslo-lgs-nf
-                        noto-fonts
-                        noto-fonts-cjk
-                        noto-fonts-emoji
-                        open-sans
-                        roboto
-                        roboto-mono
-                        roboto-serif
-                        roboto-slab
-                        source-code
-                        source-code-pro
-                        source-sans
-                        source-sans-pro
-                        source-serif
-                        source-serif-pro
-
-                        # Desktop applications
-                        alacritty
-                        brightnessctl
-                        cava
-                        cliphist
-                        fuzzel
-                        gammastep
-                        matugen
-                        nautilus
-                        wdisplays
-                        wl-clipboard
-                        xdg-user-dirs
-                        xdg-user-dirs-gtk
-                      ]
-                    );
 
                     sessionVariables = {
                       CLUTTER_BACKEND = "wayland";
@@ -596,6 +600,8 @@
                       update.auto.enable = true;
                       update.auto.onCalendar = "weekly";
                     };
+
+                    way-displays.enable = mkDefault true;
                   };
 
                   # XDG configuration moved to home-manager
