@@ -165,12 +165,14 @@
               "/var/lib/flatpak/exports/share"
               "/var/lib/flatpak/exports/share/applications"
               "/var/lib/flatpak/exports/share/icons"
+              "/var/lib/flatpak/exports/share/metainfo"
             ];
             sessionVariables = {
               # Keep only essential system-level variables
               LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
               PROTOC = "${pkgs.protobuf}/bin/protoc";
+              APPSTREAM_DATA_DIRS = "/var/lib/flatpak/exports/share/metainfo:/usr/share/metainfo";
             };
             systemPackages =
               with pkgs;
