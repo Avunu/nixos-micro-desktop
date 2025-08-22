@@ -157,31 +157,16 @@
           };
 
           environment = {
-            pathsToLink = [ "/share" ];
+            pathsToLink = [
+              "/share"
+              "/share/xdg-desktop-portal"
+              "/share/applications"
+            ];
             sessionVariables = {
-              CLUTTER_BACKEND = "wayland";
-              EGL_PLATFORM = "wayland";
-              ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-              GDK_BACKEND = "wayland";
-              GDK_PLATFORM = "wayland";
-              GTK_BACKEND = "wayland";
-              GTK_IM_MODULE = "wayland";
+              # Keep only essential system-level variables
               LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
-              MOZ_ENABLE_WAYLAND = "1";
-              MOZ_USE_XINPUT2 = "1";
-              NIXOS_OZONE_WL = "1";
-              NIXPKGS_ALLOW_UNFREE = "1";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
               PROTOC = "${pkgs.protobuf}/bin/protoc";
-              QML_DISABLE_DISK_CACHE = "1";
-              QT_IM_MODULE = "wayland";
-              QT_QPA_PLATFORM = "wayland";
-              QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
-              SDL_VIDEODRIVER = "wayland";
-              XCURSOR_THEME = "Adwaita";
-              XDG_SESSION_TYPE = "wayland";
-            };
-            sessionVariables = {
               XDG_DATA_DIRS = [
                 "${pkgs.shared-mime-info}/share"
               ];
@@ -190,13 +175,8 @@
               with pkgs;
               lib.flatten [
                 [
-                  alacritty
-                  brightnessctl
-                  cava
-                  cliphist
+                  # Essential system packages only
                   dnsmasq
-                  fuzzel
-                  gammastep
                   gcr_4
                   glib
                   gnome-menus
@@ -210,16 +190,11 @@
                   gst_all_1.gst-vaapi
                   gst_all_1.gstreamer
                   gtk3.out
-                  matugen
-                  nautilus
+                  gtk4.out
                   shared-mime-info
                   uutils-coreutils-noprefix
-                  wdisplays
-                  wl-clipboard
                   wpa_supplicant
                   wsdd
-                  xdg-user-dirs
-                  xdg-user-dirs-gtk
                 ]
               ];
           };
@@ -245,36 +220,6 @@
               ];
             };
           };
-
-          fonts.packages = mkDefault (
-            with pkgs;
-            [
-              caladea
-              cantarell-fonts
-              carlito
-              dejavu_fonts
-              fira-code
-              fira-code-symbols
-              fira-mono
-              fira-sans
-              liberation_ttf
-              meslo-lgs-nf
-              noto-fonts
-              noto-fonts-cjk
-              noto-fonts-emoji
-              open-sans
-              roboto
-              roboto-mono
-              roboto-serif
-              roboto-slab
-              source-code
-              source-code-pro
-              source-sans
-              source-sans-pro
-              source-serif
-              source-serif-pro
-            ]
-          );
 
           hardware = {
             bluetooth.enable = mkDefault true;
@@ -305,6 +250,7 @@
             useGlobalPkgs = mkDefault true;
             useUserPackages = mkDefault true;
             sharedModules = [
+              nix-flatpak.homeManagerModules.nix-flatpak
               dankmaterialshell.homeModules.dankMaterialShell
               (
                 {
@@ -314,6 +260,106 @@
                   ...
                 }:
                 {
+                  # Home configuration
+                  home = {
+                    pointerCursor = {
+                      gtk.enable = mkDefault true;
+                      x11.enable = mkDefault true;
+                      name = mkDefault "Adwaita";
+                      package = mkDefault pkgs.adwaita-icon-theme;
+                    };
+
+                    packages = mkDefault (
+                      with pkgs;
+                      [
+                        # Fonts
+                        adwaita-fonts # GNOME 48 default: Adwaita Sans & Adwaita Mono
+                        dejavu_fonts
+                        fira-code
+                        fira-code-symbols
+                        fira-mono
+                        fira-sans
+                        liberation_ttf
+                        meslo-lgs-nf
+                        noto-fonts
+                        noto-fonts-cjk
+                        noto-fonts-emoji
+                        open-sans
+                        roboto
+                        roboto-mono
+                        roboto-serif
+                        roboto-slab
+                        source-code
+                        source-code-pro
+                        source-sans
+                        source-sans-pro
+                        source-serif
+                        source-serif-pro
+
+                        # Desktop applications
+                        alacritty
+                        brightnessctl
+                        cava
+                        cliphist
+                        fuzzel
+                        gammastep
+                        matugen
+                        nautilus
+                        wdisplays
+                        wl-clipboard
+                        xdg-user-dirs
+                        xdg-user-dirs-gtk
+                      ]
+                    );
+
+                    sessionVariables = {
+                      CLUTTER_BACKEND = "wayland";
+                      EGL_PLATFORM = "wayland";
+                      ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+                      GDK_BACKEND = "wayland";
+                      GDK_PLATFORM = "wayland";
+                      GTK_BACKEND = "wayland";
+                      GTK_IM_MODULE = "wayland";
+                      MOZ_ENABLE_WAYLAND = "1";
+                      MOZ_USE_XINPUT2 = "1";
+                      NIXOS_OZONE_WL = "1";
+                      NIXPKGS_ALLOW_UNFREE = "1";
+                      QML_DISABLE_DISK_CACHE = "1";
+                      QT_IM_MODULE = "wayland";
+                      QT_QPA_PLATFORM = "wayland";
+                      QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+                      SDL_VIDEODRIVER = "wayland";
+                      XCURSOR_THEME = "Adwaita";
+                      XDG_SESSION_TYPE = "wayland";
+                    };
+                  };
+
+                  # Fonts configuration
+                  fonts.fontconfig = {
+                    enable = mkDefault true;
+                    defaultFonts = {
+                      sansSerif = mkDefault [
+                        "Adwaita Sans"
+                        "Inter"
+                        "Liberation Sans"
+                      ];
+                      serif = mkDefault [
+                        "Liberation Serif"
+                        "DejaVu Serif"
+                      ];
+                      monospace = mkDefault [
+                        "Adwaita Mono"
+                        "Iosevka"
+                        "Liberation Mono"
+                      ];
+                      emoji = mkDefault [
+                        "Noto Color Emoji"
+                        "Noto Emoji"
+                      ];
+                    };
+                  };
+
+                  # GTK configuration
                   gtk = {
                     enable = mkDefault true;
                     cursorTheme = {
@@ -325,12 +371,7 @@
                       package = mkDefault pkgs.adwaita-icon-theme;
                     };
                   };
-                  home.pointerCursor = {
-                    gtk.enable = mkDefault true;
-                    x11.enable = mkDefault true;
-                    name = mkDefault "Adwaita";
-                    package = mkDefault pkgs.adwaita-icon-theme;
-                  };
+
                   programs = {
                     niri.settings = lib.mkMerge [
                       # Add default niri keybindings
@@ -512,7 +553,73 @@
                     platformTheme.name = mkDefault "qtct";
                     style.package = mkDefault pkgs.adwaita-qt6;
                   };
-                  services.polkit-gnome.enable = true;
+
+                  services = {
+                    polkit-gnome.enable = true;
+
+                    # Flatpak configuration moved to home-manager
+                    flatpak = {
+                      enable = true;
+                      overrides = {
+                        global = {
+                          Context = {
+                            sockets = [
+                              "wayland"
+                              "!fallback-x11"
+                              "!x11"
+                            ];
+                            filesystems = [
+                              "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
+                            ];
+                          };
+                          Environment = {
+                            XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
+                          };
+                        };
+                        "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
+                        "net.xmind.XMind".Context.sockets = [ "x11" ];
+                        "net.xmind.XMind8".Context.sockets = [ "x11" ];
+                        "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
+                        "com.logseq.Logseq".Context.sockets = [ "x11" ];
+                      };
+                      packages = [
+                        "io.missioncenter.MissionCenter"
+                        "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
+                        "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
+                        "org.gnome.Loupe"
+                        "org.gnome.Papers"
+                        "org.gnome.Platform/x86_64/48"
+                        "org.gnome.Showtime"
+                        "org.gtk.Gtk3theme.adw-gtk3-dark"
+                        "org.gtk.Gtk3theme.adw-gtk3"
+                      ];
+                      update.auto.enable = true;
+                      update.auto.onCalendar = "weekly";
+                    };
+                  };
+
+                  # XDG configuration moved to home-manager
+                  xdg = {
+                    enable = mkDefault true;
+                    mime.enable = mkDefault true;
+                    mimeApps.enable = mkDefault true;
+                    portal = {
+                      enable = mkDefault true;
+                      configPackages = mkDefault [ pkgs.niri ];
+                      extraPortals = mkDefault (
+                        with pkgs;
+                        [
+                          xdg-desktop-portal-gnome
+                          xdg-desktop-portal-gtk
+                        ]
+                      );
+                      xdgOpenUsePortal = mkDefault true;
+                    };
+                    userDirs = {
+                      enable = mkDefault true;
+                      createDirectories = mkDefault true;
+                    };
+                  };
 
                   # Add D-Bus environment update
                   systemd.user.services.dbus-update-env = {
@@ -771,24 +878,6 @@
               requiredBy = [ "nixos-upgrade.service" ];
             };
           };
-          xdg = {
-            autostart.enable = mkDefault true;
-            menus.enable = mkDefault true;
-            mime.enable = mkDefault true;
-            icons.enable = mkDefault true;
-            portal = {
-              configPackages = mkDefault [ pkgs.niri ];
-              enable = mkDefault true;
-              extraPortals = (
-                with pkgs;
-                [
-                  xdg-desktop-portal-gnome
-                  xdg-desktop-portal-gtk
-                ]
-              );
-              xdgOpenUsePortal = mkDefault true;
-            };
-          };
           system.autoUpgrade = {
             allowReboot = mkDefault false;
             enable = mkDefault true;
@@ -798,45 +887,6 @@
           users.defaultUserShell = pkgs.bashInteractive;
 
           zramSwap.enable = mkDefault true;
-
-          services.flatpak = {
-            enable = true;
-            overrides = {
-              global = {
-                Context = {
-                  sockets = [
-                    "wayland"
-                    "!fallback-x11"
-                    "!x11"
-                  ];
-                  filesystems = [
-                    "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
-                  ];
-                };
-                Environment = {
-                  XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
-                };
-              };
-              "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
-              "net.xmind.XMind".Context.sockets = [ "x11" ];
-              "net.xmind.XMind8".Context.sockets = [ "x11" ];
-              "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
-              "com.logseq.Logseq".Context.sockets = [ "x11" ];
-            };
-            packages = mkDefault [
-              "io.missioncenter.MissionCenter"
-              "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
-              "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
-              "org.gnome.Loupe"
-              "org.gnome.Papers"
-              "org.gnome.Platform/x86_64/48"
-              "org.gnome.Showtime"
-              "org.gtk.Gtk3theme.adw-gtk3-dark"
-              "org.gtk.Gtk3theme.adw-gtk3"
-            ];
-            # update.auto.enable = mkDefault true;
-            # update.auto.onCalendar = mkDefault "daily";
-          };
         };
     };
 }
