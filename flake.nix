@@ -631,6 +631,8 @@
                   };
 
                   # Add D-Bus environment update
+                  systemd.user.sessionVariables = config.home.sessionVariables;
+
                   systemd.user.services.dbus-update-env = {
                     Unit = {
                       Description = "Update D-Bus activation environment";
@@ -639,7 +641,7 @@
                     };
                     Service = {
                       Type = "oneshot";
-                      ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP PATH";
+                      ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all";
                       RemainAfterExit = true;
                     };
                     Install = {
