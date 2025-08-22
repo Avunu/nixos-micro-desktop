@@ -175,7 +175,7 @@
               PROTOC = "${pkgs.protobuf}/bin/protoc";
               QML_DISABLE_DISK_CACHE = "1";
               QT_IM_MODULE = "wayland";
-              QT_QPA_PLATFORM = "wayland-egl";
+              QT_QPA_PLATFORM = "wayland";
               QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
               SDL_VIDEODRIVER = "wayland";
               XCURSOR_THEME = "Adwaita";
