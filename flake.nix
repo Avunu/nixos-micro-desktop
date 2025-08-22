@@ -483,15 +483,12 @@
                             "Mod+T".action = spawn "alacritty";
                             "Mod+D".action = spawn "fuzzel";
                           };
-                        # layout = {
-                        #   gaps = 1;
+                        layout = {
+                          gaps = 1;
 
-                        #   focus-ring = {
-                        #     width = 1;
-                        #     active.color = "#7fc8ff";
-                        #     inactive.color = "#505050";
-                        #   };
-                        # };
+                          focus-ring.enable = mkDefault false;
+                          border.enable = mkDefault false;
+                        };
                       }
                     ];
                     dankMaterialShell = {
