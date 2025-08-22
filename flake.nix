@@ -161,15 +161,16 @@
               "/share"
               "/share/xdg-desktop-portal"
               "/share/applications"
+              # Add Flatpak-specific paths
+              "/var/lib/flatpak/exports/share"
+              "/var/lib/flatpak/exports/share/applications"
+              "/var/lib/flatpak/exports/share/icons"
             ];
             sessionVariables = {
               # Keep only essential system-level variables
               LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
               PROTOC = "${pkgs.protobuf}/bin/protoc";
-              XDG_DATA_DIRS = [
-                "${pkgs.shared-mime-info}/share"
-              ];
             };
             systemPackages =
               with pkgs;
@@ -334,6 +335,7 @@
                       QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
                       SDL_VIDEODRIVER = "wayland";
                       XCURSOR_THEME = "Adwaita";
+                      XDG_DATA_DIRS = "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share";
                       XDG_SESSION_TYPE = "wayland";
                     };
                   };
