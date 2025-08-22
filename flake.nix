@@ -786,6 +786,7 @@
               defaultSession = "niri";
               sessionPackages = [ pkgs.niri ];
             };
+            flatpak.enable = mkDefault true;
             fstrim = {
               enable = mkDefault true;
               interval = mkDefault "daily";
