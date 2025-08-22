@@ -340,7 +340,7 @@
 
                   # Fonts configuration
                   fonts.fontconfig = {
-                    enable = mkDefault true;
+                    enable = mkForce true;
                     defaultFonts = {
                       sansSerif = mkDefault [
                         "Adwaita Sans"
