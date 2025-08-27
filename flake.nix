@@ -692,7 +692,7 @@
             gc = {
               automatic = mkDefault true;
               dates = mkDefault "weekly";
-              options = mkDefault "--delete-older-than 1w";
+              options = mkDefault "--delete-older-than 7d";
             };
             settings = {
               auto-optimise-store = true;
