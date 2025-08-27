@@ -602,8 +602,6 @@
                       update.auto.enable = true;
                       update.auto.onCalendar = "weekly";
                     };
-
-                    way-displays.enable = mkDefault true;
                   };
 
                   # XDG configuration moved to home-manager
