@@ -172,11 +172,17 @@
               with pkgs;
               lib.flatten [
                 [
-                  # Essential system packages
+                  alacritty
+                  brightnessctl
+                  cava
+                  cliphist
                   dnsmasq
+                  fuzzel
+                  gammastep
                   gcr_4
                   glib
                   gnome-menus
+                  gnome-network-displays
                   gnome-software
                   gnome-themes-extra
                   gst_all_1.gst-libav
@@ -186,24 +192,18 @@
                   gst_all_1.gst-plugins-ugly
                   gst_all_1.gst-vaapi
                   gst_all_1.gstreamer
-                  gtk3.out
-                  gtk4.out
-                  shared-mime-info
-                  uutils-coreutils-noprefix
-                  wpa_supplicant
-                  wsdd
-
-                  # Desktop applications
-                  alacritty
-                  brightnessctl
-                  cava
-                  cliphist
-                  fuzzel
-                  gammastep
+                  loupe
                   matugen
+                  mission-center
                   nautilus
+                  papers
+                  shared-mime-info
+                  showtime
+                  uutils-coreutils-noprefix
                   wl-clipboard
                   wlr-randr
+                  wpa_supplicant
+                  wsdd
                   xdg-user-dirs
                   xdg-user-dirs-gtk
                 ]
@@ -771,13 +771,13 @@
                 "com.logseq.Logseq".Context.sockets = [ "x11" ];
               };
               packages = [
-                "io.missioncenter.MissionCenter"
+                # "io.missioncenter.MissionCenter"
                 "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
                 "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
-                "org.gnome.Loupe"
-                "org.gnome.Papers"
+                # "org.gnome.Loupe"
+                # "org.gnome.Papers"
                 "org.gnome.Platform/x86_64/48"
-                "org.gnome.Showtime"
+                # "org.gnome.Showtime"
                 "org.gtk.Gtk3theme.adw-gtk3-dark"
                 "org.gtk.Gtk3theme.adw-gtk3"
               ];
