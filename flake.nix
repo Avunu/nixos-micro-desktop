@@ -329,6 +329,7 @@
                       QT_IM_MODULE = "wayland";
                       QT_QPA_PLATFORM = "wayland";
                       QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+                      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
                       SDL_VIDEODRIVER = "wayland";
                       XCURSOR_THEME = "Adwaita";
                       # XDG_DATA_DIRS = "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share";
