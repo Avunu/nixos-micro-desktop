@@ -333,6 +333,7 @@
                       SDL_VIDEODRIVER = "wayland";
                       XCURSOR_THEME = "Adwaita";
                       XDG_CURRENT_DESKTOP = "niri";
+                      XDG_SESSION_DESKTOP = "niri";
                       # XDG_DATA_DIRS = "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share";
                       XDG_SESSION_TYPE = "wayland";
                     };
