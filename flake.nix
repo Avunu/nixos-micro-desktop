@@ -331,7 +331,7 @@
                       QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
                       SDL_VIDEODRIVER = "wayland";
                       XCURSOR_THEME = "Adwaita";
-                      XDG_DATA_DIRS = "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share";
+                      # XDG_DATA_DIRS = "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share";
                       XDG_SESSION_TYPE = "wayland";
                     };
                   };
