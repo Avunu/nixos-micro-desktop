@@ -161,10 +161,6 @@
               "/share"
               "/share/xdg-desktop-portal"
               "/share/applications"
-              # Add Flatpak-specific paths
-              "/var/lib/flatpak/exports/share"
-              "/var/lib/flatpak/exports/share/applications"
-              "/var/lib/flatpak/exports/share/icons"
             ];
             sessionVariables = {
               # Keep only essential system-level variables
@@ -365,18 +361,18 @@
                     };
                   };
 
-                  # GTK configuration
-                  gtk = {
-                    enable = mkDefault true;
-                    cursorTheme = {
-                      package = mkDefault pkgs.adwaita-icon-theme;
-                      name = mkDefault "Adwaita";
-                    };
-                    iconTheme = {
-                      name = mkDefault "Adwaita";
-                      package = mkDefault pkgs.adwaita-icon-theme;
-                    };
-                  };
+                  # # GTK configuration
+                  # gtk = {
+                  #   enable = mkDefault true;
+                  #   cursorTheme = {
+                  #     package = mkDefault pkgs.adwaita-icon-theme;
+                  #     name = mkDefault "Adwaita";
+                  #   };
+                  #   iconTheme = {
+                  #     name = mkDefault "Adwaita";
+                  #     package = mkDefault pkgs.adwaita-icon-theme;
+                  #   };
+                  # };
 
                   programs = {
                     niri.settings = lib.mkMerge [
@@ -554,61 +550,21 @@
                       };
                     };
                   };
-                  qt = {
-                    enable = mkDefault true;
-                    platformTheme.name = mkDefault "qtct";
-                    style.package = mkDefault pkgs.adwaita-qt6;
-                  };
+                  # qt = {
+                  #   enable = mkDefault true;
+                  #   platformTheme.name = mkDefault "qtct";
+                  #   style.package = mkDefault pkgs.adwaita-qt6;
+                  # };
 
                   services = {
                     polkit-gnome.enable = true;
-
-                    # Flatpak configuration moved to home-manager
-                    flatpak = {
-                      enable = true;
-                      overrides = {
-                        global = {
-                          Context = {
-                            sockets = [
-                              "wayland"
-                              "!fallback-x11"
-                              "!x11"
-                            ];
-                            filesystems = [
-                              "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
-                            ];
-                          };
-                          Environment = {
-                            XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
-                          };
-                        };
-                        "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
-                        "net.xmind.XMind".Context.sockets = [ "x11" ];
-                        "net.xmind.XMind8".Context.sockets = [ "x11" ];
-                        "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
-                        "com.logseq.Logseq".Context.sockets = [ "x11" ];
-                      };
-                      packages = [
-                        "io.missioncenter.MissionCenter"
-                        "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
-                        "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
-                        "org.gnome.Loupe"
-                        "org.gnome.Papers"
-                        "org.gnome.Platform/x86_64/48"
-                        "org.gnome.Showtime"
-                        "org.gtk.Gtk3theme.adw-gtk3-dark"
-                        "org.gtk.Gtk3theme.adw-gtk3"
-                      ];
-                      update.auto.enable = true;
-                      update.auto.onCalendar = "weekly";
-                    };
                   };
 
-                  # XDG configuration moved to home-manager
+                  # XDG configuration
                   xdg = {
                     enable = mkDefault true;
                     mime.enable = mkDefault true;
-                    mimeApps.enable = mkDefault true;
+                    # mimeApps.enable = mkDefault true;
                     portal = {
                       enable = mkDefault true;
                       configPackages = mkDefault [ pkgs.niri ];
@@ -621,6 +577,10 @@
                       );
                       xdgOpenUsePortal = mkDefault true;
                     };
+                    systemDirs.data = [
+                      "/var/lib/flatpak/exports/share"
+                      "${config.home.homeDirectory}/.local/share/flatpak/exports/share"
+                    ];
                     userDirs = {
                       enable = mkDefault true;
                       createDirectories = mkDefault true;
@@ -786,7 +746,44 @@
               defaultSession = "niri";
               sessionPackages = [ pkgs.niri ];
             };
-            flatpak.enable = mkDefault true;
+            flatpak = {
+              enable = mkDefault true;
+              overrides = {
+                global = {
+                  Context = {
+                    sockets = [
+                      "wayland"
+                      "!fallback-x11"
+                      "!x11"
+                    ];
+                    filesystems = [
+                      "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
+                    ];
+                  };
+                  Environment = {
+                    XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
+                  };
+                };
+                "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
+                "net.xmind.XMind".Context.sockets = [ "x11" ];
+                "net.xmind.XMind8".Context.sockets = [ "x11" ];
+                "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
+                "com.logseq.Logseq".Context.sockets = [ "x11" ];
+              };
+              packages = [
+                "io.missioncenter.MissionCenter"
+                "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
+                "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
+                "org.gnome.Loupe"
+                "org.gnome.Papers"
+                "org.gnome.Platform/x86_64/48"
+                "org.gnome.Showtime"
+                "org.gtk.Gtk3theme.adw-gtk3-dark"
+                "org.gtk.Gtk3theme.adw-gtk3"
+              ];
+              update.auto.enable = mkDefault true;
+              update.auto.onCalendar = mkDefault "weekly";
+            };
             fstrim = {
               enable = mkDefault true;
               interval = mkDefault "daily";
