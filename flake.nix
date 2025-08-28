@@ -859,29 +859,41 @@
             packages = with pkgs; [
               niri
             ];
-            services.flake-update = {
-              unitConfig = {
-                Description = "Update flake inputs";
-                StartLimitIntervalSec = 300;
-                StartLimitBurst = 5;
+            services = {
+              flake-update = {
+                unitConfig = {
+                  Description = "Update flake inputs";
+                  StartLimitIntervalSec = 300;
+                  StartLimitBurst = 5;
+                };
+                serviceConfig = {
+                  ExecStart = "${pkgs.nix}/bin/nix flake update --commit-lock-file --flake /etc/nixos";
+                  Restart = "on-failure";
+                  RestartSec = "120s";
+                  Type = "oneshot";
+                  User = "root";
+                  Environment = "HOME=/root";
+                };
+                wants = [ "network-online.target" ];
+                after = [ "network-online.target" ];
+                before = [ "nixos-upgrade.service" ];
+                path = with pkgs; [
+                  nix
+                  git
+                  host
+                ];
+                requiredBy = [ "nixos-upgrade.service" ];
               };
-              serviceConfig = {
-                ExecStart = "${pkgs.nix}/bin/nix flake update --commit-lock-file --flake /etc/nixos";
-                Restart = "on-failure";
-                RestartSec = "120s";
-                Type = "oneshot";
-                User = "root";
-                Environment = "HOME=/root";
+              greetd.serviceConfig = {
+                Type = "idle";
+                StandardInput = "tty";
+                StandardOutput = "tty";
+                StandardError = "journal"; # Without this errors will spam on screen
+                # Without these bootlogs will spam on screen
+                TTYReset = true;
+                TTYVHangup = true;
+                TTYVTDisallocate = true;
               };
-              wants = [ "network-online.target" ];
-              after = [ "network-online.target" ];
-              before = [ "nixos-upgrade.service" ];
-              path = with pkgs; [
-                nix
-                git
-                host
-              ];
-              requiredBy = [ "nixos-upgrade.service" ];
             };
           };
           system.autoUpgrade = {
