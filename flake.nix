@@ -306,7 +306,7 @@
           home-manager = {
             sharedModules = [
               nix-flatpak.homeManagerModules.nix-flatpak
-              # dankmaterialshell.homeModules.dankMaterialShell
+              dankmaterialshell.homeModules.dankMaterialShell
               (
                 {
                   config,
@@ -546,21 +546,21 @@
                         };
                       }
                     ];
-                    # dankMaterialShell = {
-                    #   enable = mkDefault true;
-                    #   enableKeybinds = mkDefault true;
-                    #   enableSystemd = mkDefault true;
-                    # };
-                    quickshell = {
-                      enable = true;
-                      package = mkForce pkgs.quickshell;
-                      configs.dms = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/dms";
-                      activeConfig = "dms";
-                      systemd = {
-                        enable = true;
-                        target = "graphical-session.target";
-                      };
+                    dankMaterialShell = {
+                      enable = mkDefault true;
+                      enableKeybinds = mkDefault true;
+                      enableSystemd = mkDefault true;
                     };
+                    # quickshell = {
+                    #   enable = true;
+                    #   package = mkForce pkgs.quickshell;
+                    #   configs.dms = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/dms";
+                    #   activeConfig = "dms";
+                    #   systemd = {
+                    #     enable = true;
+                    #     target = "graphical-session.target";
+                    #   };
+                    # };
                   };
                   # qt = {
                   #   enable = mkDefault true;
