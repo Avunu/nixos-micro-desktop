@@ -554,7 +554,7 @@
                     quickshell = {
                       enable = true;
                       package = mkForce pkgs.quickshell;
-                      configs.dms = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/DankMaterialShell";
+                      configs.dms = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/dms";
                       activeConfig = "dms";
                       systemd = {
                         enable = true;
