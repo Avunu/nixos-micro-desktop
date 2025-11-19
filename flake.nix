@@ -306,7 +306,7 @@
           home-manager = {
             sharedModules = [
               nix-flatpak.homeManagerModules.nix-flatpak
-              inputs.dankMaterialShell.homeModules.dankMaterialShell.default
+              dankMaterialShell.homeModules.dankMaterialShell.default
               (
                 {
                   config,
