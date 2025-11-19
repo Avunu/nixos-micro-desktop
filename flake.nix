@@ -306,7 +306,7 @@
           home-manager = {
             sharedModules = [
               nix-flatpak.homeManagerModules.nix-flatpak
-              dankmaterialshell.homeModules.dankMaterialShell
+              # dankmaterialshell.homeModules.dankMaterialShell
               (
                 {
                   config,
@@ -546,11 +546,11 @@
                         };
                       }
                     ];
-                    dankMaterialShell = {
-                      enable = mkDefault true;
-                      enableKeybinds = mkDefault true;
-                      enableSystemd = mkDefault true;
-                    };
+                    # dankMaterialShell = {
+                    #   enable = mkDefault true;
+                    #   enableKeybinds = mkDefault true;
+                    #   enableSystemd = mkDefault true;
+                    # };
                     quickshell = {
                       enable = true;
                       package = mkForce pkgs.quickshell;
