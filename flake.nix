@@ -548,8 +548,12 @@
                     ];
                     dankMaterialShell = {
                       enable = mkDefault true;
-                      enableKeybinds = mkDefault true;
-                      enableSystemd = mkDefault true;
+                      systemd = mkDefault true;
+                      enableSystemMonitoring = mkDefault true;
+                      enableClipboard = mkDefault true;
+                      enableVPN = mkDefault true;
+                      enableBrightnessControl = mkDefault true;
+                      enableColorPicker = mkDefault true;
                     };
                     # quickshell = {
                     #   enable = true;
