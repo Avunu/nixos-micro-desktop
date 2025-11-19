@@ -548,7 +548,7 @@
                     ];
                     dankMaterialShell = {
                       enable = mkDefault true;
-                      systemd = mkDefault true;
+                      # systemd = mkDefault true;
                       enableSystemMonitoring = mkDefault true;
                       enableClipboard = mkDefault true;
                       enableVPN = mkDefault true;
