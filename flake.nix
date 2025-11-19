@@ -161,12 +161,16 @@
               "/share"
               "/share/xdg-desktop-portal"
               "/share/applications"
+              "/share/icons"
+              "/share/pixmaps"
             ];
             sessionVariables = {
               # Keep only essential system-level variables
               LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
               PROTOC = "${pkgs.protobuf}/bin/protoc";
+              XDG_CURRENT_DESKTOP = "niri";
+              XDG_SESSION_DESKTOP = "niri";
             };
             systemPackages =
               with pkgs;
@@ -185,6 +189,7 @@
                   gnome-network-displays
                   gnome-software
                   gnome-themes-extra
+                  grim
                   gst_all_1.gst-libav
                   gst_all_1.gst-plugins-bad
                   gst_all_1.gst-plugins-base
@@ -197,8 +202,13 @@
                   mission-center
                   nautilus
                   papers
+                  pavucontrol
+                  playerctl
+                  satty
                   shared-mime-info
                   showtime
+                  slurp
+                  swayidle
                   uutils-coreutils-noprefix
                   wl-clipboard
                   wlr-randr
@@ -206,6 +216,7 @@
                   wsdd
                   xdg-user-dirs
                   xdg-user-dirs-gtk
+                  xdg-utils
                 ]
               ];
           };
@@ -306,11 +317,22 @@
                 {
                   # Home configuration
                   home = {
+                    packages = with pkgs; [
+                      adwaita-qt
+                      adwaita-qt6
+                      libdbusmenu
+                      lxqt.libdbusmenu-lxqt
+                    ];
+
                     pointerCursor = {
+                      dotIcons.enable = mkDefault true;
                       gtk.enable = mkDefault true;
+                      hyprcursor.enable = mkDefault true;
+                      sway.enable = mkDefault true;
                       x11.enable = mkDefault true;
                       name = mkDefault "Adwaita";
                       package = mkDefault pkgs.adwaita-icon-theme;
+                      size = mkDefault 24;
                     };
 
                     sessionVariables = {
@@ -334,34 +356,14 @@
                       XCURSOR_THEME = "Adwaita";
                       XDG_CURRENT_DESKTOP = "niri";
                       XDG_SESSION_DESKTOP = "niri";
-                      # XDG_DATA_DIRS = "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share";
                       XDG_SESSION_TYPE = "wayland";
                     };
                   };
 
-                  # Fonts configuration
-                  fonts.fontconfig = {
-                    enable = mkForce true;
-                    defaultFonts = {
-                      sansSerif = mkDefault [
-                        "Adwaita Sans"
-                        "Inter"
-                        "Liberation Sans"
-                      ];
-                      serif = mkDefault [
-                        "Liberation Serif"
-                        "DejaVu Serif"
-                      ];
-                      monospace = mkDefault [
-                        "Adwaita Mono"
-                        "Iosevka"
-                        "Liberation Mono"
-                      ];
-                      emoji = mkDefault [
-                        "Noto Color Emoji"
-                        "Noto Emoji"
-                      ];
-                    };
+                  # dconf settings
+                  dconf = {
+                    enable = mkDefault true;
+                    settings."org/gnome/desktop/interface".color-scheme = mkDefault "prefer-dark";
                   };
 
                   # # GTK configuration
@@ -516,19 +518,26 @@
                             "Mod+Shift+Equal".action = set-window-height "+10%";
 
                             # Screenshots
-                            "Print".action = screenshot;
-                            # "Ctrl+Print".action = screenshot-screen;
-                            # "Alt+Print".action = screenshot-window;
+                            "Print".action =
+                              spawn "sh" "-c"
+                                "grim -g \"$(slurp -c '#ff0000ff')\" -t ppm - | satty --filename - --fullscreen --output-filename ~/Pictures/Screenshots/satty-$(date '+%Y%m%d-%H:%M:%S').png";
 
                             # System
                             "Mod+Shift+E".action = quit;
                             "Mod+Shift+P".action = power-off-monitors;
+                            "Mod+Shift+S".action = spawn "systemctl" "suspend";
                             "Mod+Shift+Slash".action = show-hotkey-overlay;
 
                             # Default applications
                             "Mod+T".action = spawn "alacritty";
                             "Mod+D".action = spawn "fuzzel";
                           };
+
+                        cursor = {
+                          theme = mkDefault "Adwaita";
+                          size = mkDefault 24;
+                        };
+
                         layout = {
                           gaps = 1;
 
@@ -545,8 +554,8 @@
                     quickshell = {
                       enable = true;
                       package = mkForce pkgs.quickshell;
-                      configs.DankMaterialShell = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/DankMaterialShell";
-                      activeConfig = "DankMaterialShell";
+                      configs.dms = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/DankMaterialShell";
+                      activeConfig = "dms";
                       systemd = {
                         enable = true;
                         target = "graphical-session.target";
@@ -560,8 +569,31 @@
                   # };
 
                   services = {
-                    polkit-gnome.enable = true;
+                    # Clipboard manager
+                    cliphist = {
+                      enable = mkDefault true;
+                    };
+
+                    # Automatic suspend after 10 minutes of inactivity
+                    swayidle = {
+                      enable = mkDefault false;
+                      systemdTarget = mkDefault "niri.service";
+                      events = mkDefault [
+                        {
+                          event = "before-sleep";
+                          command = "${pkgs.systemd}/bin/loginctl lock-session";
+                        }
+                      ];
+                      timeouts = mkDefault [
+                        {
+                          timeout = 600;
+                          command = "${pkgs.systemd}/bin/systemctl suspend";
+                        }
+                      ];
+                    };
                   };
+
+                  wayland.systemd.target = mkDefault "niri.service";
 
                   # XDG configuration
                   xdg = {
@@ -590,20 +622,44 @@
                     };
                   };
 
-                  # Add D-Bus environment update
-                  systemd.user.services.dbus-update-env = {
-                    Unit = {
-                      Description = "Update D-Bus activation environment";
-                      After = [ "graphical-session.target" ];
-                      PartOf = [ "graphical-session.target" ];
+                  # Add D-Bus environment update and polkit-gnome
+                  systemd.user.services = {
+                    # Ensure polkit-gnome starts after niri and has proper environment
+                    polkit-gnome-authentication-agent-1 = {
+                      Unit = {
+                        Description = "PolicyKit Authentication Agent";
+                        After = [
+                          "graphical-session.target"
+                          "niri.service"
+                        ];
+                        PartOf = [ "graphical-session.target" ];
+                      };
+                      Service = {
+                        Type = "simple";
+                        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+                        Restart = "on-failure";
+                        RestartSec = 1;
+                        TimeoutStopSec = 10;
+                      };
+                      Install = {
+                        WantedBy = [ "graphical-session.target" ];
+                      };
                     };
-                    Service = {
-                      Type = "oneshot";
-                      ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP PATH";
-                      RemainAfterExit = true;
-                    };
-                    Install = {
-                      WantedBy = [ "graphical-session.target" ];
+
+                    dbus-update-env = {
+                      Unit = {
+                        Description = "Update D-Bus activation environment";
+                        After = [ "graphical-session.target" ];
+                        PartOf = [ "graphical-session.target" ];
+                      };
+                      Service = {
+                        Type = "oneshot";
+                        ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP PATH";
+                        RemainAfterExit = true;
+                      };
+                      Install = {
+                        WantedBy = [ "graphical-session.target" ];
+                      };
                     };
                   };
                 }
@@ -743,6 +799,8 @@
                 dconf
                 gcr
                 gnome-keyring
+                libdbusmenu
+                lxqt.libdbusmenu-lxqt
               ];
             };
             displayManager = {

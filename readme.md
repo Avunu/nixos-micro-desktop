@@ -2,19 +2,20 @@ WARNING: VERY MUCH A WORK IN PROGRESS
 
 # NixOS Micro Desktop
 
-NixOS Micro Desktop is an OpenSUSE Aeon-inspired desktop, but powered by NixOS. The goals is to create a NixOS configuration that's suitable for "family and friends".
+NixOS Micro Desktop is an OpenSUSE Aeon-inspired desktop, but powered by NixOS. The goal is to create a NixOS configuration that's suitable for "family and friends".
 
-If you really care about declarative systems, you probably want to use Nix directly to install and configure your computer. Micro Desktop, in contrast, provides the goodness of a minimal but functional system that can be configured using Gnome settings and software, without tinkering with the underlying system.
+If you really care about declarative systems, you probably want to use Nix directly to install and configure your computer. Micro Desktop, in contrast, provides the goodness of a minimal but functional system that can be configured using GNOME settings and software, without tinkering with the underlying system.
 
 ## Features
 
 * Latest kernel for optimal hardware support
-* GNOME desktop environment with essential applications
+* Niri tiling Wayland compositor with DankMaterialShell
 * Network Manager with VPN support
 * Flatpak integration for easy application management
 * Optimized audio setup with PipeWire
 * Printer and scanner support out of the box
-* Automatic system maintenance (TRIM, BTRFS scrubbing)
+* Automatic system maintenance (TRIM, garbage collection)
+* Enhanced XDG portal integration for better desktop experience
 * And much more!
 
 ## Installation
