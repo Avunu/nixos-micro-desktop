@@ -47,6 +47,7 @@
         with lib;
         {
           imports = [
+            dankmaterialshell.nixosModules.dankMaterialShell
             dankmaterialshell.nixosModules.greeter
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
