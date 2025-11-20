@@ -47,10 +47,11 @@
         with lib;
         {
           imports = [
+            dankmaterialshell.nixosModules.greeter
             disko.nixosModules.disko
-            nix-flatpak.nixosModules.nix-flatpak
             home-manager.nixosModules.home-manager
             niri.nixosModules.niri
+            nix-flatpak.nixosModules.nix-flatpak
           ];
           boot = {
             initrd = {
@@ -253,6 +254,10 @@
               roboto-mono
               roboto-serif
               roboto-slab
+
+              # DMS greeter fonts
+              inter
+              material-symbols
             ]
           );
 
@@ -548,7 +553,6 @@
                     ];
                     dankMaterialShell = {
                       enable = mkDefault true;
-                      # systemd = mkDefault true;
                       enableSystemMonitoring = mkDefault false;
                       enableClipboard = mkDefault true;
                       enableVPN = mkDefault true;
@@ -751,6 +755,13 @@
           programs = {
             appimage.enable = mkDefault true;
             dconf.enable = mkDefault true;
+            dankMaterialShell.greeter = {
+              enable = mkDefault true;
+              compositor.name = mkDefault "niri";
+              compositor.customConfig = mkDefault "";
+              logs.save = mkDefault true;
+              logs.path = mkDefault "/tmp/dms-greeter.log";
+            };
             git = {
               enable = true;
               config.safe.directory = [ "/etc/nixos" ];
@@ -780,7 +791,7 @@
               ];
             };
             regreet = {
-              enable = mkDefault true;
+              enable = mkDefault false;
               settings.GTK.application_prefer_dark_theme = mkDefault true;
             };
           };
@@ -810,6 +821,14 @@
             displayManager = {
               defaultSession = "niri";
               sessionPackages = [ pkgs.niri ];
+            };
+            greetd = {
+              enable = mkDefault true;
+              settings = {
+                default_session = {
+                  user = mkDefault "greeter";
+                };
+              };
             };
             flatpak = {
               enable = mkDefault true;
