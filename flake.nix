@@ -559,6 +559,10 @@
                       enableVPN = mkDefault true;
                       enableBrightnessControl = mkDefault true;
                       enableColorPicker = mkDefault true;
+                      niri = {
+                        enableKeybinds = mkDefault true;
+                        enableSpawn = mkDefault true;
+                      };
                     };
                     # quickshell = {
                     #   enable = true;
@@ -761,10 +765,6 @@
               greeter = {
                 enable = mkDefault true;
                 compositor.name = mkDefault "niri";
-              };
-              niri = {
-                enableKeybinds = mkDefault true;
-                enableSpawn = mkDefault true;
               };
               systemd.enable = mkDefault true;
             };
