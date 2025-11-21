@@ -49,7 +49,6 @@
           imports = [
             dankmaterialshell.nixosModules.dankMaterialShell
             dankmaterialshell.nixosModules.greeter
-            dankmaterialshell.nixosModules.niri
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
             niri.nixosModules.niri
@@ -314,6 +313,7 @@
             sharedModules = [
               nix-flatpak.homeManagerModules.nix-flatpak
               dankmaterialshell.homeModules.dankMaterialShell.default
+              dankmaterialshell.homeModules.dankMaterialShell.niri
               (
                 {
                   config,
