@@ -49,6 +49,7 @@
           imports = [
             dankmaterialshell.nixosModules.dankMaterialShell
             dankmaterialshell.nixosModules.greeter
+            dankmaterialshell.nixosModules.niri
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
             niri.nixosModules.niri
