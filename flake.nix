@@ -756,12 +756,17 @@
           programs = {
             appimage.enable = mkDefault true;
             dconf.enable = mkDefault true;
-            dankMaterialShell.greeter = {
+            dankMaterialShell = {
               enable = mkDefault true;
-              compositor.name = mkDefault "niri";
-              compositor.customConfig = mkDefault "";
-              logs.save = mkDefault true;
-              logs.path = mkDefault "/tmp/dms-greeter.log";
+              greeter = {
+                enable = mkDefault true;
+                compositor.name = mkDefault "niri";
+              };
+              niri = {
+                enableKeybinds = mkDefault true;
+                enableSpawn = mkDefault true;
+              };
+              systemd.enable = mkDefault true;
             };
             git = {
               enable = true;
