@@ -37,7 +37,7 @@
             inputs.dankmaterialshell.nixosModules.dankMaterialShell
             inputs.dankmaterialshell.nixosModules.greeter
             inputs.disko.nixosModules.disko
-            home-manager.nixosModules.home-manager
+            inputs.home-manager.nixosModules.home-manager
             # niri.nixosModules.niri
             inputs.nix-flatpak.nixosModules.nix-flatpak
           ];
