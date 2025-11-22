@@ -12,10 +12,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # niri = {
-    #   url = "github:sodiboo/niri-flake";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     dankmaterialshell = {
       url = "github:AvengeMedia/DankMaterialShell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -38,7 +38,7 @@
             inputs.dankmaterialshell.nixosModules.greeter
             inputs.disko.nixosModules.disko
             inputs.home-manager.nixosModules.home-manager
-            # niri.nixosModules.niri
+            inputs.niri.nixosModules.niri
             inputs.nix-flatpak.nixosModules.nix-flatpak
           ];
           boot = {
