@@ -300,56 +300,56 @@
               inputs.dankmaterialshell.homeModules.dankMaterialShell.niri
               (
                 {
-                  # config,
-                  # lib,
-                  # pkgs,
+                  config,
+                  lib,
+                  pkgs,
                   ...
                 }:
                 {
                   # Home configuration
-                  home = {
-                    # packages = with pkgs; [
-                    #   adwaita-qt
-                    #   adwaita-qt6
-                    #   libdbusmenu
-                    #   lxqt.libdbusmenu-lxqt
-                    # ];
+                  # home = {
+                  # packages = with pkgs; [
+                  #   adwaita-qt
+                  #   adwaita-qt6
+                  #   libdbusmenu
+                  #   lxqt.libdbusmenu-lxqt
+                  # ];
 
-                    # pointerCursor = {
-                    #   dotIcons.enable = mkDefault true;
-                    #   gtk.enable = mkDefault true;
-                    #   hyprcursor.enable = mkDefault true;
-                    #   sway.enable = mkDefault true;
-                    #   x11.enable = mkDefault true;
-                    #   name = mkDefault "Adwaita";
-                    #   package = mkDefault pkgs.adwaita-icon-theme;
-                    #   size = mkDefault 24;
-                    # };
+                  # pointerCursor = {
+                  #   dotIcons.enable = mkDefault true;
+                  #   gtk.enable = mkDefault true;
+                  #   hyprcursor.enable = mkDefault true;
+                  #   sway.enable = mkDefault true;
+                  #   x11.enable = mkDefault true;
+                  #   name = mkDefault "Adwaita";
+                  #   package = mkDefault pkgs.adwaita-icon-theme;
+                  #   size = mkDefault 24;
+                  # };
 
-                    # sessionVariables = {
-                    #   CLUTTER_BACKEND = "wayland";
-                    #   EGL_PLATFORM = "wayland";
-                    #   ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-                    #   GDK_BACKEND = "wayland";
-                    #   GDK_PLATFORM = "wayland";
-                    #   GTK_BACKEND = "wayland";
-                    #   GTK_IM_MODULE = "wayland";
-                    #   MOZ_ENABLE_WAYLAND = "1";
-                    #   MOZ_USE_XINPUT2 = "1";
-                    #   NIXOS_OZONE_WL = "1";
-                    #   NIXPKGS_ALLOW_UNFREE = "1";
-                    #   QML_DISABLE_DISK_CACHE = "1";
-                    #   QT_IM_MODULE = "wayland";
-                    #   QT_QPA_PLATFORM = "wayland";
-                    #   QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
-                    #   QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-                    #   SDL_VIDEODRIVER = "wayland";
-                    #   XCURSOR_THEME = "Adwaita";
-                    #   XDG_CURRENT_DESKTOP = "niri";
-                    #   XDG_SESSION_DESKTOP = "niri";
-                    #   XDG_SESSION_TYPE = "wayland";
-                    # };
-                  };
+                  # sessionVariables = {
+                  #   CLUTTER_BACKEND = "wayland";
+                  #   EGL_PLATFORM = "wayland";
+                  #   ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+                  #   GDK_BACKEND = "wayland";
+                  #   GDK_PLATFORM = "wayland";
+                  #   GTK_BACKEND = "wayland";
+                  #   GTK_IM_MODULE = "wayland";
+                  #   MOZ_ENABLE_WAYLAND = "1";
+                  #   MOZ_USE_XINPUT2 = "1";
+                  #   NIXOS_OZONE_WL = "1";
+                  #   NIXPKGS_ALLOW_UNFREE = "1";
+                  #   QML_DISABLE_DISK_CACHE = "1";
+                  #   QT_IM_MODULE = "wayland";
+                  #   QT_QPA_PLATFORM = "wayland";
+                  #   QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+                  #   QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+                  #   SDL_VIDEODRIVER = "wayland";
+                  #   XCURSOR_THEME = "Adwaita";
+                  #   XDG_CURRENT_DESKTOP = "niri";
+                  #   XDG_SESSION_DESKTOP = "niri";
+                  #   XDG_SESSION_TYPE = "wayland";
+                  # };
+                  # };
 
                   # # dconf settings
                   # dconf = {
