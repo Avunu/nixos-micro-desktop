@@ -298,7 +298,7 @@
               # nix-flatpak.homeManagerModules.nix-flatpak
               inputs.dank-material-shell.homeModules.default
               inputs.dank-material-shell.homeModules.niri
-              # inputs.niri.homeModules.niri
+              inputs.niri.homeModules.niri
               (
                 {
                   config,
