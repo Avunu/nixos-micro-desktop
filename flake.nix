@@ -320,16 +320,16 @@
                   #   lxqt.libdbusmenu-lxqt
                   # ];
 
-                  # pointerCursor = {
-                  #   dotIcons.enable = mkDefault true;
-                  #   gtk.enable = mkDefault true;
-                  #   hyprcursor.enable = mkDefault true;
-                  #   sway.enable = mkDefault true;
-                  #   x11.enable = mkDefault true;
-                  #   name = mkDefault "Adwaita";
-                  #   package = mkDefault pkgs.adwaita-icon-theme;
-                  #   size = mkDefault 24;
-                  # };
+                  pointerCursor = {
+                    dotIcons.enable = mkDefault true;
+                    gtk.enable = mkDefault true;
+                    hyprcursor.enable = mkDefault true;
+                    sway.enable = mkDefault true;
+                    x11.enable = mkDefault true;
+                    name = mkDefault "Adwaita";
+                    package = mkDefault pkgs.adwaita-icon-theme;
+                    size = mkDefault 24;
+                  };
 
                   # sessionVariables = {
                   #   CLUTTER_BACKEND = "wayland";
@@ -383,6 +383,9 @@
                       niri = {
                         enableKeybinds = mkDefault true;
                         enableSpawn = mkDefault true;
+                      };
+                      quickshell = {
+                        package = mkForce pkgs.quickshell;
                       };
                     };
                     niri = {
