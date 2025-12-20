@@ -433,34 +433,43 @@
                   #   };
                   # };
 
-                  # wayland.systemd.target = mkDefault "niri.service";
+                  wayland.systemd.target = mkDefault "niri.service";
 
-                  # # XDG configuration
-                  # xdg = {
-                  #   enable = mkDefault true;
-                  #   mime.enable = mkDefault true;
-                  #   # mimeApps.enable = mkDefault true;
-                  #   portal = {
-                  #     enable = mkDefault true;
-                  #     configPackages = mkDefault [ pkgs.niri ];
-                  #     extraPortals = mkDefault (
-                  #       with pkgs;
-                  #       [
-                  #         xdg-desktop-portal-gnome
-                  #         xdg-desktop-portal-gtk
-                  #       ]
-                  #     );
-                  #     xdgOpenUsePortal = mkDefault true;
-                  #   };
-                  #   systemDirs.data = [
-                  #     "/var/lib/flatpak/exports/share"
-                  #     "${config.home.homeDirectory}/.local/share/flatpak/exports/share"
-                  #   ];
-                  #   userDirs = {
-                  #     enable = mkDefault true;
-                  #     createDirectories = mkDefault true;
-                  #   };
-                  # };
+                  # XDG configuration
+                  xdg = {
+                    enable = mkDefault true;
+                    mime.enable = mkDefault true;
+                    mimeApps.enable = mkDefault true;
+                    portal = {
+                      enable = mkDefault true;
+                      configPackages = mkDefault [ pkgs.niri ];
+                      extraPortals = mkDefault (
+                        with pkgs;
+                        [
+                          xdg-desktop-portal-gnome
+                          xdg-desktop-portal-gtk
+                        ]
+                      );
+                      xdgOpenUsePortal = mkDefault true;
+                      config = {
+                        common = {
+                          default = [ "gnome" "gtk" ];
+                        };
+                        niri = {
+                          default = [ "gnome" "gtk" ];
+                          "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+                        };
+                      };
+                    };
+                    systemDirs.data = [
+                      "/var/lib/flatpak/exports/share"
+                      "${config.home.homeDirectory}/.local/share/flatpak/exports/share"
+                    ];
+                    userDirs = {
+                      enable = mkDefault true;
+                      createDirectories = mkDefault true;
+                    };
+                  };
 
                   # Add D-Bus environment update and polkit-gnome
                   # systemd.user.services = {
