@@ -384,9 +384,8 @@
                         enableKeybinds = mkDefault true;
                         enableSpawn = mkDefault true;
                       };
-                      quickshell = {
-                        package = mkForce pkgs.quickshell;
-                      };
+                      # Also override at home-manager level
+                      quickshell.package = mkForce pkgs.quickshell;
                     };
                     niri = {
                       # Import default config as base, DMS will merge its keybinds on top
@@ -593,8 +592,12 @@
               greeter = {
                 enable = mkDefault true;
                 compositor.name = mkDefault "niri";
+                # Override the quickshell package to use nixpkgs version
+                quickshell.package = mkForce pkgs.quickshell;
               };
               systemd.enable = mkDefault false;
+              # Override the quickshell package to use nixpkgs version
+              quickshell.package = mkForce pkgs.quickshell;
             };
             git = {
               enable = true;
