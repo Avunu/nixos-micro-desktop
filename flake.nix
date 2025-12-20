@@ -307,7 +307,7 @@
                 }:
                 let
                   # Import the default niri config as a settings attrset
-                  defaultNiriConfig = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs; };
+                  defaultNiriConfig = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs config lib; };
                 in
                 {
                   # Home configuration
