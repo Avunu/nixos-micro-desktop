@@ -379,10 +379,7 @@
                     dank-material-shell = {
                       enable = mkDefault true;
                       enableSystemMonitoring = mkDefault false;
-                      enableClipboard = mkDefault true;
                       enableVPN = mkDefault true;
-                      enableBrightnessControl = mkDefault true;
-                      enableColorPicker = mkDefault true;
                       niri = {
                         enableKeybinds = mkDefault true;
                         enableSpawn = mkDefault true;
@@ -810,6 +807,21 @@
           };
 
           users.defaultUserShell = pkgs.bashInteractive;
+
+          xdg = {
+            portal = {
+              enable = mkDefault true;
+              configPackages = mkDefault [ pkgs.niri ];
+              extraPortals = mkDefault (
+                with pkgs;
+                [
+                  xdg-desktop-portal-gnome
+                  xdg-desktop-portal-gtk
+                ]
+              );
+              xdgOpenUsePortal = mkDefault true;
+            };
+          };
 
           zramSwap.enable = mkDefault true;
         };
