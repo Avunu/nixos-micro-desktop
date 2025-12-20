@@ -298,7 +298,7 @@
               # nix-flatpak.homeManagerModules.nix-flatpak
               inputs.dank-material-shell.homeModules.dankMaterialShell.default
               inputs.dank-material-shell.homeModules.dankMaterialShell.niri
-              (inputs.niri.lib.config.default inputs)
+              inputs.niri.homeModules.niri
               (
                 {
                   config,
@@ -383,6 +383,10 @@
                         enableKeybinds = mkDefault true;
                         enableSpawn = mkDefault true;
                       };
+                    };
+                    niri = {
+                      enable = true;
+                      config = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs; };
                     };
                     # quickshell = {
                     #   enable = true;
