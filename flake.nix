@@ -603,7 +603,7 @@
             };
             niri = {
               enable = mkDefault true;
-              package = mkDefault pkgs.niri;
+              package = mkForce pkgs.niri;
             };
             nix-ld = {
               enable = mkDefault true;
