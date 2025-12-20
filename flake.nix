@@ -16,8 +16,8 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    dankmaterialshell = {
-      url = "github:AvengeMedia/DankMaterialShell";
+    dank-material-shell = {
+      url = "github:AvengeMedia/dank-material-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -34,8 +34,8 @@
         with lib;
         {
           imports = [
-            inputs.dankmaterialshell.nixosModules.dankMaterialShell
-            inputs.dankmaterialshell.nixosModules.greeter
+            inputs.dank-material-shell.nixosModules.dank-material-shell
+            inputs.dank-material-shell.nixosModules.greeter
             inputs.disko.nixosModules.disko
             inputs.home-manager.nixosModules.home-manager
             inputs.niri.nixosModules.niri
@@ -296,8 +296,8 @@
           home-manager = {
             sharedModules = [
               # nix-flatpak.homeManagerModules.nix-flatpak
-              inputs.dankmaterialshell.homeModules.dankMaterialShell.default
-              inputs.dankmaterialshell.homeModules.dankMaterialShell.niri
+              inputs.dank-material-shell.homeModules.dank-material-shell.default
+              inputs.dank-material-shell.homeModules.dank-material-shell.niri
               (inputs.niri.lib.config.default inputs)
               (
                 {
@@ -372,7 +372,7 @@
                   # };
 
                   programs = {
-                    dankMaterialShell = {
+                    dank-material-shell = {
                       enable = mkDefault true;
                       enableSystemMonitoring = mkDefault false;
                       enableClipboard = mkDefault true;
@@ -387,7 +387,7 @@
                     # quickshell = {
                     #   enable = true;
                     #   package = mkForce pkgs.quickshell;
-                    #   configs.dms = "${dankmaterialshell.packages.x86_64-linux.dankMaterialShell}/etc/xdg/quickshell/dms";
+                    #   configs.dms = "${dank-material-shell.packages.x86_64-linux.dank-material-shell}/etc/xdg/quickshell/dms";
                     #   activeConfig = "dms";
                     #   systemd = {
                     #     enable = true;
@@ -580,7 +580,7 @@
           programs = {
             appimage.enable = mkDefault true;
             dconf.enable = mkDefault true;
-            dankMaterialShell = {
+            dank-material-shell = {
               enable = mkDefault true;
               greeter = {
                 enable = mkDefault true;
