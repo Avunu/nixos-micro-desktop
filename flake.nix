@@ -386,7 +386,6 @@
                     };
                     niri = {
                       enable = true;
-                      package = mkForce pkgs.niri;
                       config = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs; };
                     };
                     # quickshell = {
