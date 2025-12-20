@@ -385,10 +385,10 @@
                       };
                     };
                     niri = {
-                      enable = true;
+                      # enable = true;
                       # Use mkOptionDefault so it has lower priority than niri-flake's default
                       # This resolves the conflict
-                      package = lib.mkOptionDefault pkgs.niri;
+                      # package = lib.mkOptionDefault pkgs.niri;
                       config = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs; };
                     };
                     # quickshell = {
