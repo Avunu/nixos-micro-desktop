@@ -595,7 +595,7 @@
                 # Override the quickshell package to use nixpkgs version
                 quickshell.package = mkForce pkgs.quickshell;
               };
-              systemd.enable = mkDefault false;
+              systemd.enable = mkDefault true;
               # Override the quickshell package to use nixpkgs version
               quickshell.package = mkForce pkgs.quickshell;
             };
