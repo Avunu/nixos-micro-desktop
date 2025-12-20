@@ -306,8 +306,9 @@
                   ...
                 }:
                 let
-                  # Import the default niri config as a settings attrset
-                  defaultNiriConfig = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs config lib; };
+                  # Evaluate the default niri config module to extract the config value
+                  defaultNiriModule = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs config lib; };
+                  defaultNiriConfig = defaultNiriModule.programs.niri.config;
                 in
                 {
                   # Home configuration
@@ -388,7 +389,6 @@
                       };
                     };
                     niri = {
-                      # Don't set enable - let it be controlled by the NixOS module
                       # Import default config as base, DMS will merge its keybinds on top
                       config = defaultNiriConfig;
                     };
