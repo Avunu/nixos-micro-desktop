@@ -312,7 +312,7 @@
                 in
                 {
                   # Home configuration
-                  # home = {
+                  home = {
                   # packages = with pkgs; [
                   #   adwaita-qt
                   #   adwaita-qt6
@@ -354,7 +354,7 @@
                   #   XDG_SESSION_DESKTOP = "niri";
                   #   XDG_SESSION_TYPE = "wayland";
                   # };
-                  # };
+                  };
 
                   # # dconf settings
                   # dconf = {
