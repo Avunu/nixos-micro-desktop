@@ -298,7 +298,6 @@
               # nix-flatpak.homeManagerModules.nix-flatpak
               inputs.dank-material-shell.homeModules.default
               inputs.dank-material-shell.homeModules.niri
-              inputs.niri.homeModules.niri
               (
                 {
                   config,
@@ -306,6 +305,10 @@
                   pkgs,
                   ...
                 }:
+                let
+                  # Import the default niri config as a settings attrset
+                  defaultNiriConfig = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs; };
+                in
                 {
                   # Home configuration
                   # home = {
@@ -385,11 +388,9 @@
                       };
                     };
                     niri = {
-                      # enable = true;
-                      # Use mkOptionDefault so it has lower priority than niri-flake's default
-                      # This resolves the conflict
-                      # package = lib.mkOptionDefault pkgs.niri;
-                      config = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs; };
+                      # Don't set enable - let it be controlled by the NixOS module
+                      # Import default config as base, DMS will merge its keybinds on top
+                      config = defaultNiriConfig;
                     };
                     # quickshell = {
                     #   enable = true;
