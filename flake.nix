@@ -386,6 +386,7 @@
                     };
                     niri = {
                       enable = true;
+                      package = mkForce pkgs.niri;
                       config = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs; };
                     };
                     # quickshell = {
@@ -601,10 +602,10 @@
               enableSSHSupport = mkDefault true;
               pinentryPackage = mkDefault pkgs.pinentry-gnome3;
             };
-            niri = {
-              enable = mkDefault true;
-              package = mkForce pkgs.niri;
-            };
+            # niri = {
+            #   enable = mkDefault true;
+            #   package = mkForce pkgs.niri;
+            # };
             nix-ld = {
               enable = mkDefault true;
               package = pkgs.nix-ld;
