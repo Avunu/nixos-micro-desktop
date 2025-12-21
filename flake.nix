@@ -414,7 +414,7 @@
                       enableVPN = mkDefault true;
                       niri = {
                         enableKeybinds = mkDefault true;
-                        enableSpawn = mkDefault true;
+                        enableSpawn = mkDefault false;
                       };
                       # Also override at home-manager level
                       quickshell.package = mkForce pkgs.quickshell;
