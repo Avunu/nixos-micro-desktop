@@ -152,6 +152,7 @@
               "/share/applications"
               "/share/icons"
               "/share/pixmaps"
+              "/share/thumbnailers"
             ];
             sessionVariables = {
               # Keep only essential system-level variables
@@ -170,7 +171,8 @@
                   cava
                   cliphist
                   dnsmasq
-                  fuzzel
+                  ffmpeg-headless
+                  ffmpegthumbnailer
                   gammastep
                   gcr_4
                   glib
@@ -191,13 +193,11 @@
                   mission-center
                   nautilus
                   papers
-                  pavucontrol
                   playerctl
                   satty
                   shared-mime-info
                   showtime
                   slurp
-                  swayidle
                   uutils-coreutils-noprefix
                   wl-clipboard
                   wlr-randr
@@ -206,6 +206,9 @@
                   xdg-user-dirs
                   xdg-user-dirs-gtk
                   xdg-utils
+                  libheif
+                  libheif.out
+                  gdk-pixbuf
                 ]
               ];
           };
@@ -291,7 +294,7 @@
                   defaultNiriBinds = with config.lib.niri.actions; {
                     "Mod+Shift+Slash".action = show-hotkey-overlay;
                     "Mod+T".action = spawn "alacritty";
-                    "Mod+D".action = spawn "fuzzel";
+                    # "Mod+D".action = spawn "fuzzel";
                     "Mod+Q".action = close-window;
                     "Mod+Left".action = focus-column-left;
                     "Mod+Down".action = focus-window-down;
