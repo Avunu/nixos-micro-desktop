@@ -162,6 +162,7 @@
               XDG_CURRENT_DESKTOP = "niri";
               XDG_SESSION_DESKTOP = "niri";
               QT_QPA_PLATFORMTHEME = "gtk3";
+              GTK_THEME = "adw-gtk3";
             };
             systemPackages =
               with pkgs;
@@ -395,12 +396,6 @@
                     };
                   };
 
-                  # # dconf settings
-                  # dconf = {
-                  #   enable = mkDefault true;
-                  #   settings."org/gnome/desktop/interface".color-scheme = mkDefault "prefer-dark";
-                  # };
-
                   # # GTK configuration
                   # gtk = {
                   #   enable = mkDefault true;
@@ -485,31 +480,7 @@
                   #     createDirectories = mkDefault true;
                   #   };
                   # };
-
-                  # Add polkit-gnome
-                  systemd.user.services = {
-                    # Ensure polkit-gnome starts after niri and has proper environment
-                    polkit-gnome-authentication-agent-1 = {
-                      Unit = {
-                        Description = "PolicyKit Authentication Agent";
-                        After = [
-                          "graphical-session.target"
-                          "niri.service"
-                        ];
-                        PartOf = [ "graphical-session.target" ];
-                      };
-                      Service = {
-                        Type = "simple";
-                        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-                        Restart = "on-failure";
-                        RestartSec = 1;
-                        TimeoutStopSec = 10;
-                      };
-                      Install = {
-                        WantedBy = [ "graphical-session.target" ];
-                      };
-                    };
-                  };
+                  
                 }
               )
             ];
@@ -603,10 +574,6 @@
               enableSSHSupport = mkDefault true;
               pinentryPackage = mkDefault pkgs.pinentry-gnome3;
             };
-            niri = {
-              enable = mkDefault true;
-              package = mkForce pkgs.niri;
-            };
             nix-ld = {
               enable = mkDefault true;
               package = pkgs.nix-ld;
@@ -653,10 +620,10 @@
                 nautilus
               ];
             };
-            displayManager = {
-              defaultSession = "niri";
-              sessionPackages = [ pkgs.niri ];
-            };
+            # displayManager = {
+            #   defaultSession = "niri";
+            #   sessionPackages = [ pkgs.niri ];
+            # };
             greetd = {
               enable = mkDefault true;
               settings = {
