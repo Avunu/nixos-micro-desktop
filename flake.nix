@@ -289,6 +289,8 @@
                     inherit pkgs config lib;
                   };
                   defaultNiriConfig = defaultNiriModule.programs.niri.config;
+                  # Convert KDL to settings format for merging with DMS settings
+                  defaultNiriSettings = inputs.niri.lib.kdl.to-settings defaultNiriConfig;
                 in
                 {
                   # Home configuration
@@ -337,8 +339,12 @@
                       quickshell.package = mkForce pkgs.quickshell;
                     };
                     niri = {
-                      # Import default config with lower priority so DMS settings override
-                      config = lib.mkBefore defaultNiriConfig;
+                      # Manually merge default config with DMS settings
+                      # DMS settings take precedence for any conflicts
+                      settings = lib.mkMerge [
+                        (lib.mkBefore defaultNiriSettings)
+                        # DMS adds its settings via programs.niri.settings which will merge here
+                      ];
                     };
                     # quickshell = {
                     #   enable = true;
