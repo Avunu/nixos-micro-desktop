@@ -38,7 +38,7 @@
             inputs.dank-material-shell.nixosModules.greeter
             inputs.disko.nixosModules.disko
             inputs.home-manager.nixosModules.home-manager
-            # inputs.niri.nixosModules.niri
+            inputs.niri.nixosModules.niri
             inputs.nix-flatpak.nixosModules.nix-flatpak
           ];
           boot = {
@@ -155,7 +155,7 @@
             ];
             sessionVariables = {
               # Keep only essential system-level variables
-              LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
+              # LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
               PROTOC = "${pkgs.protobuf}/bin/protoc";
               XDG_CURRENT_DESKTOP = "niri";
@@ -249,28 +249,6 @@
             ]
           );
 
-          # fileSystems = mkForce {
-          #   "/" = {
-          #     device = "/dev/disk/by-label/root";
-          #     fsType = "f2fs";
-          #     options = [
-          #       "atgc"
-          #       "compress_algorithm=zstd"
-          #       "compress_chksum"
-          #       "gc_merge"
-          #       "noatime"
-          #     ];
-          #   };
-          #   "/boot" = {
-          #     device = "/dev/disk/by-label/ESP";
-          #     fsType = "vfat";
-          #     options = [
-          #       "noatime"
-          #       "umask=0077"
-          #     ];
-          #   };
-          # };
-
           hardware = {
             bluetooth.enable = mkDefault true;
             enableRedistributableFirmware = mkDefault true;
@@ -307,53 +285,24 @@
                 }:
                 let
                   # Evaluate the default niri config module to extract the config value
-                  defaultNiriModule = import "${inputs.niri}/default-config.kdl.nix" inputs { inherit pkgs config lib; };
+                  defaultNiriModule = import "${inputs.niri}/default-config.kdl.nix" inputs {
+                    inherit pkgs config lib;
+                  };
                   defaultNiriConfig = defaultNiriModule.programs.niri.config;
                 in
                 {
                   # Home configuration
                   home = {
-                  # packages = with pkgs; [
-                  #   adwaita-qt
-                  #   adwaita-qt6
-                  #   libdbusmenu
-                  #   lxqt.libdbusmenu-lxqt
-                  # ];
-
-                  pointerCursor = {
-                    dotIcons.enable = mkDefault true;
-                    gtk.enable = mkDefault true;
-                    hyprcursor.enable = mkDefault true;
-                    sway.enable = mkDefault true;
-                    x11.enable = mkDefault true;
-                    name = mkDefault "Adwaita";
-                    package = mkDefault pkgs.adwaita-icon-theme;
-                    size = mkDefault 24;
-                  };
-
-                  # sessionVariables = {
-                  #   CLUTTER_BACKEND = "wayland";
-                  #   EGL_PLATFORM = "wayland";
-                  #   ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-                  #   GDK_BACKEND = "wayland";
-                  #   GDK_PLATFORM = "wayland";
-                  #   GTK_BACKEND = "wayland";
-                  #   GTK_IM_MODULE = "wayland";
-                  #   MOZ_ENABLE_WAYLAND = "1";
-                  #   MOZ_USE_XINPUT2 = "1";
-                  #   NIXOS_OZONE_WL = "1";
-                  #   NIXPKGS_ALLOW_UNFREE = "1";
-                  #   QML_DISABLE_DISK_CACHE = "1";
-                  #   QT_IM_MODULE = "wayland";
-                  #   QT_QPA_PLATFORM = "wayland";
-                  #   QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
-                  #   QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-                  #   SDL_VIDEODRIVER = "wayland";
-                  #   XCURSOR_THEME = "Adwaita";
-                  #   XDG_CURRENT_DESKTOP = "niri";
-                  #   XDG_SESSION_DESKTOP = "niri";
-                  #   XDG_SESSION_TYPE = "wayland";
-                  # };
+                    pointerCursor = {
+                      dotIcons.enable = mkDefault true;
+                      gtk.enable = mkDefault true;
+                      hyprcursor.enable = mkDefault true;
+                      sway.enable = mkDefault true;
+                      x11.enable = mkDefault true;
+                      name = mkDefault "Adwaita";
+                      package = mkDefault pkgs.adwaita-icon-theme;
+                      size = mkDefault 24;
+                    };
                   };
 
                   # # dconf settings
@@ -516,19 +465,6 @@
             ];
           };
 
-          # i18n.inputMethod = {
-          #   type = mkDefault "fcitx5";
-          #   fcitx5 = {
-          #     addons = with pkgs; [
-          #       fcitx5-configtool
-          #       fcitx5-gtk
-          #       catppuccin-fcitx5
-          #     ];
-          #     settings.addons = mkDefault { pinyin.globalSection.EmojiEnabled = "True"; };
-          #     waylandFrontend = mkDefault true;
-          #   };
-          # };
-
           networking = {
             networkmanager = {
               enable = mkDefault true;
@@ -620,7 +556,6 @@
             niri = {
               enable = mkDefault true;
               package = mkForce pkgs.niri;
-              useNautilus = mkDefault true;
             };
             nix-ld = {
               enable = mkDefault true;
@@ -659,6 +594,7 @@
                 gnome-keyring
                 libdbusmenu
                 lxqt.libdbusmenu-lxqt
+                nautilus
               ];
             };
             displayManager = {
@@ -842,12 +778,21 @@
               xdgOpenUsePortal = mkDefault true;
               config = {
                 common = {
-                  default = [ "gnome" "gtk" ];
+                  default = [
+                    "gnome"
+                    "gtk"
+                  ];
                 };
                 niri = {
-                  default = [ "gnome" "gtk" ];
-                  "org.freedesktop.impl.portal.Settings" = [ "gnome" ];
-                  "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+                  default = [
+                    "gnome"
+                    "gtk"
+                  ];
+                  "org.freedesktop.impl.portal.Access" = "gtk";
+                  "org.freedesktop.impl.portal.FileChooser" = "gtk";
+                  "org.freedesktop.impl.portal.Notification" = "gtk";
+                  "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+                  "org.freedesktop.impl.portal.Settings" = "gnome";
                 };
               };
             };
