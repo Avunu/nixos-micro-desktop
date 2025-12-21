@@ -162,7 +162,7 @@
               XDG_CURRENT_DESKTOP = "niri";
               XDG_SESSION_DESKTOP = "niri";
               QT_QPA_PLATFORMTHEME = "gtk3";
-              GTK_THEME = "adw-gtk3";
+              # GTK_THEME = "adw-gtk3";
             };
             systemPackages =
               with pkgs;
@@ -200,6 +200,7 @@
                   nautilus
                   papers
                   playerctl
+                  polkit
                   satty
                   shared-mime-info
                   showtime
