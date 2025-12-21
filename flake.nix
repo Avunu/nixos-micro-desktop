@@ -367,8 +367,8 @@
                     "Mod+Shift+Minus" = set-window-height "-10%";
                     "Mod+Shift+Equal" = set-window-height "+10%";
                     "Print" = screenshot;
-                    "Ctrl+Print" = screenshot-screen;
-                    "Alt+Print" = screenshot-window;
+                    # "Ctrl+Print" = screenshot-screen;
+                    # "Alt+Print" = screenshot-window;
                     "Mod+Shift+E" = quit;
                     "Mod+Shift+P" = power-off-monitors;
                   };
