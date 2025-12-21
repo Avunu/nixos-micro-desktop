@@ -366,7 +366,7 @@
                     "Mod+Equal" = set-column-width "+10%";
                     "Mod+Shift+Minus" = set-window-height "-10%";
                     "Mod+Shift+Equal" = set-window-height "+10%";
-                    "Print" = screenshot;
+                    # "Print" = screenshot;
                     # "Ctrl+Print" = screenshot-screen;
                     # "Alt+Print" = screenshot-window;
                     "Mod+Shift+E" = quit;
