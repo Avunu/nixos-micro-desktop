@@ -167,6 +167,7 @@
               with pkgs;
               lib.flatten [
                 [
+                  adw-gtk3
                   alacritty
                   brightnessctl
                   cava
