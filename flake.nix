@@ -754,7 +754,7 @@
 
           security = {
             pam.services.login.enableGnomeKeyring = mkDefault true;
-            # polkit.enable = mkDefault true;
+            polkit.enable = mkDefault true;
             rtkit.enable = mkDefault true;
             tpm2.enable = mkDefault true;
           };
