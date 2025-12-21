@@ -388,8 +388,8 @@
                       quickshell.package = mkForce pkgs.quickshell;
                     };
                     niri = {
-                      # Import default config as base, DMS will merge its keybinds on top
-                      config = defaultNiriConfig;
+                      # Import default config with lower priority so DMS settings override
+                      config = lib.mkBefore defaultNiriConfig;
                     };
                     # quickshell = {
                     #   enable = true;
