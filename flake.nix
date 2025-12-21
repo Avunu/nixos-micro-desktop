@@ -625,7 +625,7 @@
 
           qt = {
             enable = mkDefault true;
-            platformTheme = mkDefault "gtk3";
+            platformTheme = mkDefault "gnome";
             style = mkDefault "adwaita";
           };
 
