@@ -249,6 +249,8 @@
             ]
           );
 
+          gtk.iconCache.enable = mkDefault true;
+
           hardware = {
             bluetooth.enable = mkDefault true;
             enableRedistributableFirmware = mkDefault true;
