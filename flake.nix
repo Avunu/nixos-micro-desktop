@@ -161,6 +161,7 @@
               PROTOC = "${pkgs.protobuf}/bin/protoc";
               XDG_CURRENT_DESKTOP = "niri";
               XDG_SESSION_DESKTOP = "niri";
+              QT_QPA_PLATFORMTHEME = "gtk3";
             };
             systemPackages =
               with pkgs;
@@ -620,6 +621,12 @@
                 zstd
               ];
             };
+          };
+
+          qt = {
+            enable = mkDefault true;
+            platformTheme = mkDefault "gnome";
+            style = mkDefault "adwaita";
           };
 
           services = {
