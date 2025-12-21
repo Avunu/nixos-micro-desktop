@@ -507,6 +507,7 @@
                         WantedBy = [ "graphical-session.target" ];
                       };
                     };
+                  };
                 }
               )
             ];
