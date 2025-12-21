@@ -174,8 +174,11 @@
                   cava
                   cliphist
                   dnsmasq
+                  dsearch
+                  dgop
                   ffmpeg-headless
                   ffmpegthumbnailer
+                  fprintd
                   gammastep
                   gcr_4
                   gdk-pixbuf
@@ -621,6 +624,7 @@
                 nautilus
               ];
             };
+            fprintd.enable = mkDefault true;
             # displayManager = {
             #   defaultSession = "niri";
             #   sessionPackages = [ pkgs.niri ];
