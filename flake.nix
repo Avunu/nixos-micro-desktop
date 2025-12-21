@@ -38,7 +38,7 @@
             inputs.dank-material-shell.nixosModules.greeter
             inputs.disko.nixosModules.disko
             inputs.home-manager.nixosModules.home-manager
-            inputs.niri.nixosModules.niri
+            # inputs.niri.nixosModules.niri
             inputs.nix-flatpak.nixosModules.nix-flatpak
           ];
           boot = {
