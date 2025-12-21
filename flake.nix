@@ -161,7 +161,7 @@
               PROTOC = "${pkgs.protobuf}/bin/protoc";
               XDG_CURRENT_DESKTOP = "niri";
               XDG_SESSION_DESKTOP = "niri";
-              QT_QPA_PLATFORMTHEME = "gtk3";
+              # QT_QPA_PLATFORMTHEME = "gtk3";
             };
             systemPackages =
               with pkgs;
@@ -625,7 +625,7 @@
 
           qt = {
             enable = mkDefault true;
-            platformTheme = mkDefault "gnome";
+            platformTheme = mkDefault "gtk3";
             style = mkDefault "adwaita";
           };
 
