@@ -445,36 +445,6 @@
                     #   };
                     # };
                   };
-                  # qt = {
-                  #   enable = mkDefault true;
-                  #   platformTheme.name = mkDefault "qtct";
-                  #   style.package = mkDefault pkgs.adwaita-qt6;
-                  # };
-
-                  # services = {
-                  #   # Clipboard manager
-                  #   cliphist = {
-                  #     enable = mkDefault true;
-                  #   };
-
-                  #   # Automatic suspend after 10 minutes of inactivity
-                  #   swayidle = {
-                  #     enable = mkDefault false;
-                  #     systemdTarget = mkDefault "niri.service";
-                  #     events = mkDefault [
-                  #       {
-                  #         event = "before-sleep";
-                  #         command = "${pkgs.systemd}/bin/loginctl lock-session";
-                  #       }
-                  #     ];
-                  #     timeouts = mkDefault [
-                  #       {
-                  #         timeout = 600;
-                  #         command = "${pkgs.systemd}/bin/systemctl suspend";
-                  #       }
-                  #     ];
-                  #   };
-                  # };
 
                   wayland.systemd.target = mkDefault "niri.service";
 
@@ -514,46 +484,29 @@
                   #   };
                   # };
 
-                  # Add D-Bus environment update and polkit-gnome
-                  # systemd.user.services = {
-                  #   # Ensure polkit-gnome starts after niri and has proper environment
-                  #   polkit-gnome-authentication-agent-1 = {
-                  #     Unit = {
-                  #       Description = "PolicyKit Authentication Agent";
-                  #       After = [
-                  #         "graphical-session.target"
-                  #         "niri.service"
-                  #       ];
-                  #       PartOf = [ "graphical-session.target" ];
-                  #     };
-                  #     Service = {
-                  #       Type = "simple";
-                  #       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-                  #       Restart = "on-failure";
-                  #       RestartSec = 1;
-                  #       TimeoutStopSec = 10;
-                  #     };
-                  #     Install = {
-                  #       WantedBy = [ "graphical-session.target" ];
-                  #     };
-                  #   };
-
-                  #   dbus-update-env = {
-                  #     Unit = {
-                  #       Description = "Update D-Bus activation environment";
-                  #       After = [ "graphical-session.target" ];
-                  #       PartOf = [ "graphical-session.target" ];
-                  #     };
-                  #     Service = {
-                  #       Type = "oneshot";
-                  #       ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP PATH";
-                  #       RemainAfterExit = true;
-                  #     };
-                  #     Install = {
-                  #       WantedBy = [ "graphical-session.target" ];
-                  #     };
-                  #   };
-                  # };
+                  # Add polkit-gnome
+                  systemd.user.services = {
+                    # Ensure polkit-gnome starts after niri and has proper environment
+                    polkit-gnome-authentication-agent-1 = {
+                      Unit = {
+                        Description = "PolicyKit Authentication Agent";
+                        After = [
+                          "graphical-session.target"
+                          "niri.service"
+                        ];
+                        PartOf = [ "graphical-session.target" ];
+                      };
+                      Service = {
+                        Type = "simple";
+                        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+                        Restart = "on-failure";
+                        RestartSec = 1;
+                        TimeoutStopSec = 10;
+                      };
+                      Install = {
+                        WantedBy = [ "graphical-session.target" ];
+                      };
+                    };
                 }
               )
             ];
