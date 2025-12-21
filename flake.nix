@@ -175,6 +175,7 @@
                   ffmpegthumbnailer
                   gammastep
                   gcr_4
+                  gdk-pixbuf
                   glib
                   gnome-menus
                   gnome-network-displays
@@ -188,6 +189,8 @@
                   gst_all_1.gst-plugins-ugly
                   gst_all_1.gst-vaapi
                   gst_all_1.gstreamer
+                  libheif
+                  libheif.out
                   loupe
                   matugen
                   mission-center
@@ -206,9 +209,6 @@
                   xdg-user-dirs
                   xdg-user-dirs-gtk
                   xdg-utils
-                  libheif
-                  libheif.out
-                  gdk-pixbuf
                 ]
               ];
           };
