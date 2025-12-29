@@ -157,12 +157,29 @@
             sessionVariables = {
               # Keep only essential system-level variables
               # LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
+              CLUTTER_BACKEND = "wayland";
+              EGL_PLATFORM = "wayland";
+              ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+              GDK_BACKEND = "wayland";
+              GDK_PLATFORM = "wayland";
+              GTK_BACKEND = "wayland";
+              MOZ_ENABLE_WAYLAND = "1";
+              NIXOS_OZONE_WL = "1";
+              NIXPKGS_ALLOW_UNFREE = "1";
               OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
               PROTOC = "${pkgs.protobuf}/bin/protoc";
+              QML_DISABLE_DISK_CACHE = "1";
+              QSG_RHI_BACKEND = "vulkan";
+              QT_QPA_PLATFORM = "wayland";
+              QT_QPA_PLATFORMTHEME = "gtk3";
+              QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+              SAL_ENABLESKIA = "1";
+              SAL_FORCESKIA = "1";
+              SAL_SKIA = "vulkan";
+              SDL_VIDEODRIVER = "wayland";
               XDG_CURRENT_DESKTOP = "niri";
               XDG_SESSION_DESKTOP = "niri";
-              QT_QPA_PLATFORMTHEME = "gtk3";
-              # GTK_THEME = "adw-gtk3";
+              XDG_SESSION_TYPE = "wayland";
             };
             systemPackages =
               with pkgs;
