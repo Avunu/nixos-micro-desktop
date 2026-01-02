@@ -32,10 +32,12 @@
           modules = [
             { nix.nixPath = [ "nixpkgs=${self.inputs.nixpkgs}" ]; }
             microdesktop.nixosModules.microDesktop
+            # ./hardware-configuration.nix  # Uncomment after installation
             {
               microDesktop = {
                 hostName = hostName;
                 diskDevice = "/dev/sda";
+                bootMode = "uefi"; # Options: "uefi" or "legacy"
                 timeZone = "America/New_York";
                 locale = "en_US.UTF-8";
                 username = username;
