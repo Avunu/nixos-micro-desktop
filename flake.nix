@@ -283,7 +283,7 @@
                 "/share/thumbnailers"
                 "/share/xdg-desktop-portal"
               ];
-              sessionVariables = {
+              variables = {
                 # Keep only essential system-level variables
                 # LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
                 CLUTTER_BACKEND = "wayland";
@@ -370,9 +370,6 @@
                   ]
                   cfg.extraPackages
                 ];
-              variables = {
-                NIXPKGS_ALLOW_UNFREE = "1";
-              };
             };
 
             fonts.packages = mkDefault (
