@@ -266,19 +266,20 @@
 
             environment = {
               etc = {
-                "swcatalog/xml/nixos.xml.gz".source = "${
+                # AppStream metadata for PackageKit/GNOME Software
+                "xdg/app-info/xmls/nixos.xml.gz".source = "${
                   inputs.nixos-appstream-data.packages.${pkgs.system}.default
                 }/share/app-info/xmls/nixos_x86_64_linux.xml.gz";
-                "swcatalog/icons/nixos".source = "${
+                "xdg/app-info/icons/nixos".source = "${
                   inputs.nixos-appstream-data.packages.${pkgs.system}.default
                 }/share/app-info/icons/nixos";
               };
               pathsToLink = [
+                "/share/app-info"
                 "/share/applications"
                 "/share/icons"
                 "/share/metainfo"
                 "/share/pixmaps"
-                "/share/swcatalog"
                 "/share/thumbnailers"
                 "/share/xdg-desktop-portal"
               ];
@@ -306,6 +307,7 @@
                 SAL_SKIA = "vulkan";
                 SDL_VIDEODRIVER = "wayland";
                 XDG_CURRENT_DESKTOP = "niri";
+                XDG_DATA_DIRS = "/etc/xdg:\${XDG_DATA_DIRS}";
                 XDG_SESSION_DESKTOP = "niri";
                 XDG_SESSION_TYPE = "wayland";
               };
