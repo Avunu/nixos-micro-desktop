@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,6 +17,11 @@
     };
     dank-material-shell = {
       url = "github:AvengeMedia/DankMaterialShell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Add AppStream data
+    nixos-appstream-data = {
+      url = "github:snowfallorg/nixos-appstream-data";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -39,7 +43,6 @@
             inputs.disko.nixosModules.disko
             inputs.home-manager.nixosModules.home-manager
             inputs.niri.nixosModules.niri
-            inputs.nix-flatpak.nixosModules.nix-flatpak
           ];
           boot = {
             initrd = {
@@ -146,13 +149,21 @@
           };
 
           environment = {
+            etc = {
+              "swcatalog/xml/nixos.xml.gz".source = "${
+                inputs.nixos-appstream-data.packages.${pkgs.system}.default
+              }/share/app-info/xmls/nixos_x86_64_linux.xml.gz";
+              "swcatalog/icons/nixos".source = "${
+                inputs.nixos-appstream-data.packages.${pkgs.system}.default
+              }/share/app-info/icons/nixos";
+            };
             pathsToLink = [
-              "/share"
-              "/share/xdg-desktop-portal"
               "/share/applications"
               "/share/icons"
               "/share/pixmaps"
+              "/share/swcatalog"
               "/share/thumbnailers"
+              "/share/xdg-desktop-portal"
             ];
             sessionVariables = {
               # Keep only essential system-level variables
@@ -185,6 +196,7 @@
               with pkgs;
               lib.flatten [
                 [
+                  inputs.nixos-appstream-data.packages.${pkgs.system}.default
                   adw-gtk3
                   alacritty
                   brightnessctl
@@ -302,7 +314,6 @@
 
           home-manager = {
             sharedModules = [
-              # nix-flatpak.homeManagerModules.nix-flatpak
               inputs.dank-material-shell.homeModules.default
               inputs.dank-material-shell.homeModules.niri
               (
@@ -501,7 +512,7 @@
                   #     createDirectories = mkDefault true;
                   #   };
                   # };
-                  
+
                 }
               )
             ];
@@ -654,40 +665,6 @@
                 };
               };
             };
-            flatpak = {
-              enable = mkDefault true;
-              overrides = {
-                global = {
-                  Context = {
-                    sockets = [
-                      "wayland"
-                      "!fallback-x11"
-                      "!x11"
-                    ];
-                    filesystems = [
-                      "/run/current-system/sw/share/X11/fonts:ro;/nix/store:ro;/run/dbus/system_bus_socket:rw"
-                    ];
-                  };
-                  Environment = {
-                    XCURSOR_PATH = "/run/host/user-share/icons:/run/host/share/icons";
-                  };
-                };
-                "com.synology.SynologyDrive".Context.sockets = [ "x11" ];
-                "net.xmind.XMind".Context.sockets = [ "x11" ];
-                "net.xmind.XMind8".Context.sockets = [ "x11" ];
-                "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" ];
-                "com.logseq.Logseq".Context.sockets = [ "x11" ];
-              };
-              packages = [
-                "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
-                "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
-                "org.gnome.Platform/x86_64/48"
-                "org.gtk.Gtk3theme.adw-gtk3-dark"
-                "org.gtk.Gtk3theme.adw-gtk3"
-              ];
-              update.auto.enable = mkDefault true;
-              update.auto.onCalendar = mkDefault "weekly";
-            };
             fstrim = {
               enable = mkDefault true;
               interval = mkDefault "daily";
@@ -713,6 +690,7 @@
               hwRender = true;
             };
             libinput.enable = mkDefault true;
+            packagekit.enable = mkDefault true;
             power-profiles-daemon.enable = mkDefault true;
             pipewire = {
               enable = mkDefault true;
