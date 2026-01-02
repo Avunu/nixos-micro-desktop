@@ -419,9 +419,8 @@
                 extraPackages = with pkgs; [
                   intel-media-driver
                   intel-vaapi-driver
-                  libva-utils
-                  libva1
-                  nvidia-vaapi-driver
+                  # libva-utils
+                  # libva1
                   ocl-icd
                   vulkan-loader
                 ];
