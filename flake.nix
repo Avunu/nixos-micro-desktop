@@ -28,14 +28,21 @@
 
   outputs =
     { self, nixpkgs, ... }@inputs:
+    let
+      lib = nixpkgs.lib;
+    in
     {
       nixosModules.microDesktop =
         {
+          config,
           lib,
           pkgs,
           ...
         }:
         with lib;
+        let
+          cfg = config.microDesktop;
+        in
         {
           imports = [
             inputs.dank-material-shell.nixosModules.dank-material-shell
@@ -44,6 +51,64 @@
             inputs.home-manager.nixosModules.home-manager
             inputs.niri.nixosModules.niri
           ];
+
+          options.microDesktop = {
+            hostName = mkOption {
+              type = types.str;
+              description = "Hostname for the system";
+            };
+            diskDevice = mkOption {
+              type = types.str;
+              default = "/dev/sda";
+              description = "Disk device for installation";
+            };
+            timeZone = mkOption {
+              type = types.str;
+              default = "America/New_York";
+              description = "System timezone";
+            };
+            locale = mkOption {
+              type = types.str;
+              default = "en_US.UTF-8";
+              description = "System locale";
+            };
+            username = mkOption {
+              type = types.str;
+              description = "Primary user name";
+            };
+            initialPassword = mkOption {
+              type = types.str;
+              default = "password";
+              description = "Initial password for the user";
+            };
+            stateVersion = mkOption {
+              type = types.str;
+              default = "25.11";
+              description = "NixOS state version";
+            };
+            extraPackages = mkOption {
+              type = types.listOf types.package;
+              default = [ ];
+              description = "Additional packages to install";
+            };
+            enableSsh = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable SSH server";
+            };
+            sshPasswordAuth = mkOption {
+              type = types.bool;
+              default = true;
+              description = "Allow password authentication for SSH";
+            };
+            sshRootLogin = mkOption {
+              type = types.str;
+              default = "yes";
+              description = "Permit root login via SSH";
+            };
+          };
+
+          config = {
           boot = {
             initrd = {
               availableKernelModules = mkDefault [
@@ -94,7 +159,7 @@
           disko.devices = {
             disk = {
               main = {
-                device = mkDefault "/dev/sda";
+                device = cfg.diskDevice;
                 type = "disk";
                 content = {
                   type = "gpt";
@@ -246,6 +311,7 @@
                   xdg-user-dirs-gtk
                   xdg-utils
                 ]
+                cfg.extraPackages
               ];
           };
 
@@ -519,6 +585,7 @@
           };
 
           networking = {
+            hostName = cfg.hostName;
             networkmanager = {
               enable = mkDefault true;
               plugins = mkDefault (
@@ -569,7 +636,7 @@
               ];
               trusted-users = [
                 "root"
-                "nixos"
+                cfg.username
                 "@wheel"
               ];
             };
@@ -781,7 +848,36 @@
             flake = mkDefault "/etc/nixos";
           };
 
-          users.defaultUserShell = pkgs.bashInteractive;
+          system.stateVersion = cfg.stateVersion;
+
+          time.timeZone = cfg.timeZone;
+
+          i18n.defaultLocale = cfg.locale;
+
+          users = {
+            defaultUserShell = pkgs.bashInteractive;
+            users.${cfg.username} = {
+              extraGroups = [ "wheel" "networkmanager" ];
+              initialPassword = cfg.initialPassword;
+              isNormalUser = true;
+            };
+          };
+
+          services.openssh = mkIf cfg.enableSsh {
+            enable = true;
+            settings = {
+              PermitRootLogin = cfg.sshRootLogin;
+              PasswordAuthentication = cfg.sshPasswordAuth;
+            };
+          };
+
+          home-manager.users.${cfg.username} = { config, pkgs, ... }: {
+            home.username = cfg.username;
+            home.homeDirectory = "/home/${cfg.username}";
+            home.stateVersion = cfg.stateVersion;
+            home.packages = cfg.extraPackages;
+            programs.home-manager.enable = true;
+          };
 
           xdg = {
             autostart.enable = mkDefault true;
@@ -823,6 +919,7 @@
           };
 
           zramSwap.enable = mkDefault true;
+          };
         };
     };
 }
