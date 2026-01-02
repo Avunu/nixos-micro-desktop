@@ -271,6 +271,7 @@
               pathsToLink = [
                 "/share/applications"
                 "/share/icons"
+                "/share/metainfo"
                 "/share/pixmaps"
                 "/share/swcatalog"
                 "/share/thumbnailers"
@@ -308,6 +309,7 @@
                 lib.flatten [
                   [
                     inputs.nixos-appstream-data.packages.${pkgs.system}.default
+                    appstream
                     adw-gtk3
                     alacritty
                     brightnessctl
@@ -325,6 +327,7 @@
                     glib
                     gnome-menus
                     gnome-network-displays
+                    gnome-packagekit
                     gnome-software
                     gnome-themes-extra
                     grim
@@ -341,6 +344,7 @@
                     matugen
                     mission-center
                     nautilus
+                    packagekit
                     papers
                     playerctl
                     polkit
