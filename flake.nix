@@ -114,6 +114,11 @@
               default = "yes";
               description = "Permit root login via SSH";
             };
+            enableVpn = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable VPN support (installs NetworkManager VPN plugins)";
+            };
           };
 
           config = {
@@ -561,7 +566,7 @@
                       dank-material-shell = {
                         enable = mkDefault true;
                         enableSystemMonitoring = mkDefault false;
-                        enableVPN = mkDefault true;
+                        enableVPN = cfg.enableVpn;
                         niri = {
                           enableKeybinds = mkDefault true;
                           enableSpawn = mkDefault false;
@@ -638,14 +643,16 @@
               hostName = cfg.hostName;
               networkmanager = {
                 enable = mkDefault true;
-                plugins = mkDefault (
-                  with pkgs;
-                  [
-                    networkmanager-openvpn
-                    networkmanager-vpnc
-                    networkmanager-openconnect
-                    networkmanager-l2tp
-                  ]
+                plugins = mkIf cfg.enableVpn (
+                  mkDefault (
+                    with pkgs;
+                    [
+                      networkmanager-openvpn
+                      networkmanager-vpnc
+                      networkmanager-openconnect
+                      networkmanager-l2tp
+                    ]
+                  )
                 );
                 wifi.backend = mkDefault "wpa_supplicant";
               };
