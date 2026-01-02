@@ -733,10 +733,10 @@
                 enableSSHSupport = mkDefault true;
                 pinentryPackage = mkDefault pkgs.pinentry-gnome3;
               };
-              niri = {
-                enable = true;
-                package = pkgs.niri;
-              };
+              # niri = {
+              #   enable = true;
+              #   package = pkgs.niri;
+              # };
               nix-ld = {
                 enable = mkDefault true;
                 package = pkgs.nix-ld;
@@ -784,10 +784,10 @@
                 ];
               };
               fprintd.enable = mkDefault true;
-              # displayManager = {
-              #   defaultSession = "niri";
-              #   sessionPackages = [ pkgs.niri ];
-              # };
+              displayManager = {
+                defaultSession = "niri";
+                sessionPackages = [ pkgs.niri ];
+              };
               greetd = {
                 enable = mkDefault true;
                 settings = {
