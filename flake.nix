@@ -370,6 +370,11 @@
                   ]
                   cfg.extraPackages
                 ];
+              sessionVariables = {
+                # SSH_ASKPASS_REQUIRE = "prefer";
+                # LD_LIBRARY_PATH = lib.mkForce "/run/opengl-driver/lib";
+                NIXOS_OZONE_WL = "1";
+              };
             };
 
             fonts.packages = mkDefault (
