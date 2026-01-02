@@ -368,9 +368,9 @@
                   ]
                   cfg.extraPackages
                 ];
-                variables = {
-                  NIXPKGS_ALLOW_UNFREE = "1";
-                }
+              variables = {
+                NIXPKGS_ALLOW_UNFREE = "1";
+              };
             };
 
             fonts.packages = mkDefault (
@@ -635,6 +635,8 @@
                     #     createDirectories = mkDefault true;
                     #   };
                     # };
+
+                    services.polkit-gnome.enable = mkDefault true;
 
                   }
                 )
