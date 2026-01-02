@@ -729,6 +729,10 @@
                 enableSSHSupport = mkDefault true;
                 pinentryPackage = mkDefault pkgs.pinentry-gnome3;
               };
+              niri = {
+                enable = true;
+                package = pkgs.niri;
+              };
               nix-ld = {
                 enable = mkDefault true;
                 package = pkgs.nix-ld;
