@@ -52,6 +52,13 @@
             inputs.niri.nixosModules.niri
           ];
 
+          # Override dmsPkgs for NixOS-level modules
+          _module.args.dmsPkgs = {
+            dms-shell = pkgs.dms-shell;
+            dgop = pkgs.dgop;
+            quickshell = pkgs.quickshell;
+          };
+
           options.microDesktop = {
             hostName = mkOption {
               type = types.str;
@@ -440,6 +447,14 @@
             };
 
             home-manager = {
+              extraSpecialArgs = {
+                # Override dmsPkgs to use nixpkgs versions for home-manager modules
+                dmsPkgs = {
+                  dms-shell = pkgs.dms-shell;
+                  dgop = pkgs.dgop;
+                  quickshell = pkgs.quickshell;
+                };
+              };
               sharedModules = [
                 inputs.dank-material-shell.homeModules.default
                 inputs.dank-material-shell.homeModules.niri
