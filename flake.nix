@@ -3,20 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     disko = {
       url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    niri = {
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    dank-material-shell = {
-      url = "github:AvengeMedia/DankMaterialShell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Add AppStream data
@@ -45,13 +33,9 @@
         in
         {
           imports = [
-            inputs.dank-material-shell.nixosModules.dank-material-shell
-            inputs.dank-material-shell.nixosModules.greeter
             inputs.disko.nixosModules.disko
-            inputs.home-manager.nixosModules.home-manager
-            inputs.niri.nixosModules.niri
           ];
-          
+
           options.microDesktop = {
             hostName = mkOption {
               type = types.str;
@@ -266,6 +250,8 @@
 
             environment = {
               etc = {
+                # Deploy niri config system-wide
+                "niri/config.kdl".source = ./config.kdl;
                 # AppStream metadata for PackageKit/GNOME Software
                 "xdg/app-info/xmls/nixos.xml.gz".source = "${
                   inputs.nixos-appstream-data.packages.${pkgs.system}.default
@@ -284,14 +270,13 @@
                 "/share/xdg-desktop-portal"
               ];
               variables = {
-                # Keep only essential system-level variables
-                # LD_LIBRARY_PATH = mkForce "/etc/sane-libs/:/run/opengl-driver/lib";
                 CLUTTER_BACKEND = "wayland";
                 EGL_PLATFORM = "wayland";
                 ELECTRON_OZONE_PLATFORM_HINT = "wayland";
                 GDK_BACKEND = "wayland";
                 GDK_PLATFORM = "wayland";
                 GTK_BACKEND = "wayland";
+                GTK_THEME = "adw-gtk3-dark";
                 MOZ_ENABLE_WAYLAND = "1";
                 NIXOS_OZONE_WL = "1";
                 NIXPKGS_ALLOW_UNFREE = "1";
@@ -302,12 +287,12 @@
                 QT_QPA_PLATFORM = "wayland";
                 QT_QPA_PLATFORMTHEME = "gtk3";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+                QT_STYLE_OVERRIDE = "adwaita-dark";
                 SAL_ENABLESKIA = "1";
                 SAL_FORCESKIA = "1";
                 SAL_SKIA = "vulkan";
                 SDL_VIDEODRIVER = "wayland";
                 XDG_CURRENT_DESKTOP = "niri";
-                # XDG_DATA_DIRS = "/etc/xdg:\${XDG_DATA_DIRS}";
                 XDG_SESSION_DESKTOP = "niri";
                 XDG_SESSION_TYPE = "wayland";
               };
@@ -316,15 +301,19 @@
                 lib.flatten [
                   [
                     inputs.nixos-appstream-data.packages.${pkgs.system}.default
-                    appstream
+                    adwaita-icon-theme
+                    adwaita-qt
+                    adwaita-qt6
                     adw-gtk3
                     alacritty
+                    appstream
                     brightnessctl
                     cava
                     cliphist
-                    dnsmasq
-                    dsearch
                     dgop
+                    dnsmasq
+                    dms-shell
+                    dsearch
                     ffmpeg-headless
                     ffmpegthumbnailer
                     fprintd
@@ -345,12 +334,16 @@
                     gst_all_1.gst-plugins-ugly
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
+                    libdbusmenu
                     libheif
                     libheif.out
                     loupe
+                    lxqt.libdbusmenu-lxqt
                     matugen
                     mission-center
+                    morewaita-icon-theme
                     nautilus
+                    niri
                     packagekit
                     papers
                     playerctl
@@ -359,6 +352,7 @@
                     shared-mime-info
                     showtime
                     slurp
+                    swayidle
                     uutils-coreutils-noprefix
                     wl-clipboard
                     wlr-randr
@@ -367,54 +361,75 @@
                     xdg-user-dirs
                     xdg-user-dirs-gtk
                     xdg-utils
+                    xwayland-satellite
                   ]
                   cfg.extraPackages
                 ];
               sessionVariables = {
-                # SSH_ASKPASS_REQUIRE = "prefer";
-                # LD_LIBRARY_PATH = lib.mkForce "/run/opengl-driver/lib";
                 NIXOS_OZONE_WL = "1";
               };
             };
 
-            fonts.packages = mkDefault (
-              with pkgs;
-              [
-                # Modern GNOME 48 fonts
-                adwaita-fonts # Adwaita Sans & Adwaita Mono
+            fonts = {
+              enableDefaultPackages = mkDefault true;
+              packages = mkDefault (
+                with pkgs;
+                [
+                  # Modern GNOME fonts
+                  adwaita-fonts
 
-                # Essential font families
-                dejavu_fonts
-                liberation_ttf
-                noto-fonts
-                noto-fonts-cjk
-                noto-fonts-emoji
+                  # Essential font families
+                  dejavu_fonts
+                  liberation_ttf
+                  noto-fonts
+                  noto-fonts-cjk-sans
+                  noto-fonts-color-emoji
 
-                # Developer fonts
-                fira-code
-                fira-code-symbols
-                fira-mono
-                fira-sans
-                meslo-lgs-nf
-                source-code
-                source-code-pro
-                source-sans
-                source-sans-pro
-                source-serif
-                source-serif-pro
+                  # Developer fonts
+                  fira-code
+                  fira-code-symbols
+                  fira-mono
+                  fira-sans
+                  meslo-lgs-nf
+                  source-code-pro
+                  source-sans-pro
+                  source-serif-pro
 
-                # Popular system fonts
-                open-sans
-                roboto
-                roboto-mono
-                roboto-serif
-                roboto-slab
+                  # Popular system fonts
+                  open-sans
+                  roboto
+                  roboto-mono
+                  roboto-serif
+                  roboto-slab
 
-                # DMS greeter fonts
-                inter
-                material-symbols
-              ]
-            );
+                  # DMS greeter fonts
+                  inter
+                  material-symbols
+                ]
+              );
+              fontconfig = {
+                enable = true;
+                defaultFonts = {
+                  sansSerif = [
+                    "Adwaita Sans"
+                    "Inter"
+                    "Liberation Sans"
+                  ];
+                  serif = [
+                    "Liberation Serif"
+                    "DejaVu Serif"
+                  ];
+                  monospace = [
+                    "Adwaita Mono"
+                    "Liberation Mono"
+                  ];
+                  emoji = [
+                    "Noto Color Emoji"
+                    "Noto Emoji"
+                  ];
+                };
+              };
+            };
 
             gtk.iconCache.enable = mkDefault true;
 
@@ -426,8 +441,6 @@
                 extraPackages = with pkgs; [
                   intel-media-driver
                   intel-vaapi-driver
-                  # libva-utils
-                  # libva1
                   ocl-icd
                   vulkan-loader
                 ];
@@ -437,222 +450,6 @@
                 extraBackends = mkDefault (with pkgs; [ sane-airscan ]);
               };
               sensor.iio.enable = mkDefault true;
-            };
-
-            home-manager = {
-              extraSpecialArgs = {
-                # Override dmsPkgs to use nixpkgs versions for home-manager modules
-                dmsPkgs = {
-                  dms-shell = pkgs.dms-shell;
-                  dgop = pkgs.dgop;
-                  quickshell = pkgs.quickshell;
-                };
-              };
-              sharedModules = [
-                inputs.dank-material-shell.homeModules.default
-                inputs.dank-material-shell.homeModules.niri
-                (
-                  {
-                    config,
-                    lib,
-                    pkgs,
-                    ...
-                  }:
-                  let
-                    # Manually define default niri keybindings in settings format
-                    # This allows proper merging with DMS keybindings
-                    defaultNiriBinds = with config.lib.niri.actions; {
-                      "Mod+Shift+Slash".action = show-hotkey-overlay;
-                      "Mod+T".action = spawn "alacritty";
-                      # "Mod+D".action = spawn "fuzzel";
-                      "Mod+Q".action = close-window;
-                      "Mod+Left".action = focus-column-left;
-                      "Mod+Down".action = focus-window-down;
-                      "Mod+Up".action = focus-window-up;
-                      "Mod+Right".action = focus-column-right;
-                      "Mod+H".action = focus-column-left;
-                      "Mod+J".action = focus-window-down;
-                      "Mod+K".action = focus-window-up;
-                      "Mod+L".action = focus-column-right;
-                      "Mod+Ctrl+Left".action = move-column-left;
-                      "Mod+Ctrl+Down".action = move-window-down;
-                      "Mod+Ctrl+Up".action = move-window-up;
-                      "Mod+Ctrl+Right".action = move-column-right;
-                      "Mod+Ctrl+H".action = move-column-left;
-                      "Mod+Ctrl+J".action = move-window-down;
-                      "Mod+Ctrl+K".action = move-window-up;
-                      "Mod+Ctrl+L".action = move-column-right;
-                      "Mod+Home".action = focus-column-first;
-                      "Mod+End".action = focus-column-last;
-                      "Mod+Ctrl+Home".action = move-column-to-first;
-                      "Mod+Ctrl+End".action = move-column-to-last;
-                      "Mod+Shift+Left".action = focus-monitor-left;
-                      "Mod+Shift+Down".action = focus-monitor-down;
-                      "Mod+Shift+Up".action = focus-monitor-up;
-                      "Mod+Shift+Right".action = focus-monitor-right;
-                      "Mod+Shift+H".action = focus-monitor-left;
-                      "Mod+Shift+J".action = focus-monitor-down;
-                      "Mod+Shift+K".action = focus-monitor-up;
-                      "Mod+Shift+L".action = focus-monitor-right;
-                      "Mod+Shift+Ctrl+Left".action = move-column-to-monitor-left;
-                      "Mod+Shift+Ctrl+Down".action = move-column-to-monitor-down;
-                      "Mod+Shift+Ctrl+Up".action = move-column-to-monitor-up;
-                      "Mod+Shift+Ctrl+Right".action = move-column-to-monitor-right;
-                      "Mod+Shift+Ctrl+H".action = move-column-to-monitor-left;
-                      "Mod+Shift+Ctrl+J".action = move-column-to-monitor-down;
-                      "Mod+Shift+Ctrl+K".action = move-column-to-monitor-up;
-                      "Mod+Shift+Ctrl+L".action = move-column-to-monitor-right;
-                      "Mod+Page_Down".action = focus-workspace-down;
-                      "Mod+Page_Up".action = focus-workspace-up;
-                      "Mod+U".action = focus-workspace-down;
-                      "Mod+I".action = focus-workspace-up;
-                      "Mod+Ctrl+Page_Down".action = move-column-to-workspace-down;
-                      "Mod+Ctrl+Page_Up".action = move-column-to-workspace-up;
-                      "Mod+Ctrl+U".action = move-column-to-workspace-down;
-                      "Mod+Ctrl+I".action = move-column-to-workspace-up;
-                      "Mod+Shift+Page_Down".action = move-workspace-down;
-                      "Mod+Shift+Page_Up".action = move-workspace-up;
-                      "Mod+Shift+U".action = move-workspace-down;
-                      "Mod+Shift+I".action = move-workspace-up;
-                      # "Mod+1".action = focus-workspace 1;
-                      # "Mod+2".action = focus-workspace 2;
-                      # "Mod+3".action = focus-workspace 3;
-                      # "Mod+4".action = focus-workspace 4;
-                      # "Mod+5".action = focus-workspace 5;
-                      # "Mod+6".action = focus-workspace 6;
-                      # "Mod+7".action = focus-workspace 7;
-                      # "Mod+8".action = focus-workspace 8;
-                      # "Mod+9".action = focus-workspace 9;
-                      # "Mod+Ctrl+1".action = move-column-to-workspace 1;
-                      # "Mod+Ctrl+2".action = move-column-to-workspace 2;
-                      # "Mod+Ctrl+3".action = move-column-to-workspace 3;
-                      # "Mod+Ctrl+4".action = move-column-to-workspace 4;
-                      # "Mod+Ctrl+5".action = move-column-to-workspace 5;
-                      # "Mod+Ctrl+6".action = move-column-to-workspace 6;
-                      # "Mod+Ctrl+7".action = move-column-to-workspace 7;
-                      # "Mod+Ctrl+8".action = move-column-to-workspace 8;
-                      # "Mod+Ctrl+9".action = move-column-to-workspace 9;
-                      "Mod+Period".action = expel-window-from-column;
-                      "Mod+R".action = switch-preset-column-width;
-                      "Mod+F".action = maximize-column;
-                      "Mod+Shift+F".action = fullscreen-window;
-                      "Mod+C".action = center-column;
-                      "Mod+Minus".action = set-column-width "-10%";
-                      "Mod+Equal".action = set-column-width "+10%";
-                      "Mod+Shift+Minus".action = set-window-height "-10%";
-                      "Mod+Shift+Equal".action = set-window-height "+10%";
-                      # "Print".action = screenshot;
-                      # "Ctrl+Print".action = screenshot-screen;
-                      # "Alt+Print".action = screenshot-window;
-                      "Mod+Shift+E".action = quit;
-                      "Mod+Shift+P".action = power-off-monitors;
-                    };
-                  in
-                  {
-                    # Home configuration
-                    home = {
-                      pointerCursor = {
-                        dotIcons.enable = mkDefault true;
-                        gtk.enable = mkDefault true;
-                        hyprcursor.enable = mkDefault true;
-                        sway.enable = mkDefault true;
-                        x11.enable = mkDefault true;
-                        name = mkDefault "Adwaita";
-                        package = mkDefault pkgs.adwaita-icon-theme;
-                        size = mkDefault 24;
-                      };
-                    };
-
-                    # # GTK configuration
-                    # gtk = {
-                    #   enable = mkDefault true;
-                    #   cursorTheme = {
-                    #     package = mkDefault pkgs.adwaita-icon-theme;
-                    #     name = mkDefault "Adwaita";
-                    #   };
-                    #   iconTheme = {
-                    #     name = mkDefault "Adwaita";
-                    #     package = mkDefault pkgs.adwaita-icon-theme;
-                    #   };
-                    # };
-
-                    programs = {
-                      dank-material-shell = {
-                        enable = mkDefault true;
-                        enableSystemMonitoring = mkDefault false;
-                        enableVPN = cfg.enableVpn;
-                        niri = {
-                          enableKeybinds = mkDefault true;
-                          enableSpawn = mkDefault false;
-                        };
-                        # Also override at home-manager level
-                        quickshell.package = mkForce pkgs.quickshell;
-                      };
-                      niri = {
-                        # Merge default keybindings with DMS settings
-                        # DMS binds will override any conflicts due to merge order
-                        settings = {
-                          binds = lib.mkMerge [
-                            (lib.mkBefore defaultNiriBinds)
-                            # DMS adds its binds here via programs.niri.settings.binds
-                          ];
-                        };
-                      };
-                      # quickshell = {
-                      #   enable = true;
-                      #   package = mkForce pkgs.quickshell;
-                      #   configs.dms = "${dank-material-shell.packages.x86_64-linux.dank-material-shell}/etc/xdg/quickshell/dms";
-                      #   activeConfig = "dms";
-                      #   systemd = {
-                      #     enable = true;
-                      #     target = "graphical-session.target";
-                      #   };
-                      # };
-                    };
-
-                    wayland.systemd.target = mkDefault "niri.service";
-
-                    # # XDG configuration
-                    # xdg = {
-                    #   enable = mkDefault true;
-                    #   mime.enable = mkDefault true;
-                    #   mimeApps.enable = mkDefault true;
-                    #   portal = {
-                    #     enable = mkDefault true;
-                    #     configPackages = mkDefault [ pkgs.niri ];
-                    #     extraPortals = mkDefault (
-                    #       with pkgs;
-                    #       [
-                    #         xdg-desktop-portal-gnome
-                    #         xdg-desktop-portal-gtk
-                    #       ]
-                    #     );
-                    #     xdgOpenUsePortal = mkDefault true;
-                    #     config = {
-                    #       common = {
-                    #         default = [ "gnome" "gtk" ];
-                    #       };
-                    #       niri = {
-                    #         default = [ "gnome" "gtk" ];
-                    #         "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
-                    #       };
-                    #     };
-                    #   };
-                    #   systemDirs.data = [
-                    #     "/var/lib/flatpak/exports/share"
-                    #     "${config.home.homeDirectory}/.local/share/flatpak/exports/share"
-                    #   ];
-                    #   userDirs = {
-                    #     enable = mkDefault true;
-                    #     createDirectories = mkDefault true;
-                    #   };
-                    # };
-
-                    services.polkit-gnome.enable = mkDefault true;
-
-                  }
-                )
-              ];
             };
 
             networking = {
@@ -700,12 +497,10 @@
                 substituters = [
                   "https://cache.nixos.org?priority=40"
                   "https://nix-community.cachix.org?priority=41"
-                  "https://niri.cachix.org?priority=42"
                 ];
                 trusted-public-keys = [
                   "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
                   "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-                  "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
                 ];
                 trusted-users = [
                   "root"
@@ -715,28 +510,23 @@
               };
             };
 
-            nixpkgs = {
-              config = {
-                allowUnfree = mkDefault true;
-              };
-              # overlays = [ niri.overlays.niri ];
-            };
+            nixpkgs.config.allowUnfree = mkDefault true;
 
             programs = {
               appimage.enable = mkDefault true;
               dconf.enable = mkDefault true;
-              dank-material-shell = {
+
+              # DMS Shell (nixpkgs native)
+              dms-shell = {
                 enable = mkDefault true;
-                greeter = {
+                enableSystemMonitoring = mkDefault true;
+                enableVPN = cfg.enableVpn;
+                systemd = {
                   enable = mkDefault true;
-                  compositor.name = mkDefault "niri";
-                  # Override the quickshell package to use nixpkgs version
-                  quickshell.package = mkForce pkgs.quickshell;
+                  target = "niri.service";
                 };
-                systemd.enable = mkDefault true;
-                # Override the quickshell package to use nixpkgs version
-                quickshell.package = mkForce pkgs.quickshell;
               };
+
               git = {
                 enable = true;
                 config.safe.directory = [ "/etc/nixos" ];
@@ -748,7 +538,7 @@
               };
               niri = {
                 enable = true;
-                package = pkgs.niri;
+                useNautilus = true;
               };
               nix-ld = {
                 enable = mkDefault true;
@@ -769,8 +559,8 @@
 
             qt = {
               enable = mkDefault true;
-              # platformTheme = mkDefault "gnome";
-              style = mkDefault "adwaita";
+              platformTheme = "gnome";
+              style = "adwaita-dark";
             };
 
             services = {
@@ -784,6 +574,7 @@
                   workstation = mkDefault true;
                 };
               };
+              bpftune.enable = true;
               colord.enable = mkDefault true;
               dbus = {
                 implementation = mkDefault "broker";
@@ -796,19 +587,15 @@
                   nautilus
                 ];
               };
-              fprintd.enable = mkDefault true;
               displayManager = {
                 defaultSession = "niri";
                 sessionPackages = [ pkgs.niri ];
-              };
-              greetd = {
-                enable = mkDefault true;
-                settings = {
-                  default_session = {
-                    user = mkDefault "greeter";
-                  };
+                dms-greeter = {
+                  enable = mkDefault true;
+                  compositor.name = "niri";
                 };
               };
+              fprintd.enable = mkDefault true;
               fstrim = {
                 enable = mkDefault true;
                 interval = mkDefault "daily";
@@ -819,11 +606,10 @@
                 gnome-keyring.enable = mkDefault true;
                 gnome-online-accounts.enable = mkDefault true;
                 gnome-settings-daemon.enable = mkDefault true;
-                # gnome-user-share.enable = mkDefault false;
-                # localsearch.enable = mkDefault true;
-                # rygel.enable = mkDefault true;
-                # sushi.enable = mkDefault true;
-                # tinysparql.enable = mkDefault true;
+              };
+              greetd = {
+                enable = mkDefault true;
+                settings.default_session.user = mkDefault "greeter";
               };
               gvfs = {
                 enable = mkDefault true;
@@ -835,7 +621,6 @@
               };
               libinput.enable = mkDefault true;
               packagekit.enable = mkDefault true;
-              power-profiles-daemon.enable = mkDefault true;
               pipewire = {
                 enable = mkDefault true;
                 alsa.enable = mkDefault true;
@@ -857,6 +642,7 @@
                   };
                 };
               };
+              power-profiles-daemon.enable = mkDefault true;
               printing = {
                 enable = mkDefault true;
                 browsed.enable = mkDefault true;
@@ -864,24 +650,31 @@
               };
               samba-wsdd.discovery = mkDefault true;
               system-config-printer.enable = mkDefault true;
-              udev.packages = with pkgs; [
-                gnome-settings-daemon
-              ];
+              udev.packages = with pkgs; [ gnome-settings-daemon ];
               udisks2.enable = mkDefault true;
               upower.enable = mkDefault true;
             };
 
+            services.openssh = mkIf cfg.enableSsh {
+              enable = true;
+              settings = {
+                PermitRootLogin = cfg.sshRootLogin;
+                PasswordAuthentication = cfg.sshPasswordAuth;
+              };
+            };
+
             security = {
-              pam.services.login.enableGnomeKeyring = mkDefault true;
               polkit.enable = mkDefault true;
+              pam.services = {
+                login.enableGnomeKeyring = mkDefault true;
+                swaylock = { };
+              };
               rtkit.enable = mkDefault true;
               tpm2.enable = mkDefault true;
             };
 
             systemd = {
-              packages = with pkgs; [
-                niri
-              ];
+              packages = [ pkgs.niri ];
               services = {
                 flake-update = {
                   unitConfig = {
@@ -911,14 +704,48 @@
                   Type = "idle";
                   StandardInput = "tty";
                   StandardOutput = "tty";
-                  StandardError = "journal"; # Without this errors will spam on screen
-                  # Without these bootlogs will spam on screen
+                  StandardError = "journal";
                   TTYReset = true;
                   TTYVHangup = true;
                   TTYVTDisallocate = true;
                 };
               };
+              user.services = {
+                pipewire = {
+                  wantedBy = [ "niri.service" ];
+                  before = [ "niri.service" ];
+                };
+
+                # Polkit authentication agent
+                niri-polkit = {
+                  description = "PolicyKit Authentication Agent for niri";
+                  wantedBy = [ "niri.service" ];
+                  after = [ "graphical-session.target" ];
+                  partOf = [ "graphical-session.target" ];
+                  serviceConfig = {
+                    Type = "simple";
+                    ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+                    Restart = "on-failure";
+                    RestartSec = 1;
+                    TimeoutStopSec = 10;
+                  };
+                };
+
+                # Swayidle for auto-suspend
+                swayidle = {
+                  description = "Idle manager for niri";
+                  wantedBy = [ "niri.service" ];
+                  after = [ "graphical-session.target" ];
+                  partOf = [ "graphical-session.target" ];
+                  serviceConfig = {
+                    Type = "simple";
+                    ExecStart = "${pkgs.swayidle}/bin/swayidle -w timeout 600 '${pkgs.systemd}/bin/systemctl suspend'";
+                    Restart = "on-failure";
+                  };
+                };
+              };
             };
+
             system.autoUpgrade = {
               allowReboot = mkDefault false;
               enable = mkDefault true;
@@ -935,35 +762,21 @@
               defaultUserShell = pkgs.bashInteractive;
               users.${cfg.username} = {
                 extraGroups = [
-                  "wheel"
+                  "input"
                   "networkmanager"
+                  "wheel"
                 ];
                 initialPassword = cfg.initialPassword;
                 isNormalUser = true;
               };
             };
 
-            services.openssh = mkIf cfg.enableSsh {
-              enable = true;
-              settings = {
-                PermitRootLogin = cfg.sshRootLogin;
-                PasswordAuthentication = cfg.sshPasswordAuth;
-              };
-            };
-
-            home-manager.users.${cfg.username} =
-              { config, pkgs, ... }:
-              {
-                home.username = cfg.username;
-                home.homeDirectory = "/home/${cfg.username}";
-                home.stateVersion = cfg.stateVersion;
-                home.packages = cfg.extraPackages;
-                programs.home-manager.enable = true;
-              };
-
             xdg = {
               autostart.enable = mkDefault true;
-              icons.enable = mkDefault true;
+              icons = {
+                enable = mkDefault true;
+                fallbackCursorThemes = [ "Adwaita" ];
+              };
               menus.enable = mkDefault true;
               mime.enable = mkDefault true;
               portal = {
@@ -978,23 +791,21 @@
                 );
                 xdgOpenUsePortal = mkDefault true;
                 config = {
-                  common = {
-                    default = [
-                      "gnome"
-                      "gtk"
-                    ];
-                  };
-                  niri = {
-                    default = [
-                      "gnome"
-                      "gtk"
-                    ];
-                    "org.freedesktop.impl.portal.Access" = "gtk";
-                    "org.freedesktop.impl.portal.FileChooser" = "gtk";
-                    "org.freedesktop.impl.portal.Notification" = "gtk";
-                    "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-                    "org.freedesktop.impl.portal.Settings" = "gnome";
-                  };
+                  common.default = [
+                    "gnome"
+                    "gtk"
+                  ];
+                  # niri = {
+                  #   default = [
+                  #     "gnome"
+                  #     "gtk"
+                  #   ];
+                  #   "org.freedesktop.impl.portal.Access" = "gtk";
+                  #   "org.freedesktop.impl.portal.FileChooser" = "gtk";
+                  #   "org.freedesktop.impl.portal.Notification" = "gtk";
+                  #   "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+                  #   "org.freedesktop.impl.portal.Settings" = "gnome";
+                  # };
                 };
               };
               sounds.enable = mkDefault true;
