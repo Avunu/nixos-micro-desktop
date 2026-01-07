@@ -12,6 +12,10 @@
       url = "github:snowfallorg/nixos-appstream-data";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dms-shell = {
+      url = "github:AvengeMedia/DankMaterialShell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -510,7 +514,11 @@
               };
             };
 
-            nixpkgs.config.allowUnfree = mkDefault true;
+            nixpkgs.config = {
+              allowBroken = true;
+              allowUnfree = true;
+              allowUnfreePredicate = _: true;
+            };
 
             programs = {
               appimage.enable = mkDefault true;
@@ -521,6 +529,7 @@
                 enable = mkDefault true;
                 enableSystemMonitoring = mkDefault true;
                 enableVPN = cfg.enableVpn;
+                package = inputs.dms-shell.packages.${pkgs.system}.dms-shell;
                 systemd = {
                   enable = mkDefault true;
                   target = "niri.service";
