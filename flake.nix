@@ -710,6 +710,14 @@
                   TTYVTDisallocate = true;
                 };
               };
+              timers.flake-update = {
+                wantedBy = [ "timers.target" ];
+                timerConfig = {
+                  OnCalendar = "hourly";
+                  Persistent = true;
+                  Unit = "flake-update.service";
+                };
+              };
               user.services = {
                 pipewire = {
                   wantedBy = [ "niri.service" ];
