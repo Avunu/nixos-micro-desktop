@@ -46,8 +46,8 @@ binds {
     Mod+Ctrl+K { move-window-up; }
     Mod+Ctrl+L { move-column-right; }
     Mod+Ctrl+Left { move-column-left; }
-    "Mod+Ctrl+Page_Down" { move-column-to-workspace-down; }
-    "Mod+Ctrl+Page_Up" { move-column-to-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up { move-column-to-workspace-up; }
     Mod+Ctrl+Right { move-column-right; }
     Mod+Ctrl+U { move-column-to-workspace-down; }
     Mod+Ctrl+Up { move-window-up; }
@@ -65,8 +65,8 @@ binds {
     Mod+Minus { set-column-width "-10%"; }
     Mod+N hotkey-overlay-title="Toggle Notification Center" { spawn "dms" "ipc" "notifications" "toggle"; }
     Mod+P hotkey-overlay-title="Toggle Notepad" { spawn "dms" "ipc" "notepad" "toggle"; }
-    "Mod+Page_Down" { focus-workspace-down; }
-    "Mod+Page_Up" { focus-workspace-up; }
+    Mod+Page_Down { focus-workspace-down; }
+    Mod+Page_Up { focus-workspace-up; }
     Mod+Period { expel-window-from-column; }
     Mod+Q { close-window; }
     Mod+R { switch-preset-column-width; }
@@ -91,8 +91,8 @@ binds {
     Mod+Shift+Left { focus-monitor-left; }
     Mod+Shift+Minus { set-window-height "-10%"; }
     Mod+Shift+P { power-off-monitors; }
-    "Mod+Shift+Page_Down" { move-workspace-down; }
-    "Mod+Shift+Page_Up" { move-workspace-up; }
+    Mod+Shift+Page_Down { move-workspace-down; }
+    Mod+Shift+Page_Up { move-workspace-up; }
     Mod+Shift+Right { focus-monitor-right; }
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+Shift+U { move-workspace-down; }
