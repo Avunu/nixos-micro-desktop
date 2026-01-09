@@ -255,7 +255,7 @@
             environment = {
               etc = {
                 # Deploy niri config system-wide
-                "niri/config.kdl".source = ./config.kdl;
+                "niri/config.kdl".source = ./configs/niri.kdl;
                 # AppStream metadata for PackageKit/GNOME Software
                 "xdg/app-info/xmls/nixos.xml.gz".source = "${
                   inputs.nixos-appstream-data.packages.${pkgs.system}.default
