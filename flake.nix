@@ -282,6 +282,7 @@
                 GTK_BACKEND = "wayland";
                 GTK_THEME = "adw-gtk3-dark";
                 MOZ_ENABLE_WAYLAND = "1";
+                NIRI_CONFIG = "/etc/niri/config.kdl";
                 NIXOS_OZONE_WL = "1";
                 NIXPKGS_ALLOW_UNFREE = "1";
                 OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
