@@ -256,8 +256,6 @@
               etc = {
                 # Deploy niri config system-wide
                 "niri/config.kdl".source = ./configs/niri-global.kdl;
-                # User config template (installed to ~/.config/niri/ via activation script)
-                "niri/home-config.kdl".source = ./configs/niri-home.kdl;
                 # AppStream metadata for PackageKit/GNOME Software
                 "xdg/app-info/xmls/nixos.xml.gz".source = "${
                   inputs.nixos-appstream-data.packages.${pkgs.system}.default
@@ -776,13 +774,23 @@
             system.activationScripts.niriUserConfig = ''
               USER_HOME="/home/${cfg.username}"
               NIRI_CONFIG_DIR="$USER_HOME/.config/niri"
-              NIRI_CONFIG="$NIRI_CONFIG_DIR/config.kdl"
-              
-              # Only install if user home exists and config doesn't already exist
-              if [ -d "$USER_HOME" ] && [ ! -f "$NIRI_CONFIG" ]; then
-                mkdir -p "$NIRI_CONFIG_DIR"
-                cp /etc/niri/home-config.kdl "$NIRI_CONFIG"
-                chown -R ${cfg.username}:users "$NIRI_CONFIG_DIR"
+              DMS_DIR="$NIRI_CONFIG_DIR/dms"
+
+              if [ -d "$USER_HOME" ]; then
+              mkdir -p "$NIRI_CONFIG_DIR" "$DMS_DIR"
+
+              # Always update config.kdl from the nix store
+              cp ${./configs/niri-home.kdl} "$NIRI_CONFIG_DIR/config.kdl"
+
+              # Create custom.kdl only if it doesn't exist (user's personal overrides)
+              [ -f "$NIRI_CONFIG_DIR/custom.kdl" ] || touch "$NIRI_CONFIG_DIR/custom.kdl"
+                  
+              # Ensure DMS config files exist (even as empty files)
+              for f in colors.kdl layout.kdl alttab.kdl binds.kdl outputs.kdl; do
+              [ -f "$DMS_DIR/$f" ] || touch "$DMS_DIR/$f"
+              done
+
+              chown -R ${cfg.username}:users "$NIRI_CONFIG_DIR"
               fi
             '';
 
