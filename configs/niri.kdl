@@ -112,4 +112,4 @@ binds {
     XF86MonBrightnessUp allow-when-locked=true { spawn "dms-ipc" "ipc" "brightness" "increment" "5" ""; }
 }
 
-include "$XDG_CONFIG_HOME/niri/config.kdl"
+include "/$XDG_CONFIG_HOME/niri/config.kdl"
