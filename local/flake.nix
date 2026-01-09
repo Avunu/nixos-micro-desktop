@@ -1,14 +1,9 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     microdesktop = {
       url = "github:Avunu/nixos-micro-desktop/niri";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
     };
   };
 
@@ -21,8 +16,8 @@
     }:
     let
       # Configuration variables
-      hostName = "nixos";
-      username = "nixos";
+      hostName = "gideon-dev-01";
+      username = "gideon";
       system = "x86_64-linux";
     in
     {
@@ -36,7 +31,7 @@
             {
               microDesktop = {
                 hostName = hostName;
-                diskDevice = "/dev/sda";
+                diskDevice = "/dev/nvme0n1";
                 bootMode = "uefi"; # Options: "uefi" or "legacy"
                 timeZone = "America/New_York";
                 locale = "en_US.UTF-8";
@@ -51,8 +46,8 @@
                   # insync-nautilus
                 ];
                 enableSsh = true;
-                sshPasswordAuth = true;
-                sshRootLogin = "yes";
+                sshPasswordAuth = false;
+                sshRootLogin = "prohibit-password";
               };
             }
           ];

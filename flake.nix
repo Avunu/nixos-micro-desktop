@@ -304,6 +304,7 @@
                 with pkgs;
                 lib.flatten [
                   [
+                    (writeShellScriptBin "dms-ipc" (builtins.readFile ./scripts/dms-ipc))
                     inputs.nixos-appstream-data.packages.${pkgs.system}.default
                     adwaita-icon-theme
                     adwaita-qt

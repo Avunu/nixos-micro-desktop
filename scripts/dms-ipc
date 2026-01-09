@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Version-agnostic DMS IPC wrapper
+# Uses quickshell's --pid flag to communicate with any running DMS instance
+
+# Find the PID of the quickshell process
+DMS_PID=$(pgrep quickshell | head -n1)
+
+if [ -z "$DMS_PID" ]; then
+    echo "No running DMS instance found"
+    exit 1
+fi
+
+# Map dms commands to quickshell IPC format
+ARGS=("$@")
+
+# Remove 'ipc' if it's the first argument (for compatibility with dms cli)
+if [ "${ARGS[0]}" = "ipc" ]; then
+    ARGS=("${ARGS[@]:1}")
+fi
+
+# Add 'call' if not present (quickshell requires it)
+if [ "${ARGS[0]}" != "call" ]; then
+    ARGS=("call" "${ARGS[@]}")
+fi
+
+# Use quickshell's --pid flag to target the specific instance
+exec qs ipc --pid "$DMS_PID" "${ARGS[@]}"
