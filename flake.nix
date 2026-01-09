@@ -316,8 +316,8 @@
                     cava
                     cliphist
                     dgop
-                    dnsmasq
                     dms-shell
+                    dnsmasq
                     dsearch
                     ffmpeg-headless
                     ffmpegthumbnailer
@@ -342,6 +342,7 @@
                     libdbusmenu
                     libheif
                     libheif.out
+                    libsecret
                     loupe
                     lxqt.libdbusmenu-lxqt
                     matugen
@@ -837,17 +838,17 @@
                     "gnome"
                     "gtk"
                   ];
-                  # niri = {
-                  #   default = [
-                  #     "gnome"
-                  #     "gtk"
-                  #   ];
-                  #   "org.freedesktop.impl.portal.Access" = "gtk";
-                  #   "org.freedesktop.impl.portal.FileChooser" = "gtk";
-                  #   "org.freedesktop.impl.portal.Notification" = "gtk";
-                  #   "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-                  #   "org.freedesktop.impl.portal.Settings" = "gnome";
-                  # };
+                  niri = {
+                    default = [
+                      "gnome"
+                      "gtk"
+                    ];
+                    "org.freedesktop.impl.portal.Access" = "gtk";
+                    "org.freedesktop.impl.portal.FileChooser" = "gtk";
+                    "org.freedesktop.impl.portal.Notification" = "gtk";
+                    "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+                    "org.freedesktop.impl.portal.Settings" = "gnome";
+                  };
                 };
               };
               sounds.enable = mkDefault true;
