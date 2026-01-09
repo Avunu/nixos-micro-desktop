@@ -544,7 +544,7 @@
               };
               gnupg.agent = {
                 enable = mkDefault true;
-                enableSSHSupport = mkDefault true;
+                enableSSHSupport = mkDefault false; # Using gnome-keyring for SSH
                 pinentryPackage = mkDefault pkgs.pinentry-gnome3;
               };
               niri = {
@@ -678,6 +678,7 @@
               polkit.enable = mkDefault true;
               pam.services = {
                 login.enableGnomeKeyring = mkDefault true;
+                greetd.enableGnomeKeyring = mkDefault true;
                 swaylock = { };
               };
               rtkit.enable = mkDefault true;
@@ -733,6 +734,21 @@
                 pipewire = {
                   wantedBy = [ "niri.service" ];
                   before = [ "niri.service" ];
+                };
+
+                # GNOME Keyring daemon
+                gnome-keyring = {
+                  description = "GNOME Keyring daemon";
+                  wantedBy = [ "graphical-session-pre.target" ];
+                  partOf = [ "graphical-session-pre.target" ];
+                  serviceConfig = {
+                    Type = "simple";
+                    ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --foreground --components=secrets,ssh,pkcs11";
+                    Restart = "on-failure";
+                  };
+                  environment = {
+                    DISPLAY = ":0";
+                  };
                 };
 
                 # Polkit authentication agent
