@@ -112,4 +112,6 @@ binds {
     XF86MonBrightnessUp allow-when-locked=true { spawn "dms-ipc" "ipc" "brightness" "increment" "5" ""; }
 }
 
-include "~/.config/niri/config.kdl"
+// User overrides: Create ~/.config/niri/config.kdl with:
+//   include "/etc/niri/config.kdl"
+//   // Your customizations here...
