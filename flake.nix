@@ -255,7 +255,9 @@
             environment = {
               etc = {
                 # Deploy niri config system-wide
-                "niri/config.kdl".source = ./configs/niri.kdl;
+                "niri/config.kdl".source = ./configs/niri-global.kdl;
+                # User config template (installed to ~/.config/niri/ via activation script)
+                "niri/home-config.kdl".source = ./configs/niri-home.kdl;
                 # AppStream metadata for PackageKit/GNOME Software
                 "xdg/app-info/xmls/nixos.xml.gz".source = "${
                   inputs.nixos-appstream-data.packages.${pkgs.system}.default
@@ -282,7 +284,6 @@
                 GTK_BACKEND = "wayland";
                 GTK_THEME = "adw-gtk3-dark";
                 MOZ_ENABLE_WAYLAND = "1";
-                NIRI_CONFIG = "/etc/niri/config.kdl";
                 NIXOS_OZONE_WL = "1";
                 NIXPKGS_ALLOW_UNFREE = "1";
                 OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
@@ -770,6 +771,20 @@
               enable = mkDefault true;
               flake = mkDefault "/etc/nixos";
             };
+
+            # Install user niri config to ~/.config/niri/config.kdl
+            system.activationScripts.niriUserConfig = ''
+              USER_HOME="/home/${cfg.username}"
+              NIRI_CONFIG_DIR="$USER_HOME/.config/niri"
+              NIRI_CONFIG="$NIRI_CONFIG_DIR/config.kdl"
+              
+              # Only install if user home exists and config doesn't already exist
+              if [ -d "$USER_HOME" ] && [ ! -f "$NIRI_CONFIG" ]; then
+                mkdir -p "$NIRI_CONFIG_DIR"
+                cp /etc/niri/home-config.kdl "$NIRI_CONFIG"
+                chown -R ${cfg.username}:users "$NIRI_CONFIG_DIR"
+              fi
+            '';
 
             system.stateVersion = cfg.stateVersion;
 

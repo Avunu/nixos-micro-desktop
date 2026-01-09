@@ -1,0 +1,6 @@
+include "/etc/niri/config.kdl"
+include "dms/colors.kdl"
+include "dms/layout.kdl"
+include "dms/alttab.kdl"
+include "dms/binds.kdl"
+include "dms/outputs.kdl"
