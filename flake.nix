@@ -326,6 +326,7 @@
                     gcr_4
                     gdk-pixbuf
                     glib
+                    gnome-keyring
                     gnome-menus
                     gnome-network-displays
                     gnome-packagekit
@@ -840,30 +841,33 @@
               mime.enable = mkDefault true;
               portal = {
                 enable = mkDefault true;
-                configPackages = mkDefault [ pkgs.niri ];
+                configPackages = mkDefault (
+                  with pkgs;
+                  [
+                    gnome-keyring
+                    niri
+                  ]
+                );
                 extraPortals = mkDefault (
                   with pkgs;
                   [
+                    gnome-keyring
                     xdg-desktop-portal-gnome
                     xdg-desktop-portal-gtk
                   ]
                 );
                 xdgOpenUsePortal = mkDefault true;
                 config = {
-                  common.default = [
-                    "gnome"
-                    "gtk"
-                  ];
-                  niri = {
+                  common = {
                     default = [
                       "gnome"
                       "gtk"
                     ];
-                    "org.freedesktop.impl.portal.Access" = "gtk";
-                    "org.freedesktop.impl.portal.FileChooser" = "gtk";
-                    "org.freedesktop.impl.portal.Notification" = "gtk";
-                    "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-                    "org.freedesktop.impl.portal.Settings" = "gnome";
+                    "org.freedesktop.impl.portal.Access" = [ "gtk" ];
+                    "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+                    "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
+                    "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+                    "org.freedesktop.impl.portal.Settings" = [ "gnome" ];
                   };
                 };
               };
