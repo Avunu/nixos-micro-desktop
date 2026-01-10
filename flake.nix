@@ -340,6 +340,7 @@
                     gst_all_1.gst-plugins-ugly
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
+                    key-rack
                     libdbusmenu
                     libheif
                     libheif.out
