@@ -422,7 +422,6 @@
             };
             nix-ld = {
               enable = mkDefault true;
-              package = pkgs.nix-ld-rs;
               libraries = with pkgs; [
                 alsa-lib
                 glib
