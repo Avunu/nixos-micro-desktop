@@ -276,11 +276,9 @@
               extraPackages = with pkgs; [
                 intel-media-driver
                 intel-vaapi-driver
-                libva-utils
-                libva-vdpau-driver
-                libva1
-                libvdpau
-                libvdpau-va-gl
+                # libva-utils
+                # libva-vdpau-driver
+                # libva1
                 nvidia-vaapi-driver
                 ocl-icd
                 vulkan-loader
