@@ -1,5 +1,27 @@
 {
   "nodes": {
+    "appstream-data": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nix-profile-backend",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1713192970,
+        "narHash": "sha256-XE7gr+zU3N4SHPAhsgk8cVAFp1iBg+Lxxp3y4dUF1vE=",
+        "owner": "snowfallorg",
+        "repo": "nixos-appstream-data",
+        "rev": "2d559dd6f5ee6905939c5ceb16f329b21e932cd3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "snowfallorg",
+        "repo": "nixos-appstream-data",
+        "type": "github"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -28,15 +50,16 @@
         "quickshell": "quickshell"
       },
       "locked": {
-        "lastModified": 1767985857,
-        "narHash": "sha256-ieCw7GQiWiYPF/g82brxtPV9XKynuMjZloq/8B1JbdQ=",
+        "lastModified": 1768575133,
+        "narHash": "sha256-P//moH3z9r4PXirTzXVsccQINsK5AIlF9RWOBwK3vLc=",
         "owner": "AvengeMedia",
         "repo": "DankMaterialShell",
-        "rev": "4b46d022af899b6e6ddab7a7b0b2cff595a90e0d",
+        "rev": "a7cdb39b0b89b9af86160ad4e847a7d14ea44512",
         "type": "github"
       },
       "original": {
         "owner": "AvengeMedia",
+        "ref": "v1.2.3",
         "repo": "DankMaterialShell",
         "type": "github"
       }
@@ -59,40 +82,77 @@
         "type": "github"
       }
     },
-    "nixos-appstream-data": {
+    "flake-utils_2": {
       "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+        "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1713192970,
-        "narHash": "sha256-XE7gr+zU3N4SHPAhsgk8cVAFp1iBg+Lxxp3y4dUF1vE=",
-        "owner": "snowfallorg",
-        "repo": "nixos-appstream-data",
-        "rev": "2d559dd6f5ee6905939c5ceb16f329b21e932cd3",
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
         "type": "github"
       },
       "original": {
-        "owner": "snowfallorg",
-        "repo": "nixos-appstream-data",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nix-profile-backend": {
+      "inputs": {
+        "appstream-data": "appstream-data",
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "packagekit-src": "packagekit-src"
+      },
+      "locked": {
+        "lastModified": 1768499820,
+        "narHash": "sha256-w7uREPGfl423o4k2tSZ4N1aevbjocb9HyD60v0fHzTc=",
+        "owner": "Avunu",
+        "repo": "nix-profile-packagekit-backend",
+        "rev": "1ec53c67f6b437f9917d4eb38872d5272870a03e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Avunu",
+        "repo": "nix-profile-packagekit-backend",
         "type": "github"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1767892417,
-        "narHash": "sha256-dhhvQY67aboBk8b0/u0XB6vwHdgbROZT3fJAjyNh5Ww=",
+        "lastModified": 1768305791,
+        "narHash": "sha256-AIdl6WAn9aymeaH/NvBj0H9qM+XuAuYbGMZaP0zcXAQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3497aa5c9457a9d88d71fa93a4a8368816fbeeba",
+        "rev": "1412caf7bf9e660f2f962917c14b1ea1c3bc695e",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "packagekit-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1718551298,
+        "narHash": "sha256-MYZFI1Q90F/AXVSJJBhmw+E7IMLXrdwmSuFJwv5D/z4=",
+        "owner": "PackageKit",
+        "repo": "PackageKit",
+        "rev": "82810b6051bbcdc7bb9f13360bc433b8c4000064",
+        "type": "github"
+      },
+      "original": {
+        "owner": "PackageKit",
+        "ref": "v1.3.0",
+        "repo": "PackageKit",
         "type": "github"
       }
     },
@@ -122,11 +182,26 @@
       "inputs": {
         "disko": "disko",
         "dms-shell": "dms-shell",
-        "nixos-appstream-data": "nixos-appstream-data",
+        "nix-profile-backend": "nix-profile-backend",
         "nixpkgs": "nixpkgs"
       }
     },
     "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_2": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
