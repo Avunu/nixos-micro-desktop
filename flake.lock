@@ -42,28 +42,6 @@
         "type": "github"
       }
     },
-    "dms-shell": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "quickshell": "quickshell"
-      },
-      "locked": {
-        "lastModified": 1768575133,
-        "narHash": "sha256-P//moH3z9r4PXirTzXVsccQINsK5AIlF9RWOBwK3vLc=",
-        "owner": "AvengeMedia",
-        "repo": "DankMaterialShell",
-        "rev": "a7cdb39b0b89b9af86160ad4e847a7d14ea44512",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AvengeMedia",
-        "ref": "v1.2.3",
-        "repo": "DankMaterialShell",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -110,11 +88,11 @@
         "packagekit-src": "packagekit-src"
       },
       "locked": {
-        "lastModified": 1768499820,
-        "narHash": "sha256-w7uREPGfl423o4k2tSZ4N1aevbjocb9HyD60v0fHzTc=",
+        "lastModified": 1768665173,
+        "narHash": "sha256-6HTPQf/BYzshl1KIY8d3rZaNmjNzBlNTEgaRtDWQoSo=",
         "owner": "Avunu",
         "repo": "nix-profile-packagekit-backend",
-        "rev": "1ec53c67f6b437f9917d4eb38872d5272870a03e",
+        "rev": "5d783f3bcfacd2d9adebc8a14b6d6a4926617c8f",
         "type": "github"
       },
       "original": {
@@ -125,11 +103,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1768305791,
-        "narHash": "sha256-AIdl6WAn9aymeaH/NvBj0H9qM+XuAuYbGMZaP0zcXAQ=",
+        "lastModified": 1768564909,
+        "narHash": "sha256-Kell/SpJYVkHWMvnhqJz/8DqQg2b6PguxVWOuadbHCc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1412caf7bf9e660f2f962917c14b1ea1c3bc695e",
+        "rev": "e4bae1bd10c9c57b2cf517953ab70060a828ee6f",
         "type": "github"
       },
       "original": {
@@ -156,32 +134,9 @@
         "type": "github"
       }
     },
-    "quickshell": {
-      "inputs": {
-        "nixpkgs": [
-          "dms-shell",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1766725085,
-        "narHash": "sha256-O2aMFdDUYJazFrlwL7aSIHbUSEm3ADVZjmf41uBJfHs=",
-        "ref": "refs/heads/master",
-        "rev": "41828c4180fb921df7992a5405f5ff05d2ac2fff",
-        "revCount": 715,
-        "type": "git",
-        "url": "https://git.outfoxxed.me/quickshell/quickshell"
-      },
-      "original": {
-        "rev": "41828c4180fb921df7992a5405f5ff05d2ac2fff",
-        "type": "git",
-        "url": "https://git.outfoxxed.me/quickshell/quickshell"
-      }
-    },
     "root": {
       "inputs": {
         "disko": "disko",
-        "dms-shell": "dms-shell",
         "nix-profile-backend": "nix-profile-backend",
         "nixpkgs": "nixpkgs"
       }
