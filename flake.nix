@@ -675,6 +675,12 @@
               };
               rtkit.enable = mkDefault true;
               tpm2.enable = mkDefault true;
+              wrappers.gnome-keyring-daemon = {
+                owner = "root";
+                group = "root";
+                capabilities = "cap_ipc_lock+ep";
+                source = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon";
+              };
             };
 
             systemd = {
@@ -735,7 +741,7 @@
                   partOf = [ "graphical-session-pre.target" ];
                   serviceConfig = {
                     Type = "simple";
-                    ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --foreground --components=secrets,ssh,pkcs11";
+                    ExecStart = "/run/wrappers/bin/gnome-keyring-daemon --start --foreground --components=secrets,ssh,pkcs11";
                     Restart = "on-failure";
                   };
                   environment = {
@@ -781,28 +787,28 @@
 
             # Install user niri config to ~/.config/niri/config.kdl
             system.activationScripts.niriUserConfig = ''
-              USER_HOME="/home/${cfg.username}"
-              NIRI_CONFIG_DIR="$USER_HOME/.config/niri"
-              DMS_DIR="$NIRI_CONFIG_DIR/dms"
+              							USER_HOME="/home/${cfg.username}"
+              							NIRI_CONFIG_DIR="$USER_HOME/.config/niri"
+              							DMS_DIR="$NIRI_CONFIG_DIR/dms"
 
-              if [ -d "$USER_HOME" ]; then
-              mkdir -p "$NIRI_CONFIG_DIR" "$DMS_DIR"
+              							if [ -d "$USER_HOME" ]; then
+              							mkdir -p "$NIRI_CONFIG_DIR" "$DMS_DIR"
 
-              # Always update config.kdl from the nix store
-              cp ${./configs/niri-home.kdl} "$NIRI_CONFIG_DIR/config.kdl"
+              							# Always update config.kdl from the nix store
+              							cp ${./configs/niri-home.kdl} "$NIRI_CONFIG_DIR/config.kdl"
 
-              # Create custom.kdl only if it doesn't exist (user's personal overrides)
-              [ -f "$NIRI_CONFIG_DIR/custom.kdl" ] || touch "$NIRI_CONFIG_DIR/custom.kdl"
-                
-              # Ensure DMS config files exist (even as empty files)
-              DMS_FILES=("alttab" "binds" "colors" "cursor" "layout" "outputs" "wpblur")
-              for f in "''${DMS_FILES[@]}"; do
-                [ -f "$DMS_DIR/$f.kdl" ] || touch "$DMS_DIR/$f.kdl"
-              done
+              							# Create custom.kdl only if it doesn't exist (user's personal overrides)
+              							[ -f "$NIRI_CONFIG_DIR/custom.kdl" ] || touch "$NIRI_CONFIG_DIR/custom.kdl"
+              								
+              							# Ensure DMS config files exist (even as empty files)
+              							DMS_FILES=("alttab" "binds" "colors" "cursor" "layout" "outputs" "wpblur")
+              							for f in "''${DMS_FILES[@]}"; do
+              								[ -f "$DMS_DIR/$f.kdl" ] || touch "$DMS_DIR/$f.kdl"
+              							done
 
-              chown -R ${cfg.username}:users "$USER_HOME/.config"
-              fi
-            '';
+              							chown -R ${cfg.username}:users "$USER_HOME/.config"
+              							fi
+              						'';
 
             system.stateVersion = cfg.stateVersion;
 
