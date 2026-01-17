@@ -309,7 +309,6 @@
                     gcr_4
                     gdk-pixbuf
                     glib
-                    gnome-keyring
                     gnome-menus
                     gnome-network-displays
                     gnome-packagekit
@@ -528,7 +527,7 @@
               };
               gnupg.agent = {
                 enable = mkDefault true;
-                enableSSHSupport = mkDefault false; # Using gnome-keyring for SSH
+                enableSSHSupport = mkDefault false; # Using gcr-ssh-agent for SSH
                 pinentryPackage = mkDefault pkgs.pinentry-gnome3;
               };
               niri.enable = mkDefault true;
@@ -582,7 +581,6 @@
                 packages = with pkgs; [
                   dconf
                   gcr
-                  gnome-keyring
                   libdbusmenu
                   lxqt.libdbusmenu-lxqt
                   nautilus
@@ -729,18 +727,15 @@
                   before = [ "wayland-session@niri.target" ];
                 };
 
-                # GNOME Keyring daemon
+                # GNOME Keyring daemon (secrets and pkcs11 only; SSH handled by gcr-ssh-agent)
                 gnome-keyring = {
                   description = "GNOME Keyring daemon";
                   wantedBy = [ "graphical-session-pre.target" ];
                   partOf = [ "graphical-session-pre.target" ];
                   serviceConfig = {
                     Type = "simple";
-                    ExecStart = "/run/wrappers/bin/gnome-keyring-daemon --start --foreground --components=secrets,ssh,pkcs11";
+                    ExecStart = "/run/wrappers/bin/gnome-keyring-daemon --start --foreground --components=secrets,pkcs11";
                     Restart = "on-failure";
-                  };
-                  environment = {
-                    DISPLAY = ":0";
                   };
                 };
 
