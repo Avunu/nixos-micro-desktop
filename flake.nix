@@ -282,8 +282,9 @@
                 SAL_ENABLESKIA = "1";
                 SAL_FORCESKIA = "1";
                 SAL_SKIA = "vulkan";
+      			SDL_SOUNDFONTS = "${pkgs.soundfont-fluid}/share/soundfonts/FluidR3_GM.sf2";
                 SDL_VIDEODRIVER = "wayland";
-				TERMINAL = "alacritty";
+				TERMINAL = getExe pkgs.alacritty;
                 XDG_CURRENT_DESKTOP = "niri";
                 XDG_SESSION_DESKTOP = "niri";
                 XDG_SESSION_TYPE = "wayland";
