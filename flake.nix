@@ -615,6 +615,7 @@
                 enable = mkDefault true;
                 package = mkDefault pkgs.gnome.gvfs;
               };
+              iio-niri.enable = mkDefault true;
               kmscon = {
                 enable = true;
                 hwRender = true;
