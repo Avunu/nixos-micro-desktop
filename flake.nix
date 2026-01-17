@@ -680,12 +680,6 @@
               };
               rtkit.enable = mkDefault true;
               tpm2.enable = mkDefault true;
-              wrappers.gnome-keyring-daemon = {
-                owner = "root";
-                group = "root";
-                capabilities = "cap_ipc_lock=ep";
-                source = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon";
-              };
             };
 
             systemd = {
