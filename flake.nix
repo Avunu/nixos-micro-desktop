@@ -424,6 +424,11 @@
 
             gtk.iconCache.enable = mkDefault true;
 
+            powerManagement = {
+              enable = mkDefault true;
+              powertop.enable = mkDefault true;
+            };
+
             hardware = {
               bluetooth.enable = mkDefault true;
               enableRedistributableFirmware = mkDefault true;
