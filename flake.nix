@@ -283,6 +283,7 @@
                 SAL_FORCESKIA = "1";
                 SAL_SKIA = "vulkan";
                 SDL_VIDEODRIVER = "wayland";
+				TERMINAL = "alacritty";
                 XDG_CURRENT_DESKTOP = "niri";
                 XDG_SESSION_DESKTOP = "niri";
                 XDG_SESSION_TYPE = "wayland";
