@@ -727,6 +727,12 @@
                   before = [ "wayland-session@niri.target" ];
                 };
 
+                # Ensure wireplumber waits for UPower to avoid battery query warnings
+                wireplumber = {
+                  wants = [ "upower.service" ];
+                  after = [ "upower.service" ];
+                };
+
                 # GNOME Keyring daemon (secrets and pkcs11 only; SSH handled by gcr-ssh-agent)
                 gnome-keyring = {
                   description = "GNOME Keyring daemon";
