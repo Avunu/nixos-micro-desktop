@@ -121,7 +121,7 @@
                 };
                 verbose = mkDefault false;
               };
-              kernelPackages = mkDefault pkgs.linuxPackages_latest;
+              kernelPackages = mkDefault pkgs.linuxPackages_zen;
               kernelParams = mkDefault [
                 "boot.shell_on_fail"
                 "console=tty0"
