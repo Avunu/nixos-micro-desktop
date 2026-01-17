@@ -523,7 +523,7 @@
                 package = inputs.dms-shell.packages.${pkgs.system}.dms-shell;
                 systemd = {
                   enable = mkDefault true;
-                  target = "wayland-session@niri.service";
+                  target = "wayland-session@niri.target";
                 };
               };
 
@@ -543,6 +543,7 @@
                   prettyName = "Niri";
                   comment = "A scrollable-tiling Wayland compositor";
                   binPath = getExe pkgs.niri;
+                  extraArgs = [ "--session" ];
                 };
               };
               nix-ld = {
@@ -729,8 +730,8 @@
               };
               user.services = {
                 pipewire = {
-                  wantedBy = [ "wayland-session@niri.service" ];
-                  before = [ "wayland-session@niri.service" ];
+                  wantedBy = [ "wayland-session@niri.target" ];
+                  before = [ "wayland-session@niri.target" ];
                 };
 
                 # GNOME Keyring daemon
@@ -751,7 +752,7 @@
                 # Polkit authentication agent
                 niri-polkit = {
                   description = "PolicyKit Authentication Agent for niri";
-                  wantedBy = [ "wayland-session@niri.service" ];
+                  wantedBy = [ "wayland-session@niri.target" ];
                   after = [ "graphical-session.target" ];
                   partOf = [ "graphical-session.target" ];
                   serviceConfig = {
@@ -766,7 +767,7 @@
                 # Swayidle for auto-suspend
                 swayidle = {
                   description = "Idle manager for niri";
-                  wantedBy = [ "wayland-session@niri.service" ];
+                  wantedBy = [ "wayland-session@niri.target" ];
                   after = [ "graphical-session.target" ];
                   partOf = [ "graphical-session.target" ];
                   serviceConfig = {
