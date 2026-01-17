@@ -304,8 +304,6 @@
 					brightnessctl
 					cava
 					cliphist
-					dgop
-					dms-shell
 					dnsmasq
 					dsearch
 					ffmpeg-headless
