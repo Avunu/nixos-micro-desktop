@@ -683,7 +683,7 @@
               wrappers.gnome-keyring-daemon = {
                 owner = "root";
                 group = "root";
-                capabilities = "cap_ipc_lock+ep";
+                capabilities = "cap_ipc_lock=ep";
                 source = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon";
               };
             };
