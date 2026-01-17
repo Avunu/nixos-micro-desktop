@@ -518,7 +518,7 @@
                 enableVPN = cfg.enableVpn;
                 systemd = {
                   enable = mkDefault true;
-                  target = "wayland-session@niri.target";
+                  target = "graphical-session.target";
                 };
               };
 
@@ -747,7 +747,7 @@
                 # Polkit authentication agent
                 niri-polkit = {
                   description = "PolicyKit Authentication Agent for niri";
-                  wantedBy = [ "wayland-session@niri.target" ];
+                  wantedBy = [ "graphical-session.target" ];
                   after = [ "graphical-session.target" ];
                   partOf = [ "graphical-session.target" ];
                   serviceConfig = {
@@ -762,7 +762,7 @@
                 # Swayidle for auto-suspend
                 swayidle = {
                   description = "Idle manager for niri";
-                  wantedBy = [ "wayland-session@niri.target" ];
+                  wantedBy = [ "graphical-session.target" ];
                   after = [ "graphical-session.target" ];
                   partOf = [ "graphical-session.target" ];
                   serviceConfig = {
