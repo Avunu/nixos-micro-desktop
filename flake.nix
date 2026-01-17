@@ -523,7 +523,7 @@
                 package = inputs.dms-shell.packages.${pkgs.system}.dms-shell;
                 systemd = {
                   enable = mkDefault true;
-                  target = "niri.service";
+                  target = "wayland-session@niri.service";
                 };
               };
 
@@ -536,9 +536,13 @@
                 enableSSHSupport = mkDefault false; # Using gnome-keyring for SSH
                 pinentryPackage = mkDefault pkgs.pinentry-gnome3;
               };
-              niri = {
-                enable = true;
-                useNautilus = true;
+              uwsm = {
+                enable = mkDefault true;
+                waylandCompositors.niri = {
+                  prettyName = "Niri";
+                  comment = "A scrollable-tiling Wayland compositor";
+                  binPath = getExe pkgs.niri;
+                };
               };
               nix-ld = {
                 enable = mkDefault true;
@@ -588,8 +592,7 @@
                 ];
               };
               displayManager = {
-                defaultSession = "niri";
-                sessionPackages = [ pkgs.niri ];
+                defaultSession = "niri-uwsm";
                 dms-greeter = {
                   enable = mkDefault true;
                   compositor.name = "niri";
@@ -731,8 +734,8 @@
               };
               user.services = {
                 pipewire = {
-                  wantedBy = [ "niri.service" ];
-                  before = [ "niri.service" ];
+                  wantedBy = [ "wayland-session@niri.service" ];
+                  before = [ "wayland-session@niri.service" ];
                 };
 
                 # GNOME Keyring daemon
@@ -753,7 +756,7 @@
                 # Polkit authentication agent
                 niri-polkit = {
                   description = "PolicyKit Authentication Agent for niri";
-                  wantedBy = [ "niri.service" ];
+                  wantedBy = [ "wayland-session@niri.service" ];
                   after = [ "graphical-session.target" ];
                   partOf = [ "graphical-session.target" ];
                   serviceConfig = {
@@ -768,7 +771,7 @@
                 # Swayidle for auto-suspend
                 swayidle = {
                   description = "Idle manager for niri";
-                  wantedBy = [ "niri.service" ];
+                  wantedBy = [ "wayland-session@niri.service" ];
                   after = [ "graphical-session.target" ];
                   partOf = [ "graphical-session.target" ];
                   serviceConfig = {
@@ -862,11 +865,11 @@
                       "gnome"
                       "gtk"
                     ];
-                    "org.freedesktop.impl.portal.Access" = [ "gtk" ];
-                    "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-                    "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
-                    "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
-                    "org.freedesktop.impl.portal.Settings" = [ "gnome" ];
+                    "org.freedesktop.impl.portal.Access" = "gtk";
+                    "org.freedesktop.impl.portal.FileChooser" = "gtk";
+                    "org.freedesktop.impl.portal.Notification" = "gtk";
+                    "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+                    "org.freedesktop.impl.portal.Settings" = "gnome";
                   };
                 };
               };
