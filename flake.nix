@@ -536,6 +536,7 @@
                 enableSSHSupport = mkDefault false; # Using gnome-keyring for SSH
                 pinentryPackage = mkDefault pkgs.pinentry-gnome3;
               };
+              niri.enable = mkDefault true;
               uwsm = {
                 enable = mkDefault true;
                 waylandCompositors.niri = {
