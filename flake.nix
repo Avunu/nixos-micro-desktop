@@ -7,10 +7,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    dms-shell = {
-      url = "github:AvengeMedia/DankMaterialShell/v1.2.3";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-profile-backend = {
       url = "github:Avunu/nix-profile-packagekit-backend";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -520,7 +516,6 @@
                 enable = mkDefault true;
                 enableSystemMonitoring = mkDefault true;
                 enableVPN = cfg.enableVpn;
-                package = inputs.dms-shell.packages.${pkgs.system}.dms-shell;
                 systemd = {
                   enable = mkDefault true;
                   target = "wayland-session@niri.target";
