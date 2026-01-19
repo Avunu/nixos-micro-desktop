@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "bombon": {
+      "inputs": {
+        "nixpkgs": [
+          "nix-profile-backend",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1764753492,
+        "narHash": "sha256-WnUjC2ID2EShikAZeyxEWavPhhBY3Ux5x84BHhL8Gig=",
+        "owner": "nikstur",
+        "repo": "bombon",
+        "rev": "a241b30745db3972a29e145ec6ad1f510c1ec500",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nikstur",
+        "repo": "bombon",
+        "type": "github"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -101,6 +122,7 @@
     },
     "nix-profile-backend": {
       "inputs": {
+        "bombon": "bombon",
         "flake-utils": "flake-utils",
         "git-hooks": "git-hooks",
         "nixpkgs": [
@@ -109,18 +131,17 @@
         "packagekit-src": "packagekit-src"
       },
       "locked": {
-        "lastModified": 1768796314,
-        "narHash": "sha256-nMEwE/tbh04sUXbk364Se0rPoIcX/NZTS8bor2uowTE=",
-        "ref": "refs/heads/main",
-        "rev": "63dd41ebaa0db9918262dcad1d3dd9f87ec78d4a",
-        "revCount": 56,
-        "submodules": true,
-        "type": "git",
-        "url": "https://github.com/Avunu/nix-profile-packagekit-backend"
+        "lastModified": 1768844766,
+        "narHash": "sha256-z9sITkU9c6KwXSqGXqTyQMeHUnpp9UKUUCZc23dLXVM=",
+        "owner": "Avunu",
+        "repo": "nix-profile-packagekit-backend",
+        "rev": "67bee14d011aa73ada91bf08bbab2de2db049739",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://github.com/Avunu/nix-profile-packagekit-backend"
+        "owner": "Avunu",
+        "repo": "nix-profile-packagekit-backend",
+        "type": "github"
       }
     },
     "nixpkgs": {

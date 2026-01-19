@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-profile-backend = {
-      url = "git+https://github.com/Avunu/nix-profile-packagekit-backend";
+      url = "github:Avunu/nix-profile-packagekit-backend";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
