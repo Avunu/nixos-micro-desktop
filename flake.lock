@@ -109,18 +109,18 @@
         "packagekit-src": "packagekit-src"
       },
       "locked": {
-        "lastModified": 1768795734,
-        "narHash": "sha256-Benf3yVNykeTvYfNfjN32eGiJB1mYE7Yu5SGW5FVctI=",
-        "owner": "Avunu",
-        "repo": "nix-profile-packagekit-backend",
-        "rev": "2b71b303394852aa81ebf584273ab8585ec4fc59",
+        "lastModified": 1768796314,
+        "narHash": "sha256-nMEwE/tbh04sUXbk364Se0rPoIcX/NZTS8bor2uowTE=",
+        "ref": "refs/heads/main",
+        "rev": "63dd41ebaa0db9918262dcad1d3dd9f87ec78d4a",
+        "revCount": 56,
         "submodules": true,
-        "type": "github"
+        "type": "git",
+        "url": "https://github.com/Avunu/nix-profile-packagekit-backend"
       },
       "original": {
-        "owner": "Avunu",
-        "repo": "nix-profile-packagekit-backend",
-        "type": "github"
+        "type": "git",
+        "url": "https://github.com/Avunu/nix-profile-packagekit-backend"
       }
     },
     "nixpkgs": {
