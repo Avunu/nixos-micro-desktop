@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-profile-backend = {
-      url = "github:Avunu/nix-profile-packagekit-backend";
+      url = "git+https://github.com/Avunu/nix-profile-packagekit-backend";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -302,7 +302,7 @@
                     brightnessctl
                     cava
                     cliphist
-					decibels
+                    decibels
                     dnsmasq
                     dsearch
                     ffmpeg-headless
@@ -614,7 +614,7 @@
                 gnome-keyring.enable = mkDefault true;
                 gnome-online-accounts.enable = mkDefault true;
                 gnome-settings-daemon.enable = mkDefault true;
-				sushi.enable = mkDefault true;
+                sushi.enable = mkDefault true;
               };
               greetd = {
                 enable = mkDefault true;
