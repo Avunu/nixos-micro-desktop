@@ -540,16 +540,19 @@
                 enableSSHSupport = mkDefault false; # Using gcr-ssh-agent for SSH
                 pinentryPackage = mkDefault pkgs.pinentry-gnome3;
               };
-              niri.enable = mkDefault true;
-              uwsm = {
+              niri = {
                 enable = mkDefault true;
-                waylandCompositors.niri = {
-                  prettyName = "Niri";
-                  comment = "A scrollable-tiling Wayland compositor";
-                  binPath = getExe pkgs.niri;
-                  extraArgs = [ "--session" ];
-                };
+                useNautilus = mkDefault true;
               };
+              # uwsm = {
+              #   enable = mkDefault true;
+              #   waylandCompositors.niri = {
+              #     prettyName = "Niri";
+              #     comment = "A scrollable-tiling Wayland compositor";
+              #     binPath = getExe pkgs.niri;
+              #     extraArgs = [ "--session" ];
+              #   };
+              # };
               nix-ld = {
                 enable = mkDefault true;
                 package = pkgs.nix-ld;
@@ -597,7 +600,7 @@
                 ];
               };
               displayManager = {
-                defaultSession = "niri-uwsm";
+                defaultSession = "niri";
                 dms-greeter = {
                   enable = mkDefault true;
                   compositor.name = "niri";
@@ -734,8 +737,8 @@
               };
               user.services = {
                 pipewire = {
-                  wantedBy = [ "wayland-session@niri.target" ];
-                  before = [ "wayland-session@niri.target" ];
+                  wantedBy = [ "niri.service" ];
+                  before = [ "niri.service" ];
                 };
 
                 # Ensure wireplumber waits for UPower to avoid battery query warnings
