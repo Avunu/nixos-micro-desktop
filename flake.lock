@@ -131,11 +131,11 @@
         "packagekit-src": "packagekit-src"
       },
       "locked": {
-        "lastModified": 1768965375,
-        "narHash": "sha256-76HcAaRSpT500Nzr9QKZpLHWpCs3YAf96oS1c+3NX20=",
+        "lastModified": 1769018219,
+        "narHash": "sha256-O8YuQP0QuCIak4mrBGu22Gt1VldruoXPxZbHLaPYSj8=",
         "owner": "Avunu",
         "repo": "nix-profile-packagekit-backend",
-        "rev": "330b624d9426d90c01c5f13d5bb1e47ce0e81f44",
+        "rev": "15faedfe40bb603c8a34a7dde01b75966a8c3773",
         "type": "github"
       },
       "original": {
@@ -146,11 +146,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1768564909,
-        "narHash": "sha256-Kell/SpJYVkHWMvnhqJz/8DqQg2b6PguxVWOuadbHCc=",
+        "lastModified": 1768886240,
+        "narHash": "sha256-C2TjvwYZ2VDxYWeqvvJ5XPPp6U7H66zeJlRaErJKoEM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e4bae1bd10c9c57b2cf517953ab70060a828ee6f",
+        "rev": "80e4adbcf8992d3fd27ad4964fbb84907f9478b0",
         "type": "github"
       },
       "original": {
