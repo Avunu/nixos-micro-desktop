@@ -131,11 +131,11 @@
         "packagekit-src": "packagekit-src"
       },
       "locked": {
-        "lastModified": 1768961647,
-        "narHash": "sha256-gDC4Mz3vNvGz5LsgVeSio01vDdjGXgl0g55/2TQKiYg=",
+        "lastModified": 1768965026,
+        "narHash": "sha256-+C9qaIwqVhJDpq59oo1ZQeTKfOKbBGXoVw/Mcs/ns8I=",
         "owner": "Avunu",
         "repo": "nix-profile-packagekit-backend",
-        "rev": "88d4fdfcd836125f9736fed6f80b6db656be2f5a",
+        "rev": "b82be7016d9c8213292982dc85ee39ccd7f4212d",
         "type": "github"
       },
       "original": {
