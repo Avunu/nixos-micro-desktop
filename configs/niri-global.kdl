@@ -110,6 +110,6 @@ binds {
     XF86AudioRaiseVolume allow-when-locked=true { spawn "dms-ipc" "ipc" "audio" "increment" "3"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "dms-ipc" "ipc" "brightness" "decrement" "5" ""; }
     XF86MonBrightnessUp allow-when-locked=true { spawn "dms-ipc" "ipc" "brightness" "increment" "5" ""; }
-    Super+XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Decrease Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "5%-"; }
-    Super+XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title="Increase Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "+5%"; }
+    Super+Alt+XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Decrease Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "5%-"; }
+    Super+Alt+XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title="Increase Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "+5%"; }
 }
