@@ -110,8 +110,8 @@ binds {
     XF86AudioRaiseVolume allow-when-locked=true { spawn "dms-ipc" "ipc" "audio" "increment" "3"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "dms-ipc" "ipc" "brightness" "decrement" "5" ""; }
     XF86MonBrightnessUp allow-when-locked=true { spawn "dms-ipc" "ipc" "brightness" "increment" "5" ""; }
-    Alt+XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Decrease Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "5%-"; }
-    Alt+XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title="Increase Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "+5%"; }
+    Mod+XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Decrease Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "5%-"; }
+    Mod+XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title="Increase Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "+5%"; }
 }
 
 // User overrides: Create ~/.config/niri/config.kdl with:
