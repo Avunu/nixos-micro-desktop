@@ -894,22 +894,22 @@
                   with pkgs;
                   [
                     gnome-keyring
-                    xdg-desktop-portal-gnome
                     xdg-desktop-portal-gtk
+                    xdg-desktop-portal-hyprland
                   ]
                 );
                 xdgOpenUsePortal = mkDefault true;
                 config = {
                   common = {
                     default = [
-                      "gnome"
+                      "hyprland"
                       "gtk"
                     ];
                     "org.freedesktop.impl.portal.Access" = "gtk";
                     "org.freedesktop.impl.portal.FileChooser" = "gtk";
-                    "org.freedesktop.impl.portal.Notification" = "gtk";
+                    "org.freedesktop.impl.portal.Notification" = "hyprland";
                     "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-                    "org.freedesktop.impl.portal.Settings" = "gnome";
+                    "org.freedesktop.impl.portal.Settings" = "hyprland";
                   };
                 };
               };
