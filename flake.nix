@@ -554,6 +554,8 @@
                 enable = mkDefault true;
                 # useNautilus = mkDefault true;
               };
+              
+              iio-hyprland.enable = mkDefault true;
               # uwsm = {
               #   enable = mkDefault true;
               #   waylandCompositors.hyprland = {
@@ -637,7 +639,6 @@
                 enable = mkDefault true;
                 package = mkDefault pkgs.gnome.gvfs;
               };
-              iio-hyprland.enable = mkDefault true;
               kmscon = {
                 enable = true;
                 hwRender = true;
