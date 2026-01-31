@@ -126,8 +126,11 @@
                 "boot.shell_on_fail"
                 "console=tty0"
                 "fbcon=vc:2-6"
-                "i915.enable_guc=3"
+                # Note: i915.enable_guc removed - not all Intel GPUs support GuC/HuC
+                # Add it per-device in local flake if needed (Gen9+ with firmware support)
                 "i915.modeset=1"
+                "i915.enable_fbc=1" # Framebuffer compression for power savings
+                "i915.fastboot=1" # Skip mode-setting at boot
                 "loglevel=3"
                 "mem_sleep_default=deep"
                 "pcie_aspm.policy=powersupersave"
