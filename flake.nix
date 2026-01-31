@@ -362,11 +362,12 @@
                 ];
               sessionVariables = {
                 NIXOS_OZONE_WL = "1";
-                # Restrict XDG_DATA_DIRS to canonical system path only
-                # This prevents dbus-broker from scanning duplicate service directories
-                # via <standard_session_servicedirs/> in session.conf
-                # For a fixed desktop stack, we only need the system-path
-                XDG_DATA_DIRS = "/run/current-system/sw/share";
+                # Curated XDG_DATA_DIRS to prevent duplicate D-Bus service warnings
+                # Only include paths that are actually needed:
+                # - User's local share (for local .desktop files)
+                # - User's nix-profile (for nix profile installed packages)
+                # - System path (canonical aggregation of all system packages)
+                XDG_DATA_DIRS = "$HOME/.local/share:$HOME/.nix-profile/share:/run/current-system/sw/share";
               };
             };
 
