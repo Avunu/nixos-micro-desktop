@@ -254,17 +254,6 @@
               etc = {
                 # Deploy niri config system-wide
                 "niri/config.kdl".source = ./configs/niri-global.kdl;
-
-                # Custom D-Bus session config to prevent duplicate service warnings
-                # By only using the system-path, we avoid scanning overlapping XDG_DATA_DIRS
-                "dbus-1/session-local.conf".text = ''
-                  <!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"
-                    "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
-                  <busconfig>
-                    <!-- Use only the canonical system-path for session services -->
-                    <servicedir>/run/current-system/sw/share/dbus-1/services</servicedir>
-                  </busconfig>
-                '';
               };
               pathsToLink = [
                 "/share/app-info"
@@ -373,6 +362,11 @@
                 ];
               sessionVariables = {
                 NIXOS_OZONE_WL = "1";
+                # Restrict XDG_DATA_DIRS to canonical system path only
+                # This prevents dbus-broker from scanning duplicate service directories
+                # via <standard_session_servicedirs/> in session.conf
+                # For a fixed desktop stack, we only need the system-path
+                XDG_DATA_DIRS = "/run/current-system/sw/share";
               };
             };
 
