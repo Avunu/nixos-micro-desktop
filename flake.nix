@@ -367,7 +367,8 @@
                 # - User's local share (for local .desktop files)
                 # - User's nix-profile (for nix profile installed packages)
                 # - System path (canonical aggregation of all system packages)
-                XDG_DATA_DIRS = "$HOME/.local/share:$HOME/.nix-profile/share:/run/current-system/sw/share";
+                # mkForce overrides display-managers and nix-profile-backend defaults
+                XDG_DATA_DIRS = mkForce "$HOME/.local/share:$HOME/.nix-profile/share:/run/current-system/sw/share";
               };
             };
 
