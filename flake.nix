@@ -252,8 +252,8 @@
 
             environment = {
               etc = {
-                # Deploy niri config system-wide
-                "niri/config.kdl".source = ./configs/niri-global.kdl;
+                # Deploy hyprland config system-wide
+                "hyprland/config.kdl".source = ./configs/hyprland-global.kdl;
               };
               pathsToLink = [
                 "/share/app-info"
@@ -287,8 +287,8 @@
                 SDL_SOUNDFONTS = "${pkgs.soundfont-fluid}/share/soundfonts/FluidR3_GM.sf2";
                 SDL_VIDEODRIVER = "wayland";
                 TERMINAL = getExe pkgs.alacritty;
-                XDG_CURRENT_DESKTOP = "niri";
-                XDG_SESSION_DESKTOP = "niri";
+                XDG_CURRENT_DESKTOP = "hyprland";
+                XDG_SESSION_DESKTOP = "hyprland";
                 XDG_SESSION_TYPE = "wayland";
               };
               systemPackages =
@@ -338,7 +338,7 @@
                     mission-center
                     morewaita-icon-theme
                     nautilus
-                    niri
+                    hyprland
                     packagekit
                     papers
                     playerctl
@@ -550,16 +550,16 @@
                 enableSSHSupport = mkDefault false; # Using gcr-ssh-agent for SSH
                 pinentryPackage = mkDefault pkgs.pinentry-gnome3;
               };
-              niri = {
+              hyprland = {
                 enable = mkDefault true;
-                useNautilus = mkDefault true;
+                # useNautilus = mkDefault true;
               };
               # uwsm = {
               #   enable = mkDefault true;
-              #   waylandCompositors.niri = {
-              #     prettyName = "Niri";
+              #   waylandCompositors.hyprland = {
+              #     prettyName = "hyprland";
               #     comment = "A scrollable-tiling Wayland compositor";
-              #     binPath = getExe pkgs.niri;
+              #     binPath = getExe pkgs.hyprland;
               #     extraArgs = [ "--session" ];
               #   };
               # };
@@ -607,13 +607,13 @@
                 packages = [ ];
               };
               displayManager = {
-                defaultSession = "niri";
+                defaultSession = "hyprland";
                 dms-greeter = {
                   enable = mkDefault true;
-                  compositor.name = "niri";
+                  compositor.name = "hyprland";
                 };
                 sessionPackages = with pkgs; [
-                  niri
+                  hyprland
                 ];
               };
               fprintd.enable = mkDefault true;
@@ -637,7 +637,7 @@
                 enable = mkDefault true;
                 package = mkDefault pkgs.gnome.gvfs;
               };
-              iio-niri.enable = mkDefault true;
+              iio-hyprland.enable = mkDefault true;
               kmscon = {
                 enable = true;
                 hwRender = true;
@@ -701,7 +701,7 @@
             };
 
             systemd = {
-              packages = [ pkgs.niri ];
+              packages = [ pkgs.hyprland ];
               services = {
                 flake-update = {
                   unitConfig = {
@@ -747,8 +747,8 @@
               };
               user.services = {
                 pipewire = {
-                  wantedBy = [ "niri.service" ];
-                  before = [ "niri.service" ];
+                  wantedBy = [ "hyprland.service" ];
+                  before = [ "hyprland.service" ];
                 };
 
                 # Ensure wireplumber waits for UPower to avoid battery query warnings
@@ -770,8 +770,8 @@
                 };
 
                 # Polkit authentication agent
-                niri-polkit = {
-                  description = "PolicyKit Authentication Agent for niri";
+                hyprland-polkit = {
+                  description = "PolicyKit Authentication Agent for hyprland";
                   wantedBy = [ "graphical-session.target" ];
                   after = [ "graphical-session.target" ];
                   partOf = [ "graphical-session.target" ];
@@ -786,7 +786,7 @@
 
                 # Swayidle for auto-suspend
                 swayidle = {
-                  description = "Idle manager for niri";
+                  description = "Idle manager for hyprland";
                   wantedBy = [ "graphical-session.target" ];
                   after = [ "graphical-session.target" ];
                   partOf = [ "graphical-session.target" ];
@@ -829,30 +829,30 @@
               flake = mkDefault "/etc/nixos";
             };
 
-            # Install user niri config to ~/.config/niri/config.kdl
-            system.activationScripts.niriUserConfig = ''
-              USER_HOME="/home/${cfg.username}"
-              NIRI_CONFIG_DIR="$USER_HOME/.config/niri"
-              DMS_DIR="$NIRI_CONFIG_DIR/dms"
+            # # Install user hyprland config to ~/.config/hyprland/config.kdl
+            # system.activationScripts.hyprlandUserConfig = ''
+            #   USER_HOME="/home/${cfg.username}"
+            #   hyprland_CONFIG_DIR="$USER_HOME/.config/hyprland"
+            #   DMS_DIR="$hyprland_CONFIG_DIR/dms"
 
-              if [ -d "$USER_HOME" ]; then
-              mkdir -p "$NIRI_CONFIG_DIR" "$DMS_DIR"
+            #   if [ -d "$USER_HOME" ]; then
+            #   mkdir -p "$hyprland_CONFIG_DIR" "$DMS_DIR"
 
-              # Always update config.kdl from the nix store
-              cp ${./configs/niri-home.kdl} "$NIRI_CONFIG_DIR/config.kdl"
+            #   # Always update config.kdl from the nix store
+            #   cp ${./configs/hyprland-home.kdl} "$hyprland_CONFIG_DIR/config.kdl"
 
-              # Create custom.kdl only if it doesn't exist (user's personal overrides)
-              [ -f "$NIRI_CONFIG_DIR/custom.kdl" ] || touch "$NIRI_CONFIG_DIR/custom.kdl"
+            #   # Create custom.kdl only if it doesn't exist (user's personal overrides)
+            #   [ -f "$hyprland_CONFIG_DIR/custom.kdl" ] || touch "$hyprland_CONFIG_DIR/custom.kdl"
                 
-              # Ensure DMS config files exist (even as empty files)
-              DMS_FILES=("alttab" "binds" "colors" "cursor" "layout" "outputs" "wpblur")
-              for f in "''${DMS_FILES[@]}"; do
-                [ -f "$DMS_DIR/$f.kdl" ] || touch "$DMS_DIR/$f.kdl"
-              done
+            #   # Ensure DMS config files exist (even as empty files)
+            #   DMS_FILES=("alttab" "binds" "colors" "cursor" "layout" "outputs" "wpblur")
+            #   for f in "''${DMS_FILES[@]}"; do
+            #     [ -f "$DMS_DIR/$f.kdl" ] || touch "$DMS_DIR/$f.kdl"
+            #   done
 
-              chown -R ${cfg.username}:users "$USER_HOME/.config"
-              fi
-            '';
+            #   chown -R ${cfg.username}:users "$USER_HOME/.config"
+            #   fi
+            # '';
 
             system.stateVersion = cfg.stateVersion;
 
@@ -887,7 +887,7 @@
                   with pkgs;
                   [
                     gnome-keyring
-                    niri
+                    hyprland
                   ]
                 );
                 extraPortals = mkDefault (
