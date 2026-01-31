@@ -130,7 +130,6 @@
                 # Add it per-device in local flake if needed (Gen9+ with firmware support)
                 "i915.modeset=1"
                 "i915.enable_fbc=1" # Framebuffer compression for power savings
-                "i915.fastboot=1" # Skip mode-setting at boot
                 "loglevel=3"
                 "mem_sleep_default=deep"
                 "pcie_aspm.policy=powersupersave"
@@ -788,6 +787,30 @@
                     ExecStart = "${pkgs.swayidle}/bin/swayidle -w timeout 600 '${pkgs.systemd}/bin/systemctl suspend'";
                     Restart = "on-failure";
                   };
+                };
+
+                # XDG Desktop Portal services - ensure they start after graphical session
+                # This prevents "cannot open display" errors during greeter/early boot
+                xdg-desktop-portal = {
+                  after = [ "graphical-session.target" ];
+                  partOf = [ "graphical-session.target" ];
+                };
+                xdg-desktop-portal-gtk = {
+                  after = [ "graphical-session.target" ];
+                  partOf = [ "graphical-session.target" ];
+                  serviceConfig = {
+                    # Prevent rapid restart loops if display isn't ready
+                    RestartSec = 2;
+                    Restart = "on-failure";
+                    RestartMaxDelaySec = 30;
+                  };
+                };
+                xdg-desktop-portal-gnome = {
+                  after = [
+                    "graphical-session.target"
+                    "xdg-desktop-portal-gtk.service"
+                  ];
+                  partOf = [ "graphical-session.target" ];
                 };
               };
             };
