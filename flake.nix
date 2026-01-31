@@ -813,13 +813,13 @@
                     RestartMaxDelaySec = 30;
                   };
                 };
-                xdg-desktop-portal-gnome = {
-                  after = [
-                    "graphical-session.target"
-                    "xdg-desktop-portal-gtk.service"
-                  ];
-                  partOf = [ "graphical-session.target" ];
-                };
+                # xdg-desktop-portal-gnome = {
+                #   after = [
+                #     "graphical-session.target"
+                #     "xdg-desktop-portal-gtk.service"
+                #   ];
+                #   partOf = [ "graphical-session.target" ];
+                # };
               };
             };
 
