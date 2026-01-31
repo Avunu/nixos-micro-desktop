@@ -296,10 +296,10 @@
                 lib.flatten [
                   [
                     (writeShellScriptBin "dms-ipc" (builtins.readFile ./scripts/dms-ipc))
+                    adw-gtk3
                     adwaita-icon-theme
                     adwaita-qt
                     adwaita-qt6
-                    adw-gtk3
                     alacritty
                     brightnessctl
                     cava
@@ -327,7 +327,10 @@
                     gst_all_1.gst-plugins-ugly
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
+                    hypridle
+                    hyprland
                     key-rack
+                    kitty
                     libdbusmenu
                     libheif
                     libheif.out
@@ -338,7 +341,6 @@
                     mission-center
                     morewaita-icon-theme
                     nautilus
-                    hyprland
                     packagekit
                     papers
                     playerctl
@@ -347,8 +349,8 @@
                     shared-mime-info
                     showtime
                     slurp
-                    swayidle
                     uutils-coreutils-noprefix
+                    uwsm
                     wl-clipboard
                     wlr-randr
                     wpa_supplicant
@@ -356,7 +358,7 @@
                     xdg-user-dirs
                     xdg-user-dirs-gtk
                     xdg-utils
-                    xwayland-satellite
+                    # xwayland-satellite
                   ]
                   cfg.extraPackages
                 ];
@@ -552,19 +554,20 @@
               };
               hyprland = {
                 enable = mkDefault true;
+                withUWSM = mkDefault true;
                 # useNautilus = mkDefault true;
               };
               
               iio-hyprland.enable = mkDefault true;
-              # uwsm = {
-              #   enable = mkDefault true;
-              #   waylandCompositors.hyprland = {
-              #     prettyName = "hyprland";
-              #     comment = "A scrollable-tiling Wayland compositor";
-              #     binPath = getExe pkgs.hyprland;
-              #     extraArgs = [ "--session" ];
-              #   };
-              # };
+              uwsm = {
+                enable = mkDefault true;
+                # waylandCompositors.hyprland = {
+                #   prettyName = "hyprland";
+                #   comment = "A scrollable-tiling Wayland compositor";
+                #   binPath = getExe pkgs.hyprland;
+                #   extraArgs = [ "--session" ];
+                # };
+              };
               nix-ld = {
                 enable = mkDefault true;
                 package = pkgs.nix-ld;
@@ -748,8 +751,8 @@
               };
               user.services = {
                 pipewire = {
-                  wantedBy = [ "hyprland.service" ];
-                  before = [ "hyprland.service" ];
+                  wantedBy = [ "wayland-session@hyprland.service" ];
+                  before = [ "wayland-session@hyprland.service" ];
                 };
 
                 # Ensure wireplumber waits for UPower to avoid battery query warnings
@@ -794,6 +797,19 @@
                   serviceConfig = {
                     Type = "simple";
                     ExecStart = "${pkgs.swayidle}/bin/swayidle -w timeout 600 '${pkgs.systemd}/bin/systemctl suspend'";
+                    Restart = "on-failure";
+                  };
+                };
+
+                # Hypridle for auto-suspend
+                hypridle = {
+                  description = "Idle manager for Hyprland";
+                  wantedBy = [ "graphical-session.target" ];
+                  after = [ "graphical-session.target" ];
+                  partOf = [ "graphical-session.target" ];
+                  serviceConfig = {
+                    Type = "simple";
+                    ExecStart = "${pkgs.hypridle}/bin/hypridle";
                     Restart = "on-failure";
                   };
                 };
