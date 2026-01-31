@@ -366,9 +366,10 @@
                 # Only include paths that are actually needed:
                 # - User's local share (for local .desktop files)
                 # - User's nix-profile (for nix profile installed packages)
+                # - Display manager session data (for .desktop session files)
                 # - System path (canonical aggregation of all system packages)
                 # mkForce overrides display-managers and nix-profile-backend defaults
-                XDG_DATA_DIRS = mkForce "$HOME/.local/share:$HOME/.nix-profile/share:/run/current-system/sw/share";
+                XDG_DATA_DIRS = mkForce "$HOME/.local/share:$HOME/.nix-profile/share:${config.services.displayManager.sessionData.desktops}/share:/run/current-system/sw/share";
               };
             };
 
@@ -611,6 +612,9 @@
                   enable = mkDefault true;
                   compositor.name = "niri";
                 };
+                sessionPackages = with pkgs; [
+                  niri
+                ];
               };
               fprintd.enable = mkDefault true;
               fstrim = {
