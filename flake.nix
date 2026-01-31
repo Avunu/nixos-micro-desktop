@@ -2,7 +2,7 @@
   description = "NixOS Micro Desktop";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:numtide/nixpkgs-unfree?ref=nixos-unstable";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -587,7 +587,7 @@
                   workstation = mkDefault true;
                 };
               };
-              bpftune.enable = true;
+              bpftune.enable = mkDefault true;
               colord.enable = mkDefault true;
               dbus = {
                 implementation = mkDefault "broker";
