@@ -251,10 +251,10 @@
             };
 
             environment = {
-              etc = {
-                # Deploy hyprland config system-wide
-                "hyprland/config.kdl".source = ./configs/hyprland-global.kdl;
-              };
+              # etc = {
+              #   # Deploy hyprland config system-wide
+              #   "hyprland/config.kdl".source = ./configs/hyprland-global.kdl;
+              # };
               pathsToLink = [
                 "/share/app-info"
                 "/share/applications"
