@@ -639,13 +639,13 @@
               };
               iio-niri.enable = mkDefault true;
               kmscon = {
-                enable = true;
+                enable = mkDefault true;
                 hwRender = true;
               };
               libinput.enable = mkDefault true;
               packagekit.backends.nix-profile = {
-                appstream.enable = true;
-                enable = true;
+                appstream.enable = mkDefault true;
+                enable = mkDefault true;
               };
               pipewire = {
                 enable = mkDefault true;
