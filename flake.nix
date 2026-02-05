@@ -820,6 +820,33 @@
                   ];
                   partOf = [ "graphical-session.target" ];
                 };
+
+                # User profile upgrade service
+                nix-profile-upgrade = {
+                  description = "Upgrade user nix profile";
+                  serviceConfig = {
+                    Type = "oneshot";
+                    ExecStart = "${pkgs.nix}/bin/nix profile upgrade --all --impure";
+                    Restart = "on-failure";
+                    RestartSec = "120s";
+                  };
+                  wants = [ "network-online.target" ];
+                  after = [ "network-online.target" ];
+                  path = with pkgs; [
+                    nix
+                    git
+                  ];
+                };
+              };
+
+              timers.nix-profile-upgrade = {
+                description = "Upgrade user nix profile timer";
+                wantedBy = [ "timers.target" ];
+                timerConfig = {
+                  OnCalendar = "hourly";
+                  Persistent = true;
+                  Unit = "nix-profile-upgrade.service";
+                };
               };
             };
 
