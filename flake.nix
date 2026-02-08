@@ -214,11 +214,13 @@
                               "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
                               "compress_cache"            # Cache decompressed pages for hot data (SQLite, desktop apps)
                               "compress_chksum"
+                              "compress_extension=*"      # Compress all files by default
                               "gc_merge"
                               "noatime"
                               "nodiscard"  # Use scheduled fstrim instead of synchronous discard
                             ];
                             extraArgs = [
+                              "-O" "extra_attr,compression" # Enable compression feature at format time
                               "-l"
                               "root"
                             ];
@@ -244,11 +246,13 @@
                               "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
                               "compress_cache"            # Cache decompressed pages for hot data (SQLite, desktop apps)
                               "compress_chksum"
+                              "compress_extension=*"      # Compress all files by default
                               "gc_merge"
                               "noatime"
                               "nodiscard"  # Use scheduled fstrim instead of synchronous discard
                             ];
                             extraArgs = [
+                              "-O" "extra_attr,compression" # Enable compression feature at format time
                               "-l"
                               "root"
                             ];
