@@ -211,7 +211,8 @@
                             mountpoint = "/";
                             mountOptions = [
                               "atgc"
-                              "compress_algorithm=zstd"
+                              "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
+                              "compress_cache"            # Cache decompressed pages for hot data (SQLite, desktop apps)
                               "compress_chksum"
                               "gc_merge"
                               "noatime"
@@ -240,7 +241,8 @@
                             mountpoint = "/";
                             mountOptions = [
                               "atgc"
-                              "compress_algorithm=zstd"
+                              "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
+                              "compress_cache"            # Cache decompressed pages for hot data (SQLite, desktop apps)
                               "compress_chksum"
                               "gc_merge"
                               "noatime"
