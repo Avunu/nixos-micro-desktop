@@ -139,6 +139,15 @@
                 "splash"
                 "udev.log_priority=3"
               ];
+              # Increase readahead for better SQLite read performance with f2fs compression
+              kernelModules = mkDefault [ "bfq" ];
+              kernel.sysctl = {
+                "vm.swappiness" = mkDefault 10; # Reduce swap pressure for better DB performance
+                "vm.vfs_cache_pressure" = mkDefault 50; # Keep inodes/dentries cached longer for SQLite
+                "vm.dirty_ratio" = mkDefault 15; # Allow more dirty pages before forced writeback
+                "vm.dirty_background_ratio" = mkDefault 5; # Start background writeback early
+                "vm.page-cluster" = mkDefault 0; # Read single pages from swap (better for zram + random I/O)
+              };
               consoleLogLevel = mkDefault 0;
               loader = mkMerge [
                 (mkIf (cfg.bootMode == "uefi") {
@@ -156,6 +165,11 @@
                 })
               ];
               plymouth.enable = mkDefault true;
+            };
+
+            boot.tmp = {
+              useTmpfs = mkDefault true;
+              tmpfsSize = mkDefault "50%"; # Half of RAM; prevents runaway usage
             };
 
             console = {
@@ -201,6 +215,7 @@
                               "compress_chksum"
                               "gc_merge"
                               "noatime"
+                              "nodiscard"  # Use scheduled fstrim instead of synchronous discard
                             ];
                             extraArgs = [
                               "-l"
@@ -229,6 +244,7 @@
                               "compress_chksum"
                               "gc_merge"
                               "noatime"
+                              "nodiscard"  # Use scheduled fstrim instead of synchronous discard
                             ];
                             extraArgs = [
                               "-l"
@@ -290,6 +306,8 @@
                 XDG_CURRENT_DESKTOP = "niri";
                 XDG_SESSION_DESKTOP = "niri";
                 XDG_SESSION_TYPE = "wayland";
+                # SQLite performance: use /tmp (tmpfs) for temp files instead of f2fs
+                SQLITE_TMPDIR = "/tmp";
               };
               systemPackages =
                 with pkgs;
