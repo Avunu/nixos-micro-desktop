@@ -816,8 +816,12 @@
                   partOf = [ "graphical-session.target" ];
                   serviceConfig = {
                     Type = "simple";
-                    ExecStart = "${pkgs.swayidle}/bin/swayidle -w timeout 600 '${pkgs.systemd}/bin/systemctl suspend'";
+                    ExecStart = "${pkgs.swayidle}/bin/swayidle -w timeout 600 '${pkgs.systemd}/bin/systemctl --no-block suspend'";
                     Restart = "on-failure";
+                    RestartSec = 5;
+                    # Prevent systemd from auto-restarting the service too aggressively
+                    StartLimitBurst = 5;
+                    StartLimitIntervalSec = 60;
                   };
                 };
 
