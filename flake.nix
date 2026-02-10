@@ -560,14 +560,7 @@
                 git
                 host
               ];
-            };
-            timers.flake-update = {
-              wantedBy = [ "timers.target" ];
-              timerConfig = {
-                OnCalendar = "hourly";
-                Persistent = true;
-                Unit = "flake-update.service";
-              };
+              requiredBy = [ "nixos-upgrade.service" ];
             };
           };
 
