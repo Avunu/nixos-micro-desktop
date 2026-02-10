@@ -168,6 +168,7 @@
               QT_QPA_PLATFORM = "wayland";
               QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
               SDL_VIDEODRIVER = "wayland";
+              XDG_CURRENT_DESKTOP = "GNOME";
               XDG_SESSION_TYPE = "wayland";
               # XMODIFIERS = "@im=fcitx";
             };
