@@ -320,7 +320,7 @@
                     };
                     Service = {
                       Type = "oneshot";
-                      ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP PATH";
+                      ExecStart = "${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=GNOME PATH";
                       RemainAfterExit = true;
                     };
                     Install = {
@@ -587,6 +587,7 @@
             allowReboot = mkDefault false;
             enable = mkDefault true;
             flake = mkDefault "/etc/nixos";
+            upgrade = 
           };
 
           users.defaultUserShell = pkgs.bashInteractive;
