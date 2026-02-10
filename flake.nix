@@ -171,10 +171,10 @@
               XDG_CURRENT_DESKTOP = "GNOME";
               XDG_SESSION_TYPE = "wayland";
               # XMODIFIERS = "@im=fcitx";
+              XDG_DATA_DIRS = [
+                "${pkgs.shared-mime-info}/share"
+              ];
             };
-            sessionVariables.XDG_DATA_DIRS = [
-              "${pkgs.shared-mime-info}/share"
-            ];
             systemPackages =
               with pkgs;
               lib.flatten [
@@ -560,7 +560,14 @@
                 git
                 host
               ];
-              requiredBy = [ "nixos-upgrade.service" ];
+            };
+            timers.flake-update = {
+              wantedBy = [ "timers.target" ];
+              timerConfig = {
+                OnCalendar = "hourly";
+                Persistent = true;
+                Unit = "flake-update.service";
+              };
             };
           };
 
