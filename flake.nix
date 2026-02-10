@@ -587,7 +587,6 @@
             allowReboot = mkDefault false;
             enable = mkDefault true;
             flake = mkDefault "/etc/nixos";
-            upgrade = 
           };
 
           users.defaultUserShell = pkgs.bashInteractive;
