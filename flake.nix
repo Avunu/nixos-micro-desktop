@@ -606,8 +606,8 @@
 
             qt = {
               enable = mkDefault true;
-              platformTheme = "gnome";
-              style = "adwaita-dark";
+              platformTheme = "gtk3";
+              # style = "adwaita-dark";
             };
 
             services = {
