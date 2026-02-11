@@ -300,7 +300,7 @@
                 QML_DISABLE_DISK_CACHE = "1";
                 QSG_RHI_BACKEND = "vulkan";
                 QT_QPA_PLATFORM = "wayland";
-                QT_QPA_PLATFORMTHEME = "gtk3";
+                QT_QPA_PLATFORMTHEME = "qt6ct";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
                 # QT_STYLE_OVERRIDE = "adwaita-dark";
                 SAL_ENABLESKIA = "1";
@@ -323,10 +323,10 @@
                       cd /etc/nixos && nix flake update && nixos-rebuild switch
                     ''
                     )
+                    adw-gtk3
                     adwaita-icon-theme
                     adwaita-qt
                     adwaita-qt6
-                    adw-gtk3
                     alacritty
                     brightnessctl
                     cava
@@ -354,11 +354,14 @@
                     gst_all_1.gst-plugins-ugly
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
+                    kdePackages.qt6ct
                     key-rack
                     libdbusmenu
                     libheif
                     libheif.out
                     libsecret
+                    libsForQt5.qt5ct
+                    libsForQt5.qt5ct
                     loupe
                     lxqt.libdbusmenu-lxqt
                     matugen
@@ -605,12 +608,6 @@
                   zstd
                 ];
               };
-            };
-
-            qt = {
-              enable = mkDefault true;
-              # platformTheme = "gtk3";
-              # style = "adwaita-dark";
             };
 
             services = {
