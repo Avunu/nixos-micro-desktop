@@ -331,6 +331,8 @@
                     brightnessctl
                     cava
                     cliphist
+                    darkly
+                    darkly-qt5
                     decibels
                     dnsmasq
                     dsearch
@@ -354,6 +356,9 @@
                     gst_all_1.gst-plugins-ugly
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
+                    kdePackages.breeze
+                    kdePackages.breeze-gtk
+                    kdePackages.breeze-icons
                     kdePackages.qt6ct
                     key-rack
                     libdbusmenu
