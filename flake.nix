@@ -300,7 +300,7 @@
                 QML_DISABLE_DISK_CACHE = "1";
                 QSG_RHI_BACKEND = "vulkan";
                 QT_QPA_PLATFORM = "wayland";
-                # QT_QPA_PLATFORMTHEME = "gtk3";
+                QT_QPA_PLATFORMTHEME = "gtk3";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
                 # QT_STYLE_OVERRIDE = "adwaita-dark";
                 SAL_ENABLESKIA = "1";
@@ -609,7 +609,7 @@
 
             qt = {
               enable = mkDefault true;
-              platformTheme = "gtk3";
+              # platformTheme = "gtk3";
               # style = "adwaita-dark";
             };
 
