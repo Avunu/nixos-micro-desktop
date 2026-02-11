@@ -319,7 +319,10 @@
                 with pkgs;
                 lib.flatten [
                   [
-                    (writeShellScriptBin "dms-ipc" (builtins.readFile ./scripts/dms-ipc))
+                    (writeShellScriptBin "system-upgrade" ''
+                      cd /etc/nixos && nix flake update && nixos-rebuild switch
+                    ''
+                    )
                     adwaita-icon-theme
                     adwaita-qt
                     adwaita-qt6
