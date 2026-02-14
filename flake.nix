@@ -293,6 +293,7 @@
                 GDK_BACKEND = "wayland";
                 GDK_PLATFORM = "wayland";
                 GTK_BACKEND = "wayland";
+                GTK_THEME = "adw-gtk";
                 MOZ_ENABLE_WAYLAND = "1";
                 NIXPKGS_ALLOW_UNFREE = "1";
                 OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
@@ -302,7 +303,7 @@
                 QT_QPA_PLATFORM = "wayland";
                 QT_QPA_PLATFORMTHEME = "qt6ct";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
-                # QT_STYLE_OVERRIDE = "adwaita-dark";
+                QT_STYLE_OVERRIDE = "Darkly";
                 SAL_ENABLESKIA = "1";
                 SAL_FORCESKIA = "1";
                 SAL_SKIA = "vulkan";
