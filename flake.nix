@@ -293,7 +293,7 @@
                 GDK_BACKEND = "wayland";
                 GDK_PLATFORM = "wayland";
                 GTK_BACKEND = "wayland";
-                GTK_THEME = "adw-gtk";
+                # GTK_THEME = "adw-gtk";
                 MOZ_ENABLE_WAYLAND = "1";
                 NIXPKGS_ALLOW_UNFREE = "1";
                 OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
