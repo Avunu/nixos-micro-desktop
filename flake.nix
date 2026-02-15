@@ -212,15 +212,16 @@
                             mountOptions = [
                               "atgc"
                               "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
-                              "compress_cache"            # Cache decompressed pages for hot data (SQLite, desktop apps)
+                              "compress_cache" # Cache decompressed pages for hot data (SQLite, desktop apps)
                               "compress_chksum"
-                              "compress_extension=*"      # Compress all files by default
+                              "compress_extension=*" # Compress all files by default
                               "gc_merge"
                               "noatime"
-                              "nodiscard"  # Use scheduled fstrim instead of synchronous discard
+                              "nodiscard" # Use scheduled fstrim instead of synchronous discard
                             ];
                             extraArgs = [
-                              "-O" "extra_attr,compression" # Enable compression feature at format time
+                              "-O"
+                              "extra_attr,compression" # Enable compression feature at format time
                               "-l"
                               "root"
                             ];
@@ -244,15 +245,16 @@
                             mountOptions = [
                               "atgc"
                               "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
-                              "compress_cache"            # Cache decompressed pages for hot data (SQLite, desktop apps)
+                              "compress_cache" # Cache decompressed pages for hot data (SQLite, desktop apps)
                               "compress_chksum"
-                              "compress_extension=*"      # Compress all files by default
+                              "compress_extension=*" # Compress all files by default
                               "gc_merge"
                               "noatime"
-                              "nodiscard"  # Use scheduled fstrim instead of synchronous discard
+                              "nodiscard" # Use scheduled fstrim instead of synchronous discard
                             ];
                             extraArgs = [
-                              "-O" "extra_attr,compression" # Enable compression feature at format time
+                              "-O"
+                              "extra_attr,compression" # Enable compression feature at format time
                               "-l"
                               "root"
                             ];
@@ -320,10 +322,10 @@
                 with pkgs;
                 lib.flatten [
                   [
+                    (writeShellScriptBin "dms-ipc" (builtins.readFile ./scripts/dms-ipc))
                     (writeShellScriptBin "system-upgrade" ''
                       cd /etc/nixos && nix flake update && nixos-rebuild switch
-                    ''
-                    )
+                    '')
                     adw-gtk3
                     adwaita-icon-theme
                     adwaita-qt
