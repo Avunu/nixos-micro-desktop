@@ -394,7 +394,6 @@
                     xdg-user-dirs
                     xdg-user-dirs-gtk
                     xdg-utils
-                    xwayland-satellite
                   ]
                   cfg.extraPackages
                 ];
