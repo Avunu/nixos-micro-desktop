@@ -303,6 +303,7 @@
                 QML_DISABLE_DISK_CACHE = "1";
                 QSG_RHI_BACKEND = "vulkan";
                 QT_QPA_PLATFORM = "wayland";
+                MU_QT_QPA_PLATFORM = "wayland";
                 QT_QPA_PLATFORMTHEME = "xdgdesktopportal";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
                 QT_STYLE_OVERRIDE = "Darkly";
