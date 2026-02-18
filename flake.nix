@@ -304,9 +304,9 @@
                 QSG_RHI_BACKEND = "vulkan";
                 QT_QPA_PLATFORM = "wayland";
                 MU_QT_QPA_PLATFORM = "wayland";
-                QT_QPA_PLATFORMTHEME = "xdgdesktopportal";
+                QT_QPA_PLATFORMTHEME = "qt6ct";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
-                QT_STYLE_OVERRIDE = "Darkly";
+                # QT_STYLE_OVERRIDE = "Darkly";
                 SAL_ENABLESKIA = "1";
                 SAL_FORCESKIA = "1";
                 SAL_SKIA = "vulkan";
