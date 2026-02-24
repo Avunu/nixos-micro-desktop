@@ -336,7 +336,7 @@
                     cava
                     cliphist
                     darkly
-                    darkly-qt5
+                    # darkly-qt5
                     decibels
                     dnsmasq
                     dsearch
