@@ -571,6 +571,7 @@
               # DMS Shell (nixpkgs native)
               dms-shell = {
                 enable = mkDefault true;
+                enableCalendarEvents = mkDefault false; # todo: re-enable when khal is fixed upstream
                 enableSystemMonitoring = mkDefault true;
                 enableVPN = cfg.enableVpn;
                 systemd = {
