@@ -778,111 +778,115 @@
                   Unit = "flake-update.service";
                 };
               };
-              user.services = {
-                pipewire = {
-                  wantedBy = [ "niri.service" ];
-                  before = [ "niri.service" ];
-                };
+              user = {
+                services = {
+                  pipewire = {
+                    wantedBy = [ "niri.service" ];
+                    before = [ "niri.service" ];
+                  };
 
-                # Ensure wireplumber waits for UPower to avoid battery query warnings
-                wireplumber = {
-                  wants = [ "upower.service" ];
-                  after = [ "upower.service" ];
-                };
+                  # Ensure wireplumber waits for UPower to avoid battery query warnings
+                  wireplumber = {
+                    wants = [ "upower.service" ];
+                    after = [ "upower.service" ];
+                  };
 
-                # GNOME Keyring daemon (secrets and pkcs11 only; SSH handled by gcr-ssh-agent)
-                gnome-keyring = {
-                  description = "GNOME Keyring daemon";
-                  wantedBy = [ "graphical-session-pre.target" ];
-                  partOf = [ "graphical-session-pre.target" ];
-                  serviceConfig = {
-                    Type = "simple";
-                    ExecStart = "/run/wrappers/bin/gnome-keyring-daemon --start --foreground --components=secrets,pkcs11";
-                    Restart = "on-failure";
+                  # GNOME Keyring daemon (secrets and pkcs11 only; SSH handled by gcr-ssh-agent)
+                  gnome-keyring = {
+                    description = "GNOME Keyring daemon";
+                    wantedBy = [ "graphical-session-pre.target" ];
+                    partOf = [ "graphical-session-pre.target" ];
+                    serviceConfig = {
+                      Type = "simple";
+                      ExecStart = "/run/wrappers/bin/gnome-keyring-daemon --start --foreground --components=secrets,pkcs11";
+                      Restart = "on-failure";
+                    };
+                  };
+
+                  # Polkit authentication agent
+                  niri-polkit = {
+                    description = "PolicyKit Authentication Agent for niri";
+                    wantedBy = [ "graphical-session.target" ];
+                    after = [ "graphical-session.target" ];
+                    partOf = [ "graphical-session.target" ];
+                    serviceConfig = {
+                      Type = "simple";
+                      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+                      Restart = "on-failure";
+                      RestartSec = 1;
+                      TimeoutStopSec = 10;
+                    };
+                  };
+
+                  # Swayidle for auto-suspend
+                  swayidle = {
+                    description = "Idle manager for niri";
+                    wantedBy = [ "graphical-session.target" ];
+                    after = [ "graphical-session.target" ];
+                    partOf = [ "graphical-session.target" ];
+                    serviceConfig = {
+                      Type = "simple";
+                      ExecStart = "${pkgs.swayidle}/bin/swayidle -w timeout 600 '${pkgs.systemd}/bin/systemctl --no-block suspend'";
+                      Restart = "on-failure";
+                      RestartSec = 5;
+                      # Prevent systemd from auto-restarting the service too aggressively
+                      StartLimitBurst = 5;
+                      StartLimitIntervalSec = 60;
+                    };
+                  };
+
+                  # XDG Desktop Portal services - ensure they start after graphical session
+                  # This prevents "cannot open display" errors during greeter/early boot
+                  xdg-desktop-portal = {
+                    after = [ "graphical-session.target" ];
+                    partOf = [ "graphical-session.target" ];
+                  };
+                  xdg-desktop-portal-gtk = {
+                    after = [ "graphical-session.target" ];
+                    partOf = [ "graphical-session.target" ];
+                    serviceConfig = {
+                      # Prevent rapid restart loops if display isn't ready
+                      RestartSec = 2;
+                      Restart = "on-failure";
+                      RestartMaxDelaySec = 30;
+                    };
+                  };
+                  xdg-desktop-portal-gnome = {
+                    after = [
+                      "graphical-session.target"
+                      "xdg-desktop-portal-gtk.service"
+                    ];
+                    partOf = [ "graphical-session.target" ];
+                  };
+
+                  # User profile upgrade service
+                  nix-profile-upgrade = {
+                    description = "Upgrade user nix profile";
+                    serviceConfig = {
+                      Type = "oneshot";
+                      ExecStart = "${pkgs.nix}/bin/nix profile upgrade --all --impure";
+                      Restart = "on-failure";
+                      RestartSec = "120s";
+                    };
+                    wants = [ "network-online.target" ];
+                    after = [ "network-online.target" ];
+                    path = with pkgs; [
+                      nix
+                      git
+                    ];
                   };
                 };
 
-                # Polkit authentication agent
-                niri-polkit = {
-                  description = "PolicyKit Authentication Agent for niri";
-                  wantedBy = [ "graphical-session.target" ];
-                  after = [ "graphical-session.target" ];
-                  partOf = [ "graphical-session.target" ];
-                  serviceConfig = {
-                    Type = "simple";
-                    ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-                    Restart = "on-failure";
-                    RestartSec = 1;
-                    TimeoutStopSec = 10;
+                timers = {
+                  nix-profile-upgrade = {
+                    description = "Upgrade user nix profile timer";
+                    wantedBy = [ "timers.target" ];
+                    timerConfig = {
+                      OnCalendar = "hourly";
+                      Persistent = true;
+                      Unit = "nix-profile-upgrade.service";
+                    };
                   };
-                };
-
-                # Swayidle for auto-suspend
-                swayidle = {
-                  description = "Idle manager for niri";
-                  wantedBy = [ "graphical-session.target" ];
-                  after = [ "graphical-session.target" ];
-                  partOf = [ "graphical-session.target" ];
-                  serviceConfig = {
-                    Type = "simple";
-                    ExecStart = "${pkgs.swayidle}/bin/swayidle -w timeout 600 '${pkgs.systemd}/bin/systemctl --no-block suspend'";
-                    Restart = "on-failure";
-                    RestartSec = 5;
-                    # Prevent systemd from auto-restarting the service too aggressively
-                    StartLimitBurst = 5;
-                    StartLimitIntervalSec = 60;
-                  };
-                };
-
-                # XDG Desktop Portal services - ensure they start after graphical session
-                # This prevents "cannot open display" errors during greeter/early boot
-                xdg-desktop-portal = {
-                  after = [ "graphical-session.target" ];
-                  partOf = [ "graphical-session.target" ];
-                };
-                xdg-desktop-portal-gtk = {
-                  after = [ "graphical-session.target" ];
-                  partOf = [ "graphical-session.target" ];
-                  serviceConfig = {
-                    # Prevent rapid restart loops if display isn't ready
-                    RestartSec = 2;
-                    Restart = "on-failure";
-                    RestartMaxDelaySec = 30;
-                  };
-                };
-                xdg-desktop-portal-gnome = {
-                  after = [
-                    "graphical-session.target"
-                    "xdg-desktop-portal-gtk.service"
-                  ];
-                  partOf = [ "graphical-session.target" ];
-                };
-
-                # User profile upgrade service
-                nix-profile-upgrade = {
-                  description = "Upgrade user nix profile";
-                  serviceConfig = {
-                    Type = "oneshot";
-                    ExecStart = "${pkgs.nix}/bin/nix profile upgrade --all --impure";
-                    Restart = "on-failure";
-                    RestartSec = "120s";
-                  };
-                  wants = [ "network-online.target" ];
-                  after = [ "network-online.target" ];
-                  path = with pkgs; [
-                    nix
-                    git
-                  ];
-                };
-              };
-
-              timers.nix-profile-upgrade = {
-                description = "Upgrade user nix profile timer";
-                wantedBy = [ "timers.target" ];
-                timerConfig = {
-                  OnCalendar = "hourly";
-                  Persistent = true;
-                  Unit = "nix-profile-upgrade.service";
                 };
               };
             };
