@@ -894,6 +894,11 @@
             system.autoUpgrade = {
               allowReboot = mkDefault false;
               enable = mkDefault true;
+              flags = [
+                "--update-input"
+                "nixpkgs"
+                "--impure"
+              ];
               flake = mkDefault "/etc/nixos";
             };
 
