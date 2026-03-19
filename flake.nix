@@ -325,7 +325,7 @@
                   [
                     (writeShellScriptBin "dms-ipc" (builtins.readFile ./scripts/dms-ipc))
                     (writeShellScriptBin "system-upgrade" ''
-                      cd /etc/nixos && nix flake update && nixos-rebuild switch --impure
+                      sudo sh -c 'cd /etc/nixos && nix flake update && nixos-rebuild switch --impure'
                     '')
                     (writeShellScriptBin "restart-shell" ''
                       systemctl --user restart dms.service
