@@ -48,6 +48,7 @@ binds {
     Super+Ctrl+Left { move-column-left; }
     Super+Ctrl+Page_Down { move-column-to-workspace-down; }
     Super+Ctrl+Page_Up { move-column-to-workspace-up; }
+    Super+Ctrl+R hotkey-overlay-title="Restart Shell" { spawn "restart-shell"; }
     Super+Ctrl+Right { move-column-right; }
     Super+Ctrl+U { move-column-to-workspace-down; }
     Super+Ctrl+Up { move-window-up; }

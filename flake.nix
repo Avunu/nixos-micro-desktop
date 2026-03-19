@@ -327,6 +327,9 @@
                     (writeShellScriptBin "system-upgrade" ''
                       cd /etc/nixos && nix flake update && nixos-rebuild switch --impure
                     '')
+                    (writeShellScriptBin "restart-shell" ''
+                      systemctl --user restart dms.service
+                    '')
                     adw-gtk3
                     adwaita-icon-theme
                     adwaita-qt
