@@ -335,11 +335,12 @@
                     adwaita-qt
                     adwaita-qt6
                     alacritty
+                    aspell
+                    aspellDicts.en
                     brightnessctl
                     cava
                     cliphist
                     darkly
-                    # darkly-qt5
                     decibels
                     dnsmasq
                     dsearch
@@ -363,6 +364,8 @@
                     gst_all_1.gst-plugins-ugly
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
+                    hunspell
+                    hunspellDicts.en_US
                     kdePackages.breeze
                     kdePackages.breeze-gtk
                     kdePackages.breeze-icons
