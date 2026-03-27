@@ -327,6 +327,9 @@
                     (writeShellScriptBin "system-upgrade" ''
                       sudo sh -c 'cd /etc/nixos && nix flake update && nixos-rebuild switch --impure'
                     '')
+                    (writeShellScriptBin "profile-upgrade" ''
+                      nix profile upgrade --all --impure
+                    '')
                     (writeShellScriptBin "restart-shell" ''
                       systemctl --user restart dms.service
                     '')
