@@ -330,6 +330,13 @@
                     (writeShellScriptBin "restart-shell" ''
                       systemctl --user restart dms.service
                     '')
+                    (hunspellWithDicts (
+                      with hunspellDicts;
+                      [
+                        en_US
+                        en_US-large
+                      ]
+                    ))
                     adw-gtk3
                     adwaita-icon-theme
                     adwaita-qt
@@ -399,13 +406,6 @@
                     xdg-user-dirs
                     xdg-user-dirs-gtk
                     xdg-utils
-                  ]
-                  [
-                    hunspellWithDicts
-                    [
-                      hunspellDicts.en-us
-                      hunspellDicts.en-us-large
-                    ]
                   ]
                   cfg.extraPackages
                 ];
