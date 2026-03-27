@@ -364,8 +364,6 @@
                     gst_all_1.gst-plugins-ugly
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
-                    hunspell
-                    hunspellDicts.en_US
                     kdePackages.breeze
                     kdePackages.breeze-gtk
                     kdePackages.breeze-icons
@@ -401,6 +399,13 @@
                     xdg-user-dirs
                     xdg-user-dirs-gtk
                     xdg-utils
+                  ]
+                  [
+                    hunspellWithDicts
+                    [
+                      hunspellDicts.en-us
+                      hunspellDicts.en-us-large
+                    ]
                   ]
                   cfg.extraPackages
                 ];
