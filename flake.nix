@@ -746,7 +746,7 @@
                     StartLimitBurst = 5;
                   };
                   serviceConfig = {
-                    ExecStart = "${pkgs.nix}/bin/nix flake update --commit-lock-file --flake /etc/nixos";
+                    ExecStart = "${pkgs.nix}/bin/nix flake update --flake /etc/nixos";
                     Restart = "on-failure";
                     RestartSec = "120s";
                     Type = "oneshot";
