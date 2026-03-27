@@ -333,7 +333,7 @@
                     (writeShellScriptBin "restart-shell" ''
                       systemctl --user restart dms.service
                     '')
-                    (hunspellWithDicts (
+                    (hunspell.withDicts (
                       with hunspellDicts;
                       [
                         en_US
