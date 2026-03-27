@@ -334,7 +334,6 @@
                       with hunspellDicts;
                       [
                         en_US
-                        en_US-large
                       ]
                     ))
                     adw-gtk3
