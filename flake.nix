@@ -647,10 +647,6 @@
               colord.enable = mkDefault true;
               dbus = {
                 implementation = mkDefault "broker";
-                # Note: Don't add packages here that are already in environment.systemPackages
-                # The system-path aggregates all systemPackages and provides their D-Bus services.
-                # Adding them here too causes "Ignoring duplicate name" warnings from dbus-broker.
-                packages = [ ];
               };
               displayManager = {
                 defaultSession = "niri";
