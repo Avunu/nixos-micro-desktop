@@ -333,19 +333,21 @@
                     (writeShellScriptBin "restart-shell" ''
                       systemctl --user restart dms.service
                     '')
-                    (hunspell.withDicts (
-                      with hunspellDicts;
-                      [
-                        en_US
-                      ]
-                    ))
+                    # Aspell Dictionaries
+                    (pkgs.aspellWithDicts (dicts: [
+                      dicts.en
+                      dicts.en-computers
+                    ]))
+                    # Hunspell Dictionaries
+                    (pkgs.hunspell.withDicts (dicts: [
+                      dicts.en_GB-ize
+                      dicts.en_US
+                    ]))
                     adw-gtk3
                     adwaita-icon-theme
                     adwaita-qt
                     adwaita-qt6
                     alacritty
-                    aspell
-                    aspellDicts.en
                     brightnessctl
                     cava
                     cliphist
