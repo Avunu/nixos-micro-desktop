@@ -3,7 +3,7 @@
     "bombon": {
       "inputs": {
         "nixpkgs": [
-          "nix-profile-backend",
+          "nix-packagekit",
           "nixpkgs"
         ]
       },
@@ -80,7 +80,7 @@
         "flake-compat": "flake-compat",
         "gitignore": "gitignore",
         "nixpkgs": [
-          "nix-profile-backend",
+          "nix-packagekit",
           "nixpkgs"
         ]
       },
@@ -101,7 +101,7 @@
     "gitignore": {
       "inputs": {
         "nixpkgs": [
-          "nix-profile-backend",
+          "nix-packagekit",
           "git-hooks",
           "nixpkgs"
         ]
@@ -120,7 +120,7 @@
         "type": "github"
       }
     },
-    "nix-profile-backend": {
+    "nix-packagekit": {
       "inputs": {
         "bombon": "bombon",
         "flake-utils": "flake-utils",
@@ -197,7 +197,7 @@
     "root": {
       "inputs": {
         "disko": "disko",
-        "nix-profile-backend": "nix-profile-backend",
+        "nix-packagekit": "nix-packagekit",
         "nixpkgs": "nixpkgs"
       }
     },
