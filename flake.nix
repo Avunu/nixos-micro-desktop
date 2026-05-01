@@ -278,6 +278,9 @@
               etc = {
                 # Deploy niri config system-wide
                 "niri/config.kdl".source = ./configs/niri-global.kdl;
+                # deploy default GTK config
+                "gtk-3.0/settings.ini".source = ./configs/gtk-3.0-settings.ini;
+                "gtk-4.0/settings.ini".source = ./configs/gtk-4.0-settings.ini;
               };
               pathsToLink = [
                 "/share/app-info"
