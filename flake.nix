@@ -389,6 +389,7 @@
                     libdbusmenu
                     libheif
                     libheif.out
+                    libmtp
                     libsecret
                     libsForQt5.qt5ct
                     libsForQt5.qt5ct
