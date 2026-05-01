@@ -282,6 +282,8 @@
               pathsToLink = [
                 "/share/app-info"
                 "/share/applications"
+                "/share/gtk-3.0"
+                "/share/gtk-4.0"
                 "/share/icons"
                 "/share/metainfo"
                 "/share/pixmaps"
@@ -375,6 +377,7 @@
                     gst_all_1.gst-plugins-ugly
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
+                    gtk4.out
                     kdePackages.breeze
                     kdePackages.breeze-gtk
                     kdePackages.breeze-icons
@@ -649,6 +652,13 @@
               colord.enable = mkDefault true;
               dbus = {
                 implementation = mkDefault "broker";
+                packages = with pkgs; [
+                  dconf
+                  gcr
+                  gnome-keyring
+                  libdbusmenu
+                  lxqt.libdbusmenu-lxqt
+                ];
               };
               displayManager = {
                 defaultSession = "niri";
@@ -671,7 +681,9 @@
                 gnome-keyring.enable = mkDefault true;
                 gnome-online-accounts.enable = mkDefault true;
                 gnome-settings-daemon.enable = mkDefault true;
+                localsearch.enable = mkDefault true;
                 sushi.enable = mkDefault true;
+                tinysparql.enable = mkDefault true;
               };
               greetd = {
                 enable = mkDefault true;
