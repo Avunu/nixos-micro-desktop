@@ -163,6 +163,7 @@
                     device = cfg.diskDevice;
                   };
                 })
+                (loader.timeout = mkDefault 2);
               ];
               plymouth.enable = mkDefault true;
             };
