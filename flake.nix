@@ -7,7 +7,7 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-profile-backend = {
+    nix-packagekit = {
       url = "github:Avunu/nix-profile-packagekit-backend";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -33,7 +33,7 @@
         {
           imports = [
             inputs.disko.nixosModules.disko
-            inputs.nix-profile-backend.nixosModules.default
+            inputs.nix-packagekit.nixosModules.default
           ];
 
           options.microDesktop = {
@@ -424,7 +424,7 @@
                 # - User's nix-profile (for nix profile installed packages)
                 # - Display manager session data (for .desktop session files)
                 # - System path (canonical aggregation of all system packages)
-                # mkForce overrides display-managers and nix-profile-backend defaults
+                # mkForce overrides display-managers and nix-packagekit defaults
                 XDG_DATA_DIRS = mkForce "$HOME/.local/share:$HOME/.nix-profile/share:${config.services.displayManager.sessionData.desktops}/share:/run/current-system/sw/share";
               };
             };
