@@ -2,7 +2,7 @@
   description = "NixOS Micro Desktop";
 
   inputs = {
-    nixpkgs.url = "github:numtide/nixpkgs-unfree?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
