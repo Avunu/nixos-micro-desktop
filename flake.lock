@@ -841,11 +841,11 @@
         "packagekit-src": "packagekit-src"
       },
       "locked": {
-        "lastModified": 1777731637,
-        "narHash": "sha256-K+Peyq+d3CorZNpJ1P7IDmXtxoRnFnVLCFbJDsgQxQo=",
+        "lastModified": 1777733881,
+        "narHash": "sha256-eLdJBgeW9nXPVn4vlt/4LPJ/M4W2s8yXMMTQw244eco=",
         "owner": "Avunu",
         "repo": "nix-profile-packagekit-backend",
-        "rev": "8d682f6bdfe416e7844ea7b6bacad9834a94fc6a",
+        "rev": "a4f29151026f74963b86a5e07691719f92ce6bb6",
         "type": "github"
       },
       "original": {
