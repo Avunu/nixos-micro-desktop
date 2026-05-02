@@ -981,7 +981,66 @@
                 fallbackCursorThemes = [ "Adwaita" ];
               };
               menus.enable = mkDefault true;
-              mime.enable = mkDefault true;
+              mime = {
+                enable = mkDefault true;
+                defaultApplications = {
+                  # Images → Loupe
+                  "image/jpeg" = "org.gnome.Loupe.desktop";
+                  "image/png" = "org.gnome.Loupe.desktop";
+                  "image/gif" = "org.gnome.Loupe.desktop";
+                  "image/webp" = "org.gnome.Loupe.desktop";
+                  "image/tiff" = "org.gnome.Loupe.desktop";
+                  "image/bmp" = "org.gnome.Loupe.desktop";
+                  "image/x-bmp" = "org.gnome.Loupe.desktop";
+                  "image/svg+xml" = "org.gnome.Loupe.desktop";
+                  "image/avif" = "org.gnome.Loupe.desktop";
+                  "image/heic" = "org.gnome.Loupe.desktop";
+                  "image/heif" = "org.gnome.Loupe.desktop";
+                  "image/jxl" = "org.gnome.Loupe.desktop";
+                  "image/vnd.microsoft.icon" = "org.gnome.Loupe.desktop";
+                  "image/x-portable-bitmap" = "org.gnome.Loupe.desktop";
+                  "image/x-portable-pixmap" = "org.gnome.Loupe.desktop";
+                  "image/x-portable-graymap" = "org.gnome.Loupe.desktop";
+                  "image/x-portable-anymap" = "org.gnome.Loupe.desktop";
+                  "image/x-tga" = "org.gnome.Loupe.desktop";
+                  # Audio → Decibels
+                  "audio/mpeg" = "org.gnome.Decibels.desktop";
+                  "audio/mp3" = "org.gnome.Decibels.desktop";
+                  "audio/ogg" = "org.gnome.Decibels.desktop";
+                  "audio/x-ogg" = "org.gnome.Decibels.desktop";
+                  "audio/vorbis" = "org.gnome.Decibels.desktop";
+                  "audio/flac" = "org.gnome.Decibels.desktop";
+                  "audio/x-flac" = "org.gnome.Decibels.desktop";
+                  "audio/wav" = "org.gnome.Decibels.desktop";
+                  "audio/x-wav" = "org.gnome.Decibels.desktop";
+                  "audio/aac" = "org.gnome.Decibels.desktop";
+                  "audio/mp4" = "org.gnome.Decibels.desktop";
+                  "audio/x-m4a" = "org.gnome.Decibels.desktop";
+                  "audio/opus" = "org.gnome.Decibels.desktop";
+                  # Video → Showtime
+                  "video/mp4" = "org.gnome.Showtime.desktop";
+                  "video/x-matroska" = "org.gnome.Showtime.desktop";
+                  "video/webm" = "org.gnome.Showtime.desktop";
+                  "video/ogg" = "org.gnome.Showtime.desktop";
+                  "video/mpeg" = "org.gnome.Showtime.desktop";
+                  "video/quicktime" = "org.gnome.Showtime.desktop";
+                  "video/x-msvideo" = "org.gnome.Showtime.desktop";
+                  "video/x-flv" = "org.gnome.Showtime.desktop";
+                  "video/x-ms-wmv" = "org.gnome.Showtime.desktop";
+                  "video/3gpp" = "org.gnome.Showtime.desktop";
+                  "video/3gpp2" = "org.gnome.Showtime.desktop";
+                  "video/x-ogm+ogg" = "org.gnome.Showtime.desktop";
+                  # Documents → Papers
+                  "application/pdf" = "org.gnome.Papers.desktop";
+                  "application/epub+zip" = "org.gnome.Papers.desktop";
+                  "application/x-cbr" = "org.gnome.Papers.desktop";
+                  "application/x-cbz" = "org.gnome.Papers.desktop";
+                  "application/x-cb7" = "org.gnome.Papers.desktop";
+                  "application/x-cbt" = "org.gnome.Papers.desktop";
+                  # Directories → Nautilus
+                  "inode/directory" = "org.gnome.Nautilus.desktop";
+                };
+              };
               portal = {
                 enable = mkDefault true;
                 configPackages = mkDefault (

@@ -15,8 +15,8 @@
     }:
     let
       # Configuration variables
-      hostName = "gideon-dev-01";
-      username = "gideon";
+      hostName = "kevin-dev-laptop";
+      username = "batonac";
       system = "x86_64-linux";
     in
     {
@@ -30,7 +30,7 @@
             {
               microDesktop = {
                 hostName = hostName;
-                diskDevice = "/dev/nvme0n1";
+                diskDevice = "/dev/sda";
                 bootMode = "uefi"; # Options: "uefi" or "legacy"
                 timeZone = "America/New_York";
                 locale = "en_US.UTF-8";
