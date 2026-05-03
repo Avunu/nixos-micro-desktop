@@ -518,7 +518,7 @@
               };
               sane = {
                 enable = mkDefault true;
-                extraBackends = mkDefault (with pkgs; [ sane-airscan ]);
+                extraBackends = mkDefault (with pkgs; [ sane-airscan sane-backends ]);
               };
               sensor.iio.enable = mkDefault true;
             };
