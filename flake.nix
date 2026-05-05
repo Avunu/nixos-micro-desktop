@@ -962,7 +962,7 @@
             i18n.defaultLocale = cfg.locale;
 
             users = {
-              defaultUserShell = pkgs.bashInteractive;
+              defaultUserShell = pkgs.brush;
               users.${cfg.username} = {
                 extraGroups = [
                   "input"
@@ -971,6 +971,7 @@
                 ];
                 initialPassword = cfg.initialPassword;
                 isNormalUser = true;
+                useDefaultShell = true;
               };
             };
 
