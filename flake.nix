@@ -962,7 +962,7 @@
             i18n.defaultLocale = cfg.locale;
 
             users = {
-              defaultUserShell = pkgs.brush;
+              defaultUserShell = pkgs.nushell;
               users.${cfg.username} = {
                 extraGroups = [
                   "input"
