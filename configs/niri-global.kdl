@@ -99,7 +99,7 @@ binds {
     Super+Shift+U { move-workspace-down; }
     Super+Shift+Up { focus-monitor-up; }
     Super+Space hotkey-overlay-title="Toggle Application Launcher" { spawn "dms-ipc" "ipc" "spotlight" "toggle"; }
-    Super+T { spawn "alacritty"; }
+    Super+T { spawn "ghostty"; }
     Super+U { focus-workspace-down; }
     Super+Up { focus-window-up; }
     Super+V hotkey-overlay-title="Toggle Clipboard Manager" { spawn "dms-ipc" "ipc" "clipboard" "toggle"; }

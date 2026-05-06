@@ -318,7 +318,7 @@
                 SAL_SKIA = "vulkan";
                 SDL_SOUNDFONTS = "${pkgs.soundfont-fluid}/share/soundfonts/FluidR3_GM.sf2";
                 SDL_VIDEODRIVER = "wayland";
-                TERMINAL = getExe pkgs.alacritty;
+                TERMINAL = getExe pkgs.ghostty;
                 XDG_CURRENT_DESKTOP = "niri";
                 XDG_SESSION_DESKTOP = "niri";
                 XDG_SESSION_TYPE = "wayland";
@@ -353,7 +353,7 @@
                     adwaita-icon-theme
                     adwaita-qt
                     adwaita-qt6
-                    alacritty
+                    ghostty
                     brightnessctl
                     cava
                     cliphist
