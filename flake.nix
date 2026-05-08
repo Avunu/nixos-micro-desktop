@@ -910,7 +910,7 @@
               [ -f "$NIRI_CONFIG_DIR/custom.kdl" ] || touch "$NIRI_CONFIG_DIR/custom.kdl"
                 
               # Ensure DMS config files exist (even as empty files)
-              DMS_FILES=("alttab" "binds" "colors" "cursor" "layout" "outputs" "wpblur")
+              DMS_FILES=("alttab" "binds" "colors" "cursor" "layout" "outputs" "windowrules" "wpblur")
               for f in "''${DMS_FILES[@]}"; do
                 [ -f "$DMS_DIR/$f.kdl" ] || touch "$DMS_DIR/$f.kdl"
               done
