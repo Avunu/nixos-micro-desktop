@@ -404,12 +404,10 @@
                     packagekit
                     papers
                     playerctl
-                    polkit
                     satty
                     shared-mime-info
                     showtime
                     slurp
-                    swayidle
                     uutils-coreutils-noprefix
                     wl-clipboard
                     wlr-randr
@@ -755,7 +753,6 @@
               pam.services = {
                 login.enableGnomeKeyring = mkDefault true;
                 greetd.enableGnomeKeyring = mkDefault true;
-                swaylock = { };
               };
               rtkit.enable = mkDefault true;
               tpm2.enable = mkDefault true;
@@ -828,38 +825,6 @@
                       Type = "simple";
                       ExecStart = "/run/wrappers/bin/gnome-keyring-daemon --start --foreground --components=secrets,pkcs11";
                       Restart = "on-failure";
-                    };
-                  };
-
-                  # Polkit authentication agent
-                  niri-polkit = {
-                    description = "PolicyKit Authentication Agent for niri";
-                    wantedBy = [ "graphical-session.target" ];
-                    after = [ "graphical-session.target" ];
-                    partOf = [ "graphical-session.target" ];
-                    serviceConfig = {
-                      Type = "simple";
-                      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-                      Restart = "on-failure";
-                      RestartSec = 1;
-                      TimeoutStopSec = 10;
-                    };
-                  };
-
-                  # Swayidle for auto-suspend
-                  swayidle = {
-                    description = "Idle manager for niri";
-                    wantedBy = [ "graphical-session.target" ];
-                    after = [ "graphical-session.target" ];
-                    partOf = [ "graphical-session.target" ];
-                    serviceConfig = {
-                      Type = "simple";
-                      ExecStart = "${pkgs.swayidle}/bin/swayidle -w timeout 600 '${pkgs.systemd}/bin/systemctl --no-block suspend'";
-                      Restart = "on-failure";
-                      RestartSec = 5;
-                      # Prevent systemd from auto-restarting the service too aggressively
-                      StartLimitBurst = 5;
-                      StartLimitIntervalSec = 60;
                     };
                   };
 
