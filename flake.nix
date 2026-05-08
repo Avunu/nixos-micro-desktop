@@ -329,7 +329,6 @@
                 with pkgs;
                 lib.flatten [
                   [
-                    (writeShellScriptBin "dms-ipc" (builtins.readFile ./scripts/dms-ipc))
                     (writeShellScriptBin "system-upgrade" ''
                       sudo sh -c 'cd /etc/nixos && nix flake update && nixos-rebuild switch --impure'
                     '')

@@ -34,9 +34,9 @@ cursor {
     xcursor-size 24
 }
 binds {
-    Super+Alt+N allow-when-locked=true hotkey-overlay-title="Toggle Night Mode" { spawn "dms-ipc" "ipc" "night" "toggle"; }
+    Super+Alt+N allow-when-locked=true hotkey-overlay-title="Toggle Night Mode" { spawn "dms" "ipc" "night" "toggle"; }
     Super+C { center-column; }
-    Super+Comma hotkey-overlay-title="Toggle Settings" { spawn "dms-ipc" "ipc" "settings" "toggle"; }
+    Super+Comma hotkey-overlay-title="Toggle Settings" { spawn "dms" "ipc" "settings" "toggle"; }
     Super+Ctrl+Down { move-window-down; }
     Super+Ctrl+End { move-column-to-last; }
     Super+Ctrl+H { move-column-left; }
@@ -64,8 +64,8 @@ binds {
     Super+L { focus-column-right; }
     Super+Left { focus-column-left; }
     Super+Minus { set-column-width "-10%"; }
-    Super+N hotkey-overlay-title="Toggle Notification Center" { spawn "dms-ipc" "ipc" "notifications" "toggle"; }
-    Super+P hotkey-overlay-title="Toggle Notepad" { spawn "dms-ipc" "ipc" "notepad" "toggle"; }
+    Super+N hotkey-overlay-title="Toggle Notification Center" { spawn "dms" "ipc" "notifications" "toggle"; }
+    Super+P hotkey-overlay-title="Toggle Notepad" { spawn "dms" "ipc" "notepad" "toggle"; }
     Super+Page_Down { focus-workspace-down; }
     Super+Page_Up { focus-workspace-up; }
     Super+Period { expel-window-from-column; }
@@ -98,19 +98,19 @@ binds {
     Super+Shift+Slash { show-hotkey-overlay; }
     Super+Shift+U { move-workspace-down; }
     Super+Shift+Up { focus-monitor-up; }
-    Super+Space hotkey-overlay-title="Toggle Application Launcher" { spawn "dms-ipc" "ipc" "spotlight" "toggle"; }
+    Super+Space hotkey-overlay-title="Toggle Application Launcher" { spawn "dms" "ipc" "spotlight" "toggle"; }
     Super+T { spawn "ghostty"; }
     Super+U { focus-workspace-down; }
     Super+Up { focus-window-up; }
-    Super+V hotkey-overlay-title="Toggle Clipboard Manager" { spawn "dms-ipc" "ipc" "clipboard" "toggle"; }
-    Super+X hotkey-overlay-title="Toggle Power Menu" { spawn "dms-ipc" "ipc" "powermenu" "toggle"; }
-    Super+Alt+L hotkey-overlay-title="Toggle Lock Screen" { spawn "dms-ipc" "ipc" "lock" "lock"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "dms-ipc" "ipc" "audio" "decrement" "3"; }
-    XF86AudioMicMute allow-when-locked=true { spawn "dms-ipc" "ipc" "audio" "micmute"; }
-    XF86AudioMute allow-when-locked=true { spawn "dms-ipc" "ipc" "audio" "mute"; }
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "dms-ipc" "ipc" "audio" "increment" "3"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "dms-ipc" "ipc" "brightness" "decrement" "5" ""; }
-    XF86MonBrightnessUp allow-when-locked=true { spawn "dms-ipc" "ipc" "brightness" "increment" "5" ""; }
+    Super+V hotkey-overlay-title="Toggle Clipboard Manager" { spawn "dms" "ipc" "clipboard" "toggle"; }
+    Super+X hotkey-overlay-title="Toggle Power Menu" { spawn "dms" "ipc" "powermenu" "toggle"; }
+    Super+Alt+L hotkey-overlay-title="Toggle Lock Screen" { spawn "dms" "ipc" "lock" "lock"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "audio" "decrement" "3"; }
+    XF86AudioMicMute allow-when-locked=true { spawn "dms" "ipc" "audio" "micmute"; }
+    XF86AudioMute allow-when-locked=true { spawn "dms" "ipc" "audio" "mute"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "dms" "ipc" "audio" "increment" "3"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "dms" "ipc" "brightness" "decrement" "5" ""; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "dms" "ipc" "brightness" "increment" "5" ""; }
     Super+Alt+XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Decrease Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "5%-"; }
     Super+Alt+XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title="Increase Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "+5%"; }
 }
