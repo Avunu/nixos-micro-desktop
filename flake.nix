@@ -282,6 +282,7 @@
                 # deploy default GTK config
                 "gtk-3.0/settings.ini".source = ./configs/gtk-3.0-settings.ini;
                 "gtk-4.0/settings.ini".source = ./configs/gtk-4.0-settings.ini;
+                "xdg/qt6ct/qt6ct.conf".source = ./configs/qt6ct.conf;
               };
               pathsToLink = [
                 "/share/app-info"
