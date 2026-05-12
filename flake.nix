@@ -294,6 +294,10 @@
                 "/share/thumbnailers"
                 "/share/xdg-desktop-portal"
               ];
+              shells = with pkgs; [
+                bash
+                nushell
+              ];
               variables = {
                 CLUTTER_BACKEND = "wayland";
                 EGL_PLATFORM = "wayland";
