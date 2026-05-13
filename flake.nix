@@ -120,6 +120,7 @@
                   tpm2.enable = mkDefault true;
                 };
                 verbose = mkDefault false;
+                zfs.enabled = mkDefault false;
               };
               kernelPackages = mkDefault pkgs.linuxPackages_latest;
               kernelParams = mkDefault [
@@ -166,6 +167,13 @@
                 ({ timeout = mkDefault 2; })
               ];
               plymouth.enable = mkDefault true;
+              supportedFilesystems = {
+                ext3 = mkDefault false;
+                ntfs3 = mkDefault false;
+                xfs = mkDefault false;
+                zfs = mkDefault false;
+              };
+              swraid.enable = mkDefault false;
             };
 
             boot.tmp = {
@@ -520,7 +528,13 @@
               };
               sane = {
                 enable = mkDefault true;
-                extraBackends = mkDefault (with pkgs; [ sane-airscan sane-backends ]);
+                extraBackends = mkDefault (
+                  with pkgs;
+                  [
+                    sane-airscan
+                    sane-backends
+                  ]
+                );
               };
               sensor.iio.enable = mkDefault true;
             };
