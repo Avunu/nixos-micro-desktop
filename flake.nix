@@ -173,7 +173,6 @@
                 zfs = mkDefault false;
               };
               swraid.enable = mkDefault false;
-              zfs.enabled = mkDefault false;
             };
 
             boot.tmp = {
