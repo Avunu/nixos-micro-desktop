@@ -120,7 +120,6 @@
                   tpm2.enable = mkDefault true;
                 };
                 verbose = mkDefault false;
-                zfs.enabled = mkDefault false;
               };
               kernelPackages = mkDefault pkgs.linuxPackages_latest;
               kernelParams = mkDefault [
@@ -174,6 +173,7 @@
                 zfs = mkDefault false;
               };
               swraid.enable = mkDefault false;
+              zfs.enabled = mkDefault false;
             };
 
             boot.tmp = {
