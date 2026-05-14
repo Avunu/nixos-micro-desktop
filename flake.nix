@@ -662,6 +662,7 @@
               avahi = {
                 enable = mkDefault true;
                 nssmdns4 = mkDefault true;
+                nssmdns6 = mkDefault true;
                 publish = {
                   addresses = mkDefault true;
                   enable = mkDefault true;
