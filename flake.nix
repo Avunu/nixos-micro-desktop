@@ -691,7 +691,14 @@
                   niri
                 ];
               };
-              fprintd.enable = mkDefault true;
+              fprintd = {
+                enable = mkDefault true;
+                package = mkDefault pkgs.fprintd-tod;
+                tod = {
+                  enable = mkDefault true;
+                  driver = mkDefault pkgs.libfprint-2-tod1-vfs0090;
+                };
+              };
               fstrim = {
                 enable = mkDefault true;
                 interval = mkDefault "daily";
