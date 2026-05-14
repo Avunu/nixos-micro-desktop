@@ -695,7 +695,7 @@
                 package = mkDefault pkgs.fprintd-tod;
                 tod = {
                   enable = mkDefault true;
-                  driver = mkDefault pkgs.libfprint-2-tod1-vfs0090;
+                  driver = mkDefault pkgs.libfprint-2-tod1-goodix;
                 };
               };
               fstrim = {
