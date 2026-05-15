@@ -34,6 +34,7 @@ cursor {
     xcursor-size 24
 }
 binds {
+    Print hotkey-overlay-title="Screenshot (Interactive)" { screenshot; }
     Super+Alt+N allow-when-locked=true hotkey-overlay-title="Toggle Night Mode" { spawn "dms" "ipc" "night" "toggle"; }
     Super+C { center-column; }
     Super+Comma hotkey-overlay-title="Toggle Settings" { spawn "dms" "ipc" "settings" "toggle"; }
