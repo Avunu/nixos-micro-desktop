@@ -841,18 +841,6 @@
                     after = [ "upower.service" ];
                   };
 
-                  # GNOME Keyring daemon (secrets and pkcs11 only; SSH handled by gcr-ssh-agent)
-                  gnome-keyring = {
-                    description = "GNOME Keyring daemon";
-                    wantedBy = [ "graphical-session-pre.target" ];
-                    partOf = [ "graphical-session-pre.target" ];
-                    serviceConfig = {
-                      Type = "simple";
-                      ExecStart = "/run/wrappers/bin/gnome-keyring-daemon --start --foreground --components=secrets,pkcs11";
-                      Restart = "on-failure";
-                    };
-                  };
-
                   # XDG Desktop Portal services - ensure they start after graphical session
                   # This prevents "cannot open display" errors during greeter/early boot
                   xdg-desktop-portal = {
