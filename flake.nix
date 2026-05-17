@@ -290,6 +290,11 @@
                 "gtk-3.0/settings.ini".source = ./configs/gtk-3.0-settings.ini;
                 "gtk-4.0/settings.ini".source = ./configs/gtk-4.0-settings.ini;
                 "xdg/qt6ct/qt6ct.conf".source = ./configs/qt6ct.conf;
+                # Fix Electron CHROME_DESKTOP on NixOS: preload script that derives
+                # the correct .desktop name from process.argv at JS init time.
+                "environment.d/60-electron-chrome-desktop.conf".text = ''
+                  NODE_OPTIONS="--require=${./scripts/electron-chrome-desktop-fix.js}"
+                '';
               };
               pathsToLink = [
                 "/share/app-info"
@@ -601,6 +606,8 @@
               allowUnfree = true;
               allowUnfreePredicate = _: true;
             };
+
+            nixpkgs.overlays = [];
 
             programs = {
               appimage.enable = mkDefault true;
