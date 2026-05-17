@@ -858,10 +858,15 @@
                   xdg-desktop-portal = {
                     after = [ "graphical-session.target" ];
                     partOf = [ "graphical-session.target" ];
+                    # GLib validates desktop file Exec fields against PATH when looking
+                    # up MIME handlers. Without system PATH, the portal discards all
+                    # app candidates and shows "No Apps Available".
+                    path = [ config.system.path ];
                   };
                   xdg-desktop-portal-gtk = {
                     after = [ "graphical-session.target" ];
                     partOf = [ "graphical-session.target" ];
+                    path = [ config.system.path ];
                     serviceConfig = {
                       # Prevent rapid restart loops if display isn't ready
                       RestartSec = 2;
@@ -875,6 +880,7 @@
                       "xdg-desktop-portal-gtk.service"
                     ];
                     partOf = [ "graphical-session.target" ];
+                    path = [ config.system.path ];
                   };
 
                   # User profile upgrade service
