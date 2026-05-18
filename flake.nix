@@ -1050,7 +1050,7 @@
                     xdg-desktop-portal-gtk
                   ]
                 );
-                xdgOpenUsePortal = mkDefault true;
+                xdgOpenUsePortal = mkDefault false;
                 config = {
                   common = {
                     default = [
