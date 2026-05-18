@@ -19,6 +19,24 @@
       lib = nixpkgs.lib;
     in
     {
+      devShells.x86_64-linux.default =
+        let
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        in
+        pkgs.mkShell {
+          nativeBuildInputs = [
+            (pkgs.writeShellScriptBin "update-flake" ''
+              git pull
+              nix flake update
+              git add flake.lock
+              git commit -m "chore: update flake"
+              git push
+            '')
+          ];
+          packages = [
+            pkgs.mcp-nixos
+          ];
+        };
       nixosModules.microDesktop =
         {
           config,
@@ -607,7 +625,7 @@
               allowUnfreePredicate = _: true;
             };
 
-            nixpkgs.overlays = [];
+            nixpkgs.overlays = [ ];
 
             programs = {
               appimage.enable = mkDefault true;
