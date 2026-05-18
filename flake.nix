@@ -1067,6 +1067,12 @@
                 };
               };
               sounds.enable = mkDefault true;
+              terminal-exec = {
+                enable = mkDefault true;
+                settings = {
+                  default = [ "ghostty.desktop" ];
+                };
+              };
             };
 
             zramSwap.enable = mkDefault true;
