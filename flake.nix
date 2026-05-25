@@ -203,7 +203,7 @@
               packages = mkDefault [ pkgs.terminus_font ];
             };
 
-            disko.devices = {
+            disko.devices = mkDefault {
               disk = {
                 main = {
                   device = cfg.diskDevice;
