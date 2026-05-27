@@ -533,7 +533,7 @@
 
             powerManagement = {
               enable = mkDefault true;
-              powertop.enable = mkDefault true;
+              powertop.enable = mkDefault false;
             };
 
             hardware = {
