@@ -1089,7 +1089,7 @@
                   with pkgs;
                   [
                     gnome-keyring
-                    xdg-desktop-portal-kde
+                    kdePackages.xdg-desktop-portal-kde
                     xdg-desktop-portal-gnome
                     xdg-desktop-portal-gtk
                   ]
