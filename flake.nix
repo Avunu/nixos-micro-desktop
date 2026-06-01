@@ -307,7 +307,7 @@
                 # deploy default GTK config
                 "gtk-3.0/settings.ini".source = ./configs/gtk-3.0-settings.ini;
                 "gtk-4.0/settings.ini".source = ./configs/gtk-4.0-settings.ini;
-                "xdg/qt6ct/qt6ct.conf".source = ./configs/qt6ct.conf;
+                # "xdg/qt6ct/qt6ct.conf".source = ./configs/qt6ct.conf;
                 # Fix Electron CHROME_DESKTOP on NixOS: preload script that derives
                 # the correct .desktop name from process.argv at JS init time.
                 "environment.d/60-electron-chrome-desktop.conf".text = ''
@@ -345,7 +345,8 @@
                 QSG_RHI_BACKEND = "vulkan";
                 QT_QPA_PLATFORM = "wayland";
                 MU_QT_QPA_PLATFORM = "wayland";
-                QT_QPA_PLATFORMTHEME = "qt6ct";
+                # Let KDE integration bridge portal dark/light preference to Qt/KF apps.
+                QT_QPA_PLATFORMTHEME = "kde";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
                 # QT_STYLE_OVERRIDE = "Darkly";
                 SAL_ENABLESKIA = "1";
@@ -419,15 +420,13 @@
                     kdePackages.breeze
                     kdePackages.breeze-gtk
                     kdePackages.breeze-icons
-                    kdePackages.qt6ct
+                    kdePackages.plasma-integration
                     key-rack
                     libdbusmenu
                     libheif
                     libheif.out
                     libmtp
                     libsecret
-                    libsForQt5.qt5ct
-                    libsForQt5.qt5ct
                     loupe
                     lxqt.libdbusmenu-lxqt
                     matugen
@@ -1082,6 +1081,7 @@
                   with pkgs;
                   [
                     gnome-keyring
+                    xdg-desktop-portal-kde
                     xdg-desktop-portal-gnome
                     xdg-desktop-portal-gtk
                   ]
@@ -1091,6 +1091,7 @@
                   common = {
                     default = [
                       "gnome"
+                      "kde"
                       "gtk"
                     ];
                     "org.freedesktop.impl.portal.Access" = "gtk";
@@ -1098,7 +1099,7 @@
                     "org.freedesktop.impl.portal.Notification" = "gtk";
                     "org.freedesktop.impl.portal.OpenURI" = "gtk";
                     "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-                    "org.freedesktop.impl.portal.Settings" = "gnome";
+                    "org.freedesktop.impl.portal.Settings" = "kde";
                   };
                 };
               };
