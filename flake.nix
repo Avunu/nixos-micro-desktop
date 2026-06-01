@@ -1082,6 +1082,7 @@
                   with pkgs;
                   [
                     gnome-keyring
+                    kdePackages.xdg-desktop-portal-kde
                     niri
                   ]
                 );
