@@ -387,7 +387,6 @@
                     adwaita-icon-theme
                     adwaita-qt
                     adwaita-qt6
-                    ghostty
                     brightnessctl
                     cava
                     cliphist
@@ -401,6 +400,7 @@
                     gammastep
                     gcr_4
                     gdk-pixbuf
+                    ghostty
                     glib
                     gnome-menus
                     gnome-network-displays
@@ -438,6 +438,7 @@
                     packagekit
                     papers
                     playerctl
+                    ripgrep
                     satty
                     shared-mime-info
                     showtime
