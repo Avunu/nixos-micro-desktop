@@ -314,6 +314,8 @@
                 "environment.d/60-electron-chrome-desktop.conf".text = ''
                   NODE_OPTIONS="--require=${./scripts/electron-chrome-desktop-fix.js}"
                 '';
+                "xdg/menus/applications.menu".source =
+                  "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
               };
               pathsToLink = [
                 "/share/app-info"
