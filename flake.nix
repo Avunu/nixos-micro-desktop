@@ -628,16 +628,6 @@
               appimage.enable = mkDefault true;
               dconf.enable = mkDefault true;
 
-              # KDE platform integration — lets Qt/KF apps (Okular, etc.) follow
-              # the org.freedesktop.appearance color-scheme portal signal for dark/light.
-              # Using the NixOS module (not a raw env var) so that QT_PLUGIN_PATH is
-              # set up correctly to include the system profile's platformthemes dir.
-              qt = {
-                enable = mkDefault true;
-                platformTheme.name = mkDefault "kde";
-                style.name = mkDefault "breeze";
-              };
-
               # DMS Shell (nixpkgs native)
               dms-shell = {
                 enable = mkDefault true;
@@ -687,6 +677,16 @@
                   zstd
                 ];
               };
+            };
+
+            # KDE platform integration — lets Qt/KF apps (Okular, etc.) follow
+            # the org.freedesktop.appearance color-scheme portal signal for dark/light.
+            # Using the NixOS module (not a raw env var) so that QT_PLUGIN_PATH is
+            # set up correctly to include the system profile's platformthemes dir.
+            qt = {
+              enable = mkDefault true;
+              platformTheme.name = mkDefault "kde";
+              style.name = mkDefault "breeze";
             };
 
             services = {
