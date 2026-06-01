@@ -345,8 +345,6 @@
                 QSG_RHI_BACKEND = "vulkan";
                 QT_QPA_PLATFORM = "wayland";
                 MU_QT_QPA_PLATFORM = "wayland";
-                # Let KDE integration bridge portal dark/light preference to Qt/KF apps.
-                QT_QPA_PLATFORMTHEME = "kde";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
                 # QT_STYLE_OVERRIDE = "Darkly";
                 SAL_ENABLESKIA = "1";
@@ -420,7 +418,6 @@
                     kdePackages.breeze
                     kdePackages.breeze-gtk
                     kdePackages.breeze-icons
-                    kdePackages.plasma-integration
                     key-rack
                     libdbusmenu
                     libheif
@@ -630,6 +627,16 @@
             programs = {
               appimage.enable = mkDefault true;
               dconf.enable = mkDefault true;
+
+              # KDE platform integration — lets Qt/KF apps (Okular, etc.) follow
+              # the org.freedesktop.appearance color-scheme portal signal for dark/light.
+              # Using the NixOS module (not a raw env var) so that QT_PLUGIN_PATH is
+              # set up correctly to include the system profile's platformthemes dir.
+              qt = {
+                enable = mkDefault true;
+                platformTheme.name = mkDefault "kde";
+                style.name = mkDefault "breeze";
+              };
 
               # DMS Shell (nixpkgs native)
               dms-shell = {
