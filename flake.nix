@@ -153,6 +153,7 @@
                 "pcie_aspm.policy=powersupersave"
                 "quiet"
                 "rd.systemd.show_status=false"
+                "systemd.show_status=false"
                 "rd.udev.log_level=3"
                 "splash"
                 "udev.log_priority=3"
