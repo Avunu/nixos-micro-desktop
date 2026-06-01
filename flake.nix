@@ -685,8 +685,8 @@
             # set up correctly to include the system profile's platformthemes dir.
             qt = {
               enable = mkDefault true;
-              platformTheme.name = mkDefault "kde";
-              style.name = mkDefault "breeze";
+              platformTheme = mkDefault "kde";
+              style = mkDefault "breeze";
             };
 
             services = {
