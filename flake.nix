@@ -811,6 +811,23 @@
             systemd = {
               packages = [ pkgs.niri ];
               services = {
+                cups-browsed-resume = {
+                  description = "Restart cups-browsed after resume from suspend";
+                  after = [
+                    "suspend.target"
+                    "hibernate.target"
+                    "hybrid-sleep.target"
+                  ];
+                  wantedBy = [
+                    "suspend.target"
+                    "hibernate.target"
+                    "hybrid-sleep.target"
+                  ];
+                  serviceConfig = {
+                    Type = "oneshot";
+                    ExecStart = "systemctl restart cups-browsed";
+                  };
+                };
                 flake-update = {
                   unitConfig = {
                     Description = "Update flake inputs";
