@@ -759,7 +759,9 @@
               iio-niri.enable = mkDefault true;
               kmscon = {
                 enable = mkDefault true;
-                hwRender = true;
+                config = {
+                  hwaccel = mkDefault true;
+                };
               };
               libinput.enable = mkDefault true;
               packagekit.backends.nix-profile = {
