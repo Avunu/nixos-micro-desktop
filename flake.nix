@@ -308,7 +308,7 @@
                 # deploy default GTK config
                 "gtk-3.0/settings.ini".source = ./configs/gtk-3.0-settings.ini;
                 "gtk-4.0/settings.ini".source = ./configs/gtk-4.0-settings.ini;
-                "xdg/qt6ct/qt6ct.conf".source = ./configs/qt6ct.conf;
+                # "xdg/qt6ct/qt6ct.conf".source = ./configs/qt6ct.conf;
                 # Fix Electron CHROME_DESKTOP on NixOS: preload script that derives
                 # the correct .desktop name from process.argv at JS init time.
                 "environment.d/60-electron-chrome-desktop.conf".text = ''
@@ -398,7 +398,7 @@
                     brightnessctl
                     cava
                     cliphist
-                    darkly
+                    # darkly
                     decibels
                     dnsmasq
                     dsearch
@@ -433,7 +433,7 @@
                     libheif.out
                     libmtp
                     libsecret
-                    libsForQt5.qt5ct
+                    # libsForQt5.qt5ct
                     loupe
                     lxqt.libdbusmenu-lxqt
                     matugen
@@ -444,7 +444,7 @@
                     packagekit
                     papers
                     playerctl
-                    qt6Packages.qt6ct
+                    # qt6Packages.qt6ct
                     ripgrep
                     satty
                     shared-mime-info
@@ -958,7 +958,31 @@
                       git
                     ];
                   };
-                };
+
+                #   # DMS writes qt6ct.conf with a KDE-format .colors path that qt6ct
+                #   # can't parse. This service fires (via path unit below) whenever DMS
+                #   # overwrites the file and corrects color_scheme_path to the native
+                #   # qt6ct format file that matugen generates alongside the KDE one.
+                #   qt6ct-colorscheme-fix = {
+                #     description = "Correct qt6ct color_scheme_path to native format after DMS update";
+                #     serviceConfig = {
+                #       Type = "oneshot";
+                #       ExecStart = pkgs.writeShellScript "qt6ct-fix-colorscheme" ''
+                #         conf="$HOME/.config/qt6ct/qt6ct.conf"
+                #         native="$HOME/.config/qt6ct/colors/matugen.conf"
+                #         [ -f "$conf" ] && [ -f "$native" ] || exit 0
+                #         grep -qF "color_scheme_path=$native" "$conf" && exit 0
+                #         ${pkgs.gnused}/bin/sed -i "s|^color_scheme_path=.*|color_scheme_path=$native|" "$conf"
+                #       '';
+                #     };
+                #   };
+                # };
+
+                # paths.qt6ct-colorscheme-fix = {
+                #   description = "Watch qt6ct.conf for DMS color scheme overwrites";
+                #   wantedBy = [ "graphical-session.target" ];
+                #   pathConfig.PathModified = "%h/.config/qt6ct/qt6ct.conf";
+                # };
 
                 timers = {
                   nix-profile-upgrade = {
