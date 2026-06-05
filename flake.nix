@@ -860,6 +860,7 @@
                   };
                 };
                 system-upgrade = {
+                  restartIfChanged = false;
                   unitConfig = {
                     Description = "Update flake inputs and switch NixOS configuration";
                     StartLimitIntervalSec = 300;
