@@ -308,7 +308,7 @@
                 # deploy default GTK config
                 "gtk-3.0/settings.ini".source = ./configs/gtk-3.0-settings.ini;
                 "gtk-4.0/settings.ini".source = ./configs/gtk-4.0-settings.ini;
-                # "xdg/qt6ct/qt6ct.conf".source = ./configs/qt6ct.conf;
+                "xdg/qt6ct/qt6ct.conf".source = ./configs/qt6ct.conf;
                 # Fix Electron CHROME_DESKTOP on NixOS: preload script that derives
                 # the correct .desktop name from process.argv at JS init time.
                 "environment.d/60-electron-chrome-desktop.conf".text = ''
@@ -432,6 +432,7 @@
                     libheif.out
                     libmtp
                     libsecret
+                    libsForQt5.qt5ct
                     loupe
                     lxqt.libdbusmenu-lxqt
                     matugen
@@ -442,6 +443,7 @@
                     packagekit
                     papers
                     playerctl
+                    qt6Packages.qt6ct
                     ripgrep
                     satty
                     shared-mime-info
@@ -693,14 +695,9 @@
               };
             };
 
-            # KDE platform integration — lets Qt/KF apps (Okular, etc.) follow
-            # the org.freedesktop.appearance color-scheme portal signal for dark/light.
-            # Using the NixOS module (not a raw env var) so that QT_PLUGIN_PATH is
-            # set up correctly to include the system profile's platformthemes dir.
             qt = {
               enable = mkDefault true;
-              platformTheme = mkDefault "kde";
-              style = mkDefault "breeze";
+              platformTheme = mkDefault "qt6ct";
             };
 
             services = {
