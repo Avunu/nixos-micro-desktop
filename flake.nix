@@ -47,10 +47,18 @@
         with lib;
         let
           cfg = config.microDesktop;
-          systemUpgradeScript = pkgs.writeShellScript "system-upgrade" ''
-            ${pkgs.nix}/bin/nix flake update --flake /etc/nixos
-            /run/current-system/sw/bin/nixos-rebuild switch --flake /etc/nixos
-          '';
+          systemUpgradeScript = pkgs.writeShellApplication {
+            name = "system-upgrade";
+            runtimeInputs = with pkgs; [
+              git
+              nix
+              nixos-rebuild
+            ];
+            text = ''
+              ${lib.getExe pkgs.nix} flake update --flake /etc/nixos
+              ${lib.getExe pkgs.nixos-rebuild} switch --flake /etc/nixos
+            '';
+          };
         in
         {
           imports = [
@@ -868,7 +876,7 @@
                         exit 1
                       fi
                     '';
-                    ExecStart = systemUpgradeScript;
+                    ExecStart = lib.getExe systemUpgradeScript;
                     Restart = "on-failure";
                     RestartSec = "120s";
                   };
