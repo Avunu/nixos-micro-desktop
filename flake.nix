@@ -47,6 +47,10 @@
         with lib;
         let
           cfg = config.microDesktop;
+          systemUpgradeScript = pkgs.writeShellScript "system-upgrade" ''
+            ${pkgs.nix}/bin/nix flake update --flake /etc/nixos
+            /run/current-system/sw/bin/nixos-rebuild switch --flake /etc/nixos
+          '';
         in
         {
           imports = [
@@ -372,9 +376,6 @@
                 with pkgs;
                 lib.flatten [
                   [
-                    (writeShellScriptBin "system-upgrade" ''
-                      systemctl start system-upgrade.service
-                    '')
                     (writeShellScriptBin "profile-upgrade" ''
                       nix profile upgrade --all --impure
                     '')
@@ -398,7 +399,7 @@
                     brightnessctl
                     cava
                     cliphist
-                    # darkly
+                    darkly
                     decibels
                     dnsmasq
                     dsearch
@@ -450,6 +451,7 @@
                     shared-mime-info
                     showtime
                     slurp
+                    systemUpgradeScript
                     uutils-coreutils-noprefix
                     wl-clipboard
                     wlr-randr
@@ -866,10 +868,7 @@
                         exit 1
                       fi
                     '';
-                    ExecStart = pkgs.writeShellScript "run-system-upgrade" ''
-                      ${pkgs.nix}/bin/nix flake update --flake /etc/nixos
-                      /run/current-system/sw/bin/nixos-rebuild switch --flake /etc/nixos
-                    '';
+                    ExecStart = systemUpgradeScript;
                     Restart = "on-failure";
                     RestartSec = "120s";
                   };
