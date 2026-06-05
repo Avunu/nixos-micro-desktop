@@ -367,7 +367,7 @@
                 lib.flatten [
                   [
                     (writeShellScriptBin "system-upgrade" ''
-                      sudo sh -c 'cd /etc/nixos && nix flake update && nixos-rebuild switch --impure'
+                      systemctl start system-upgrade.service
                     '')
                     (writeShellScriptBin "profile-upgrade" ''
                       nix profile upgrade --all --impure
@@ -840,29 +840,37 @@
                     ExecStart = "systemctl restart cups-browsed";
                   };
                 };
-                flake-update = {
+                system-upgrade = {
                   unitConfig = {
-                    Description = "Update flake inputs";
+                    Description = "Update flake inputs and switch NixOS configuration";
                     StartLimitIntervalSec = 300;
                     StartLimitBurst = 5;
                   };
                   serviceConfig = {
-                    ExecStart = "${pkgs.nix}/bin/nix flake update --flake /etc/nixos";
-                    Restart = "on-failure";
-                    RestartSec = "120s";
                     Type = "oneshot";
                     User = "root";
                     Environment = "HOME=/root";
+                    # Skip gracefully (result=condition, no restart) when on a metered connection
+                    ExecCondition = pkgs.writeShellScript "check-not-metered" ''
+                      if ${pkgs.networkmanager}/bin/nmcli -g GENERAL.METERED dev show 2>/dev/null | grep -qi "yes"; then
+                        echo "Network connection is metered, skipping system upgrade" >&2
+                        exit 1
+                      fi
+                    '';
+                    ExecStart = pkgs.writeShellScript "run-system-upgrade" ''
+                      ${pkgs.nix}/bin/nix flake update --flake /etc/nixos
+                      /run/current-system/sw/bin/nixos-rebuild switch --flake /etc/nixos --impure
+                    '';
+                    Restart = "on-failure";
+                    RestartSec = "120s";
                   };
                   wants = [ "network-online.target" ];
                   after = [ "network-online.target" ];
-                  before = [ "nixos-upgrade.service" ];
                   path = with pkgs; [
                     nix
                     git
-                    host
+                    networkmanager
                   ];
-                  requiredBy = [ "nixos-upgrade.service" ];
                 };
                 greetd.serviceConfig = {
                   Type = "idle";
@@ -874,12 +882,12 @@
                   TTYVTDisallocate = true;
                 };
               };
-              timers.flake-update = {
+              timers.system-upgrade = {
                 wantedBy = [ "timers.target" ];
                 timerConfig = {
                   OnCalendar = "hourly";
                   Persistent = true;
-                  Unit = "flake-update.service";
+                  Unit = "system-upgrade.service";
                 };
               };
               user = {
@@ -957,16 +965,7 @@
               };
             };
 
-            system.autoUpgrade = {
-              allowReboot = mkDefault false;
-              enable = mkDefault true;
-              flags = [
-                "--update-input"
-                "nixpkgs"
-                "--impure"
-              ];
-              flake = mkDefault "/etc/nixos";
-            };
+            system.autoUpgrade.enable = mkDefault false;
 
             # Install user niri config to ~/.config/niri/config.kdl
             system.activationScripts.niriUserConfig = ''
