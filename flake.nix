@@ -314,6 +314,11 @@
                 "environment.d/60-electron-chrome-desktop.conf".text = ''
                   NODE_OPTIONS="--require=${./scripts/electron-chrome-desktop-fix.js}"
                 '';
+                "nix/nixpkgs-config.nix".text = lib.mkDefault ''
+                  {
+                    allowUnfree = true;
+                  }
+                '';
                 "xdg/menus/applications.menu".source =
                   "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
               };
@@ -618,6 +623,7 @@
                   "@wheel"
                 ];
                 use-cgroups = true;
+                use-xdg-base-directories = true;
               };
             };
 
@@ -864,7 +870,7 @@
                     '';
                     ExecStart = pkgs.writeShellScript "run-system-upgrade" ''
                       ${pkgs.nix}/bin/nix flake update --flake /etc/nixos
-                      /run/current-system/sw/bin/nixos-rebuild switch --flake /etc/nixos --impure
+                      /run/current-system/sw/bin/nixos-rebuild switch --flake /etc/nixos
                     '';
                     Restart = "on-failure";
                     RestartSec = "120s";
@@ -943,7 +949,7 @@
                     description = "Upgrade user nix profile";
                     serviceConfig = {
                       Type = "oneshot";
-                      ExecStart = "${pkgs.nix}/bin/nix profile upgrade --all --impure";
+                      ExecStart = "${pkgs.nix}/bin/nix profile upgrade --all";
                       Restart = "on-failure";
                       RestartSec = "120s";
                     };
