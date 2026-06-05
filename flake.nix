@@ -602,6 +602,7 @@
                 experimental-features = [
                   "nix-command"
                   "flakes"
+                  "cgroups"
                 ];
                 substituters = [
                   "https://cache.nixos.org?priority=40"
@@ -616,6 +617,7 @@
                   cfg.username
                   "@wheel"
                 ];
+                use-cgroups = true;
               };
             };
 
