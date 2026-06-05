@@ -355,6 +355,7 @@
                 MU_QT_QPA_PLATFORM = "wayland";
                 QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
                 # QT_STYLE_OVERRIDE = "Darkly";
+                QT_QPA_PLATFORMTHEME = "qt6ct";
                 SAL_ENABLESKIA = "1";
                 SAL_FORCESKIA = "1";
                 SAL_SKIA = "vulkan";
@@ -695,10 +696,10 @@
               };
             };
 
-            qt = {
-              enable = mkDefault true;
-              platformTheme = mkDefault "qt5ct";
-            };
+            # qt = {
+            #   enable = mkDefault true;
+            #   platformTheme = mkDefault "qt5ct";
+            # };
 
             services = {
               accounts-daemon.enable = mkDefault true;
