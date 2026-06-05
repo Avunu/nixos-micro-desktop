@@ -697,7 +697,7 @@
 
             qt = {
               enable = mkDefault true;
-              platformTheme = mkDefault "qt6ct";
+              platformTheme = mkDefault "qt5ct";
             };
 
             services = {
