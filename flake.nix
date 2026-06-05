@@ -959,24 +959,24 @@
                     ];
                   };
 
-                #   # DMS writes qt6ct.conf with a KDE-format .colors path that qt6ct
-                #   # can't parse. This service fires (via path unit below) whenever DMS
-                #   # overwrites the file and corrects color_scheme_path to the native
-                #   # qt6ct format file that matugen generates alongside the KDE one.
-                #   qt6ct-colorscheme-fix = {
-                #     description = "Correct qt6ct color_scheme_path to native format after DMS update";
-                #     serviceConfig = {
-                #       Type = "oneshot";
-                #       ExecStart = pkgs.writeShellScript "qt6ct-fix-colorscheme" ''
-                #         conf="$HOME/.config/qt6ct/qt6ct.conf"
-                #         native="$HOME/.config/qt6ct/colors/matugen.conf"
-                #         [ -f "$conf" ] && [ -f "$native" ] || exit 0
-                #         grep -qF "color_scheme_path=$native" "$conf" && exit 0
-                #         ${pkgs.gnused}/bin/sed -i "s|^color_scheme_path=.*|color_scheme_path=$native|" "$conf"
-                #       '';
-                #     };
-                #   };
-                # };
+                  #   # DMS writes qt6ct.conf with a KDE-format .colors path that qt6ct
+                  #   # can't parse. This service fires (via path unit below) whenever DMS
+                  #   # overwrites the file and corrects color_scheme_path to the native
+                  #   # qt6ct format file that matugen generates alongside the KDE one.
+                  #   qt6ct-colorscheme-fix = {
+                  #     description = "Correct qt6ct color_scheme_path to native format after DMS update";
+                  #     serviceConfig = {
+                  #       Type = "oneshot";
+                  #       ExecStart = pkgs.writeShellScript "qt6ct-fix-colorscheme" ''
+                  #         conf="$HOME/.config/qt6ct/qt6ct.conf"
+                  #         native="$HOME/.config/qt6ct/colors/matugen.conf"
+                  #         [ -f "$conf" ] && [ -f "$native" ] || exit 0
+                  #         grep -qF "color_scheme_path=$native" "$conf" && exit 0
+                  #         ${pkgs.gnused}/bin/sed -i "s|^color_scheme_path=.*|color_scheme_path=$native|" "$conf"
+                  #       '';
+                  #     };
+                  #   };
+                };
 
                 # paths.qt6ct-colorscheme-fix = {
                 #   description = "Watch qt6ct.conf for DMS color scheme overwrites";
