@@ -331,8 +331,8 @@
                     allowUnfree = true;
                   }
                 '';
-                "xdg/menus/applications.menu".source =
-                  "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
+                # "xdg/menus/applications.menu".source =
+                #   "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
               };
               pathsToLink = [
                 "/share/app-info"
@@ -433,9 +433,9 @@
                     gst_all_1.gst-vaapi
                     gst_all_1.gstreamer
                     gtk4.out
-                    kdePackages.breeze
-                    kdePackages.breeze-gtk
-                    kdePackages.breeze-icons
+                    # kdePackages.breeze
+                    # kdePackages.breeze-gtk
+                    # kdePackages.breeze-icons
                     key-rack
                     libdbusmenu
                     libheif
