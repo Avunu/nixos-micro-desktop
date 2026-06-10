@@ -53,8 +53,12 @@
               git
               nix
               nixos-rebuild
+              sudo
             ];
             text = ''
+              if [ "$(id -u)" -ne 0 ]; then
+                exec sudo "$0" "$@"
+              fi
               ${lib.getExe pkgs.nix} flake update --flake /etc/nixos
               ${lib.getExe pkgs.nixos-rebuild} switch --flake /etc/nixos
             '';
