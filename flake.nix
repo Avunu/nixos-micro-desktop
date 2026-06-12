@@ -57,7 +57,7 @@
             ];
             text = ''
               if [ "$(id -u)" -ne 0 ]; then
-                exec ${pkgs.polkit}/bin/pkexec "$0" "$@"
+                exec /run/wrappers/bin/pkexec "$0" "$@"
               fi
 
               LOCK_FILE="/etc/nixos/flake.lock"
