@@ -50,17 +50,34 @@
           systemUpgradeScript = pkgs.writeShellApplication {
             name = "system-upgrade";
             runtimeInputs = with pkgs; [
+              coreutils
               git
               nix
               nixos-rebuild
-              sudo
             ];
             text = ''
               if [ "$(id -u)" -ne 0 ]; then
-                exec sudo "$0" "$@"
+                exec ${pkgs.polkit}/bin/pkexec "$0" "$@"
               fi
+
+              LOCK_FILE="/etc/nixos/flake.lock"
+              BEFORE=""
+              if [ -f "$LOCK_FILE" ]; then
+                BEFORE=$(sha256sum "$LOCK_FILE")
+              fi
+
               ${lib.getExe pkgs.nix} flake update --flake /etc/nixos
-              ${lib.getExe pkgs.nixos-rebuild} switch --flake /etc/nixos
+
+              AFTER=""
+              if [ -f "$LOCK_FILE" ]; then
+                AFTER=$(sha256sum "$LOCK_FILE")
+              fi
+
+              if [ "$BEFORE" != "$AFTER" ]; then
+                ${lib.getExe pkgs.nixos-rebuild} switch --flake /etc/nixos
+              else
+                echo "Flake lock unchanged, skipping rebuild" >&2
+              fi
             '';
           };
         in
