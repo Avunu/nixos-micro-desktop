@@ -194,11 +194,14 @@
               # Increase readahead for better SQLite read performance with f2fs compression
               kernelModules = mkDefault [ "bfq" ];
               kernel.sysctl = {
-                "vm.swappiness" = mkDefault 10; # Reduce swap pressure for better DB performance
+                "vm.swappiness" = mkDefault 100; # zram benefits from eager compression; 100 avoids OOM before zram fills
                 "vm.vfs_cache_pressure" = mkDefault 50; # Keep inodes/dentries cached longer for SQLite
-                "vm.dirty_ratio" = mkDefault 15; # Allow more dirty pages before forced writeback
+                "vm.dirty_ratio" = mkDefault 10; # default; elevated values increase unreclaimable memory pressure
                 "vm.dirty_background_ratio" = mkDefault 5; # Start background writeback early
-                "vm.page-cluster" = mkDefault 0; # Read single pages from swap (better for zram + random I/O)
+                # Single-page swap reads (optimal for zram).  If a disk swap file is
+                # present (e.g. via devWorkstation.extraConfig), this makes disk swap
+                # extremely slow — acceptable only as a last-resort safety net.
+                "vm.page-cluster" = mkDefault 0;
               };
               consoleLogLevel = mkDefault 0;
               loader = mkMerge [
@@ -229,7 +232,7 @@
 
             boot.tmp = {
               useTmpfs = mkDefault true;
-              tmpfsSize = mkDefault "50%"; # Half of RAM; prevents runaway usage
+              tmpfsSize = mkDefault "25%"; # Quarter of RAM — enough for most workloads without starving apps
             };
 
             console = {
@@ -500,8 +503,8 @@
                 # - User's nix-profile (for nix profile installed packages)
                 # - Display manager session data (for .desktop session files)
                 # - System path (canonical aggregation of all system packages)
-                # mkForce overrides display-managers and nix-packagekit defaults
-                XDG_DATA_DIRS = mkForce "$HOME/.local/share:$HOME/.nix-profile/share:${config.services.displayManager.sessionData.desktops}/share:/run/current-system/sw/share";
+                # Using mkDefault so other modules (nix-packagekit, display-managers) can extend.
+                XDG_DATA_DIRS = mkDefault "$HOME/.local/share:$HOME/.nix-profile/share:${config.services.displayManager.sessionData.desktops}/share:/run/current-system/sw/share";
               };
             };
 
@@ -744,7 +747,10 @@
                   workstation = mkDefault true;
                 };
               };
-              bpftune.enable = mkDefault true;
+              # bpftune dynamically overrides swappiness/watermarks at runtime,
+              # which conflicts with zram tuning. Disabled until per-sysctl
+              # exclusion is supported upstream.
+              bpftune.enable = mkDefault false;
               colord.enable = mkDefault true;
               dbus = {
                 implementation = mkDefault "broker";
@@ -950,6 +956,14 @@
                     # up MIME handlers. Without system PATH, the portal discards all
                     # app candidates and shows "No Apps Available".
                     path = [ config.system.path ];
+                    serviceConfig = {
+                      # Main portal must recover from transient startup failures
+                      # (D-Bus not ready, display socket unavailable); without this
+                      # all portal backends are dead for the session.
+                      RestartSec = 2;
+                      Restart = "on-failure";
+                      RestartMaxDelaySec = 30;
+                    };
                   };
                   xdg-desktop-portal-gtk = {
                     after = [ "graphical-session.target" ];
@@ -963,12 +977,14 @@
                     };
                   };
                   xdg-desktop-portal-gnome = {
-                    after = [
-                      "graphical-session.target"
-                      "xdg-desktop-portal-gtk.service"
-                    ];
+                    after = [ "graphical-session.target" ];
                     partOf = [ "graphical-session.target" ];
                     path = [ config.system.path ];
+                    serviceConfig = {
+                      RestartSec = 2;
+                      Restart = "on-failure";
+                      RestartMaxDelaySec = 30;
+                    };
                   };
 
                   # User profile upgrade service
