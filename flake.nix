@@ -548,8 +548,6 @@
                   # DMS greeter fonts
                   inter
                   material-symbols
-
-                  # default nixos fonts
                 ]
               );
               fontconfig = {
