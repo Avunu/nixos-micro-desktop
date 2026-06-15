@@ -593,13 +593,10 @@
               };
               sane = {
                 enable = mkDefault true;
-                extraBackends = mkDefault (
-                  with pkgs;
-                  [
-                    sane-airscan
-                    sane-backends
-                  ]
-                );
+                extraBackends = with pkgs; [
+                  sane-airscan
+                  sane-backends
+                ];
               };
               sensor.iio.enable = mkDefault true;
             };
@@ -609,15 +606,13 @@
               networkmanager = {
                 enable = mkDefault true;
                 plugins = mkIf cfg.enableVpn (
-                  mkDefault (
-                    with pkgs;
-                    [
-                      networkmanager-openvpn
-                      networkmanager-vpnc
-                      networkmanager-openconnect
-                      networkmanager-l2tp
-                    ]
-                  )
+                  with pkgs;
+                  [
+                    networkmanager-openvpn
+                    networkmanager-vpnc
+                    networkmanager-openconnect
+                    networkmanager-l2tp
+                  ]
                 );
                 wifi.backend = mkDefault "wpa_supplicant";
               };
@@ -1160,21 +1155,15 @@
               };
               portal = {
                 enable = mkDefault true;
-                configPackages = mkDefault (
-                  with pkgs;
-                  [
-                    gnome-keyring
-                    niri
-                  ]
-                );
-                extraPortals = mkDefault (
-                  with pkgs;
-                  [
-                    gnome-keyring
-                    xdg-desktop-portal-gnome
-                    xdg-desktop-portal-gtk
-                  ]
-                );
+                configPackages = with pkgs; [
+                  gnome-keyring
+                  niri
+                ];
+                extraPortals = with pkgs; [
+                  gnome-keyring
+                  xdg-desktop-portal-gnome
+                  xdg-desktop-portal-gtk
+                ];
                 xdgOpenUsePortal = mkDefault false;
                 config = {
                   common = {
