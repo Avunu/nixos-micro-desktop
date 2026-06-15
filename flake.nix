@@ -511,45 +511,42 @@
             fonts = {
               enableDefaultPackages = mkForce false;
               fontDir.enable = mkDefault true;
-              packages = mkDefault (
-                with pkgs;
-                [
-                  # Modern GNOME fonts
-                  adwaita-fonts
+              packages = with pkgs; [
+                # Modern GNOME fonts
+                adwaita-fonts
 
-                  # Essential font families
-                  dejavu_fonts
-                  freefont_ttf
-                  gyre-fonts
-                  liberation_ttf
-                  noto-fonts
-                  noto-fonts-cjk-sans
-                  noto-fonts-cjk-serif
-                  noto-fonts-color-emoji
+                # Essential font families
+                dejavu_fonts
+                freefont_ttf
+                gyre-fonts
+                liberation_ttf
+                noto-fonts
+                noto-fonts-cjk-sans
+                noto-fonts-cjk-serif
+                noto-fonts-color-emoji
 
-                  # Developer fonts
-                  cascadia-code
-                  fira-code
-                  fira-code-symbols
-                  fira-mono
-                  fira-sans
-                  meslo-lgs-nf
-                  source-code-pro
-                  source-sans-pro
-                  source-serif-pro
+                # Developer fonts
+                cascadia-code
+                fira-code
+                fira-code-symbols
+                fira-mono
+                fira-sans
+                meslo-lgs-nf
+                source-code-pro
+                source-sans-pro
+                source-serif-pro
 
-                  # Popular system fonts
-                  open-sans
-                  roboto
-                  roboto-mono
-                  roboto-serif
-                  roboto-slab
+                # Popular system fonts
+                open-sans
+                roboto
+                roboto-mono
+                roboto-serif
+                roboto-slab
 
-                  # DMS greeter fonts
-                  inter
-                  material-symbols
-                ]
-              );
+                # DMS greeter fonts
+                inter
+                material-symbols
+              ];
               fontconfig = {
                 enable = true;
                 defaultFonts = {
