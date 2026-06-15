@@ -510,6 +510,7 @@
 
             fonts = {
               enableDefaultPackages = mkDefault true;
+              fontDir.enable = mkDefault true;
               packages = mkDefault (
                 with pkgs;
                 [
@@ -559,7 +560,7 @@
                     "DejaVu Serif"
                   ];
                   monospace = [
-                    "Cascadia Code"
+                    "Fira Code Light"
                     "Adwaita Mono"
                     "Liberation Mono"
                   ];
