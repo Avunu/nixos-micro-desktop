@@ -509,7 +509,7 @@
             };
 
             fonts = {
-              enableDefaultPackages = mkDefault false;
+              enableDefaultPackages = mkForce false;
               fontDir.enable = mkDefault true;
               packages = mkDefault (
                 with pkgs;
