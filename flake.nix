@@ -509,7 +509,7 @@
             };
 
             fonts = {
-              enableDefaultPackages = mkDefault true;
+              enableDefaultPackages = mkDefault false;
               fontDir.enable = mkDefault true;
               packages = mkDefault (
                 with pkgs;
@@ -519,9 +519,12 @@
 
                   # Essential font families
                   dejavu_fonts
+                  freefont_ttf
+                  gyre-fonts
                   liberation_ttf
                   noto-fonts
                   noto-fonts-cjk-sans
+                  noto-fonts-cjk-serif
                   noto-fonts-color-emoji
 
                   # Developer fonts
@@ -545,6 +548,8 @@
                   # DMS greeter fonts
                   inter
                   material-symbols
+
+                  # default nixos fonts
                 ]
               );
               fontconfig = {
@@ -560,7 +565,7 @@
                     "DejaVu Serif"
                   ];
                   monospace = [
-                    "Fira Code Light"
+                    "Cascadia Code"
                     "Adwaita Mono"
                     "Liberation Mono"
                   ];
