@@ -272,6 +272,7 @@
                             type = "filesystem";
                             format = "f2fs";
                             mountpoint = "/";
+                            noCheck = true; # disable fsck with f2fs until it runs correctly with the large amount of /nix symlinks
                             mountOptions = [
                               "atgc"
                               "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
