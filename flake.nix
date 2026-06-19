@@ -272,7 +272,6 @@
                             type = "filesystem";
                             format = "f2fs";
                             mountpoint = "/";
-                            noCheck = true; # disable fsck with f2fs until it runs correctly with the large amount of /nix symlinks
                             mountOptions = [
                               "atgc"
                               "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
@@ -508,6 +507,8 @@
                 XDG_DATA_DIRS = mkDefault "$HOME/.local/share:$HOME/.nix-profile/share:${config.services.displayManager.sessionData.desktops}/share:/run/current-system/sw/share";
               };
             };
+
+            fileSystems.f2fs.noCheck = mkDefault true; # disable fsck with f2fs until it runs correctly with the large amount of /nix symlinks
 
             fonts = {
               enableDefaultPackages = mkForce false;
