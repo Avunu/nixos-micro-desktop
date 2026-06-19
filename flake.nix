@@ -228,11 +228,10 @@
                 zfs = mkDefault false;
               };
               swraid.enable = mkDefault false;
-            };
-
-            boot.tmp = {
-              useTmpfs = mkDefault true;
-              tmpfsSize = mkDefault "25%"; # Quarter of RAM — enough for most workloads without starving apps
+              tmp = {
+                useTmpfs = mkDefault true;
+                tmpfsSize = mkDefault "25%"; # Quarter of RAM — enough for most workloads without starving apps
+              };
             };
 
             console = {
