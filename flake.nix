@@ -669,8 +669,6 @@
               ];
             };
 
-            nixpkgs.overlays = [ ];
-
             programs = {
               appimage.enable = mkDefault true;
               dconf.enable = mkDefault true;
@@ -700,15 +698,6 @@
                 enable = mkDefault true;
                 useNautilus = mkDefault true;
               };
-              # uwsm = {
-              #   enable = mkDefault true;
-              #   waylandCompositors.niri = {
-              #     prettyName = "Niri";
-              #     comment = "A scrollable-tiling Wayland compositor";
-              #     binPath = getExe pkgs.niri;
-              #     extraArgs = [ "--session" ];
-              #   };
-              # };
               nix-ld = {
                 enable = mkDefault true;
                 package = pkgs.nix-ld;
@@ -725,11 +714,6 @@
                 ];
               };
             };
-
-            # qt = {
-            #   enable = mkDefault true;
-            #   platformTheme = mkDefault "qt5ct";
-            # };
 
             services = {
               accounts-daemon.enable = mkDefault true;
