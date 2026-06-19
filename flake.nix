@@ -838,21 +838,16 @@
             };
 
             security = {
-              polkit.enable = mkDefault true;
+              polkit = {
+                enable = mkDefault true;
+                enablePkexecWrapper = mkDefault true;
+              };
               pam.services = {
                 login.enableGnomeKeyring = mkDefault true;
                 greetd.enableGnomeKeyring = mkDefault true;
               };
               rtkit.enable = mkDefault true;
               tpm2.enable = mkDefault true;
-              wrappers = {
-                pkexec = {
-                  source = "${pkgs.polkit}/bin/pkexec";
-                  setuid = true;
-                  owner = "root";
-                  group = "root";
-                };
-              };
             };
 
             systemd = {
