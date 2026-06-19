@@ -748,6 +748,7 @@
                 dms-greeter = {
                   enable = mkDefault true;
                   compositor.name = "niri";
+                  configHome = "/home/${cfg.username}";
                 };
                 sessionPackages = with pkgs; [
                   niri
