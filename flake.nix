@@ -562,8 +562,8 @@
                     "DejaVu Serif"
                   ];
                   monospace = [
-                    "Cascadia Code"
                     "Adwaita Mono"
+                    "Cascadia Code"
                     "Liberation Mono"
                   ];
                   emoji = [
