@@ -165,7 +165,10 @@
                   "nvme"
                   "uhci_hcd"
                 ];
-                kernelModules = [ "fbcon" ];
+                # fbcon is built into the kernel (not a loadable module), so it
+                # must not be listed here — doing so breaks the modules-shrunk
+                # initrd build. The framebuffer console is configured via the
+                # `fbcon=vc:2-6` kernel parameter below.
                 systemd = {
                   enable = mkDefault true;
                   tpm2.enable = mkDefault true;
