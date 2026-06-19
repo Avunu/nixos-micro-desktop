@@ -159,13 +159,13 @@
           config = {
             boot = {
               initrd = {
-                availableKernelModules = mkDefault [
+                availableKernelModules = [
                   "ahci"
                   "ehci_pci"
                   "nvme"
                   "uhci_hcd"
                 ];
-                kernelModules = mkDefault [ "fbcon" ];
+                kernelModules = [ "fbcon" ];
                 systemd = {
                   enable = mkDefault true;
                   tpm2.enable = mkDefault true;
@@ -173,7 +173,7 @@
                 verbose = mkDefault false;
               };
               kernelPackages = mkDefault pkgs.linuxPackages_latest;
-              kernelParams = mkDefault [
+              kernelParams = [
                 "boot.shell_on_fail"
                 "console=tty0"
                 "fbcon=vc:2-6"
@@ -191,8 +191,6 @@
                 "splash"
                 "udev.log_priority=3"
               ];
-              # Increase readahead for better SQLite read performance with f2fs compression
-              kernelModules = mkDefault [ "bfq" ];
               kernel.sysctl = {
                 "vm.swappiness" = mkDefault 100; # zram benefits from eager compression; 100 avoids OOM before zram fills
                 "vm.vfs_cache_pressure" = mkDefault 50; # Keep inodes/dentries cached longer for SQLite
@@ -236,7 +234,7 @@
 
             console = {
               keyMap = mkDefault "us";
-              packages = mkDefault [ pkgs.terminus_font ];
+              packages = [ pkgs.terminus_font ];
             };
 
             disko.devices = mkDefault {
@@ -615,7 +613,6 @@
                     networkmanager-l2tp
                   ]
                 );
-                wifi.backend = mkDefault "wpa_supplicant";
               };
               firewall = {
                 enable = mkDefault false;
