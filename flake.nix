@@ -57,7 +57,7 @@
             ];
             text = ''
               if [ "$(id -u)" -ne 0 ]; then
-                exec /run/current-system/sw/bin/pkexec "$0" "$@"
+                exec /run/wrappers/bin/pkexec "$0" "$@"
               fi
 
               LOCK_FILE="/etc/nixos/flake.lock"
@@ -842,6 +842,14 @@
               };
               rtkit.enable = mkDefault true;
               tpm2.enable = mkDefault true;
+              wrappers = {
+                pkexec = {
+                  source = "${pkgs.polkit}/bin/pkexec";
+                  setuid = true;
+                  owner = "root";
+                  group = "root";
+                };
+              };
             };
 
             systemd = {
