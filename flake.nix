@@ -508,7 +508,7 @@
               };
             };
 
-            fileSystems.f2fs.noCheck = mkDefault true; # disable fsck with f2fs until it runs correctly with the large amount of /nix symlinks
+            fileSystems."/".noCheck = mkDefault true; # disable fsck with f2fs until it runs correctly with the large amount of /nix symlinks
 
             fonts = {
               enableDefaultPackages = mkForce false;
