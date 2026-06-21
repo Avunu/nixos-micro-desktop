@@ -230,8 +230,8 @@
               };
               swraid.enable = mkDefault false;
               tmp = {
-                useTmpfs = mkDefault true;
-                tmpfsSize = mkDefault "25%"; # Quarter of RAM — enough for most workloads without starving apps
+                useTmpfs = mkDefault false;
+                cleanOnBoot = mkDefault true;
               };
             };
 
