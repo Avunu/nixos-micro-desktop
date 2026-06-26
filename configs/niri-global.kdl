@@ -35,9 +35,9 @@ cursor {
 }
 binds {
     Print hotkey-overlay-title="Screenshot (Interactive)" { screenshot; }
-    Super+Alt+N allow-when-locked=true hotkey-overlay-title="Toggle Night Mode" { spawn "dms" "ipc" "night" "toggle"; }
+    Super+Alt+N allow-when-locked=true hotkey-overlay-title="Toggle Night Mode" { spawn "noctalia" "msg" "nightlight-toggle"; }
     Super+C { center-column; }
-    Super+Comma hotkey-overlay-title="Toggle Settings" { spawn "dms" "ipc" "settings" "toggle"; }
+    Super+Comma hotkey-overlay-title="Toggle Settings" { spawn "noctalia" "msg" "settings-toggle"; }
     Super+Ctrl+Down { move-window-down; }
     Super+Ctrl+End { move-column-to-last; }
     Super+Ctrl+H { move-column-left; }
@@ -65,8 +65,7 @@ binds {
     Super+L { focus-column-right; }
     Super+Left { focus-column-left; }
     Super+Minus { set-column-width "-10%"; }
-    Super+N hotkey-overlay-title="Toggle Notification Center" { spawn "dms" "ipc" "notifications" "toggle"; }
-    Super+P hotkey-overlay-title="Toggle Notepad" { spawn "dms" "ipc" "notepad" "toggle"; }
+    Super+N hotkey-overlay-title="Toggle Control Center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
     Super+Page_Down { focus-workspace-down; }
     Super+Page_Up { focus-workspace-up; }
     Super+Period { expel-window-from-column; }
@@ -99,19 +98,19 @@ binds {
     Super+Shift+Slash { show-hotkey-overlay; }
     Super+Shift+U { move-workspace-down; }
     Super+Shift+Up { focus-monitor-up; }
-    Super+Space hotkey-overlay-title="Toggle Application Launcher" { spawn "dms" "ipc" "spotlight" "toggle"; }
+    Super+Space hotkey-overlay-title="Toggle Application Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Super+T { spawn "ghostty"; }
     Super+U { focus-workspace-down; }
     Super+Up { focus-window-up; }
-    Super+V hotkey-overlay-title="Toggle Clipboard Manager" { spawn "dms" "ipc" "clipboard" "toggle"; }
-    Super+X hotkey-overlay-title="Toggle Power Menu" { spawn "dms" "ipc" "powermenu" "toggle"; }
-    Super+Alt+L hotkey-overlay-title="Toggle Lock Screen" { spawn "dms" "ipc" "lock" "lock"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "audio" "decrement" "3"; }
-    XF86AudioMicMute allow-when-locked=true { spawn "dms" "ipc" "audio" "micmute"; }
-    XF86AudioMute allow-when-locked=true { spawn "dms" "ipc" "audio" "mute"; }
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "dms" "ipc" "audio" "increment" "3"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "dms" "ipc" "brightness" "decrement" "5" ""; }
-    XF86MonBrightnessUp allow-when-locked=true { spawn "dms" "ipc" "brightness" "increment" "5" ""; }
+    Super+V hotkey-overlay-title="Toggle Clipboard Manager" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
+    Super+X hotkey-overlay-title="Toggle Power Menu" { spawn "noctalia" "msg" "panel-toggle" "session"; }
+    Super+Alt+L hotkey-overlay-title="Toggle Lock Screen" { spawn "noctalia" "msg" "session" "lock"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down" "3"; }
+    XF86AudioMicMute allow-when-locked=true { spawn "noctalia" "msg" "mic-mute"; }
+    XF86AudioMute allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-up" "3"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down" "5"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "noctalia" "msg" "brightness-up" "5"; }
     Super+Alt+XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Decrease Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "5%-"; }
     Super+Alt+XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title="Increase Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "+5%"; }
 }

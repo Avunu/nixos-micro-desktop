@@ -11,6 +11,14 @@
       url = "github:Avunu/nix-profile-packagekit-backend";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    noctalia-greeter = {
+      url = "github:noctalia-dev/noctalia-greeter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -85,6 +93,8 @@
           imports = [
             inputs.disko.nixosModules.disko
             inputs.nix-packagekit.nixosModules.default
+            inputs.noctalia.nixosModules.default
+            inputs.noctalia-greeter.nixosModules.default
           ];
 
           options.microDesktop = {
@@ -412,7 +422,7 @@
                       nix profile upgrade --all --impure
                     '')
                     (writeShellScriptBin "restart-shell" ''
-                      systemctl --user restart dms.service
+                      systemctl --user restart noctalia.service
                     '')
                     # Aspell Dictionaries
                     (pkgs.aspellWithDicts (dicts: [
@@ -545,7 +555,7 @@
                 roboto-serif
                 roboto-slab
 
-                # DMS greeter fonts
+                # Noctalia fonts
                 inter
                 material-symbols
               ];
@@ -674,17 +684,18 @@
               appimage.enable = mkDefault true;
               dconf.enable = mkDefault true;
 
-              # DMS Shell (nixpkgs native)
-              dms-shell = {
+              # Noctalia v5 shell (upstream flake)
+              noctalia = {
                 enable = mkDefault true;
-                enableCalendarEvents = mkDefault false; # todo: re-enable when khal is fixed upstream
-                enableSystemMonitoring = mkDefault true;
-                enableVPN = cfg.enableVpn;
                 systemd = {
                   enable = mkDefault true;
                   target = "graphical-session.target";
                 };
               };
+
+              # Noctalia greeter (upstream flake); appearance synced at runtime via
+              # `noctalia msg greeter-sync` (polkit policy + helper ship with the package).
+              noctalia-greeter.enable = mkDefault true;
 
               git = {
                 enable = true;
@@ -745,11 +756,6 @@
               };
               displayManager = {
                 defaultSession = "niri";
-                dms-greeter = {
-                  enable = mkDefault true;
-                  compositor.name = "niri";
-                  configHome = "/home/${cfg.username}";
-                };
                 sessionPackages = with pkgs; [
                   niri
                 ];
@@ -988,31 +994,7 @@
                       git
                     ];
                   };
-
-                  #   # DMS writes qt6ct.conf with a KDE-format .colors path that qt6ct
-                  #   # can't parse. This service fires (via path unit below) whenever DMS
-                  #   # overwrites the file and corrects color_scheme_path to the native
-                  #   # qt6ct format file that matugen generates alongside the KDE one.
-                  #   qt6ct-colorscheme-fix = {
-                  #     description = "Correct qt6ct color_scheme_path to native format after DMS update";
-                  #     serviceConfig = {
-                  #       Type = "oneshot";
-                  #       ExecStart = pkgs.writeShellScript "qt6ct-fix-colorscheme" ''
-                  #         conf="$HOME/.config/qt6ct/qt6ct.conf"
-                  #         native="$HOME/.config/qt6ct/colors/matugen.conf"
-                  #         [ -f "$conf" ] && [ -f "$native" ] || exit 0
-                  #         grep -qF "color_scheme_path=$native" "$conf" && exit 0
-                  #         ${pkgs.gnused}/bin/sed -i "s|^color_scheme_path=.*|color_scheme_path=$native|" "$conf"
-                  #       '';
-                  #     };
-                  #   };
                 };
-
-                # paths.qt6ct-colorscheme-fix = {
-                #   description = "Watch qt6ct.conf for DMS color scheme overwrites";
-                #   wantedBy = [ "graphical-session.target" ];
-                #   pathConfig.PathModified = "%h/.config/qt6ct/qt6ct.conf";
-                # };
 
                 timers = {
                   nix-profile-upgrade = {
@@ -1034,22 +1016,15 @@
             system.activationScripts.niriUserConfig = ''
               USER_HOME="/home/${cfg.username}"
               NIRI_CONFIG_DIR="$USER_HOME/.config/niri"
-              DMS_DIR="$NIRI_CONFIG_DIR/dms"
 
               if [ -d "$USER_HOME" ]; then
-              mkdir -p "$NIRI_CONFIG_DIR" "$DMS_DIR"
+              mkdir -p "$NIRI_CONFIG_DIR"
 
               # Always update config.kdl from the nix store
               cp ${./configs/niri-home.kdl} "$NIRI_CONFIG_DIR/config.kdl"
 
               # Create custom.kdl only if it doesn't exist (user's personal overrides)
               [ -f "$NIRI_CONFIG_DIR/custom.kdl" ] || touch "$NIRI_CONFIG_DIR/custom.kdl"
-                
-              # Ensure DMS config files exist (even as empty files)
-              DMS_FILES=("alttab" "binds" "colors" "cursor" "layout" "outputs" "windowrules" "wpblur")
-              for f in "''${DMS_FILES[@]}"; do
-                [ -f "$DMS_DIR/$f.kdl" ] || touch "$DMS_DIR/$f.kdl"
-              done
 
               chown -R ${cfg.username}:users "$USER_HOME/.config"
               fi

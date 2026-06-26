@@ -231,6 +231,46 @@
         "type": "github"
       }
     },
+    "noctalia": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1782484061,
+        "narHash": "sha256-aWqvRYFKGwoiv9mKLPU0XXVEK1yOwYYLjt6Ws5fpoug=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia",
+        "rev": "ad835db312eb7d5291d6df08fe14804a714d9386",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "repo": "noctalia",
+        "type": "github"
+      }
+    },
+    "noctalia-greeter": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1782384482,
+        "narHash": "sha256-/M/0qSuGh3Jc2KwcwxlSSURNxFnB8GtytVPKlVi5r90=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia-greeter",
+        "rev": "ff35479bc920469fe371611915d7b20624237672",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "repo": "noctalia-greeter",
+        "type": "github"
+      }
+    },
     "packagekit-src": {
       "flake": false,
       "locked": {
@@ -252,7 +292,9 @@
       "inputs": {
         "disko": "disko",
         "nix-packagekit": "nix-packagekit",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "noctalia": "noctalia",
+        "noctalia-greeter": "noctalia-greeter"
       }
     },
     "systems": {
