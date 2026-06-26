@@ -11,12 +11,33 @@
       url = "github:Avunu/nix-profile-packagekit-backend";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-install-helper = {
+      url = "github:Avunu/nixos-install-helper";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.disko.follows = "disko";
+    };
   };
 
   outputs =
     { self, nixpkgs, ... }@inputs:
     let
       lib = nixpkgs.lib;
+      system = "x86_64-linux";
+
+      # Public-facing installer: derives its menu from microDesktop.* and ships
+      # unattended / guided ISOs plus a nixos-anywhere deploy. The whole
+      # installer surface is this one call.
+      ih = inputs.nixos-install-helper.lib.mkProject {
+        inherit nixpkgs system self;
+        installModules = [ self.nixosModules.microDesktop ];
+        optionRoots = [ "microDesktop" ];
+        flakeStyle = "local";
+        upstream = "github:Avunu/nixos-micro-desktop";
+        diskName = "main";
+        hints = {
+          diskDevice = "disk-device";
+        };
+      };
     in
     {
       devShells.x86_64-linux.default =
@@ -90,6 +111,7 @@
           options.microDesktop = {
             hostName = mkOption {
               type = types.str;
+              default = "nixos";
               description = "Hostname for the system";
             };
             diskDevice = mkOption {
@@ -117,6 +139,7 @@
             };
             username = mkOption {
               type = types.str;
+              default = "user";
               description = "Primary user name";
             };
             initialPassword = mkOption {
@@ -1182,5 +1205,12 @@
             zramSwap.enable = mkDefault true;
           };
         };
+
+      # ── Installer (via nixos-install-helper) ─────────────────────────────────
+      # install / installTemplate systems, the unattended + guided ISOs, and the
+      # configure / install / deploy apps — all derived from microDesktop.*.
+      nixosConfigurations = ih.nixosConfigurations;
+      packages = ih.packages;
+      apps = ih.apps;
     };
 }
