@@ -729,7 +729,7 @@
                   libxkbcommon
                   openssl
                   vulkan-loader
-                  vulkan-validation-layers
+                  # vulkan-validation-layers
                   wayland
                   zstd
                 ];
