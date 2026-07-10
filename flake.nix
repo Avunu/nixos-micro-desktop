@@ -203,7 +203,6 @@
                   gst_all_1.gst-plugins-base
                   gst_all_1.gst-plugins-good
                   gst_all_1.gst-plugins-ugly
-                  gst_all_1.gst-vaapi
                   gst_all_1.gstreamer
                   gtk3.out
                   nautilus
@@ -620,7 +619,6 @@
             packages = mkDefault [
               "io.missioncenter.MissionCenter"
               "org.freedesktop.Platform.ffmpeg-full/x86_64/24.08"
-              "org.freedesktop.Platform.GStreamer.gstreamer-vaapi/x86_64/23.08"
               "org.gnome.Loupe"
               "org.gnome.Papers"
               "org.gnome.Platform/x86_64/48"
