@@ -287,12 +287,24 @@
                               "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
                               "compress_cache" # Cache decompressed pages for hot data (SQLite, desktop apps)
                               "compress_chksum"
-                              # "compress_extension=*" # Compress all files by default
+                              "compress_extension=*" # Compress all files by default
                               # ...except frequently-rewritten small WAL/journal/lock files: recompressing
                               # a whole cluster on every tiny in-place-ish rewrite (SQLite/LevelDB WAL,
                               # systemd journal) is a known GC/checkpoint stall pattern under f2fs, worst
                               # when the volume is mostly full. See linux-f2fs-devel deadlock reports.
-                              "nocompress_extension=db,db-wal,db-shm,sqlite,sqlite-wal,sqlite-shm,ldb,log,journal,lock"
+                              # f2fs mount options are comma-split at the top level, so each excluded
+                              # extension needs its own repeated nocompress_extension=... entry — a single
+                              # comma-joined value gets torn into unrecognized tokens and fails root mount.
+                              "nocompress_extension=db"
+                              "nocompress_extension=db-wal"
+                              "nocompress_extension=db-shm"
+                              "nocompress_extension=sqlite"
+                              "nocompress_extension=sqlite-wal"
+                              "nocompress_extension=sqlite-shm"
+                              "nocompress_extension=ldb"
+                              "nocompress_extension=log"
+                              "nocompress_extension=journal"
+                              "nocompress_extension=lock"
                               "gc_merge"
                               "noatime"
                               "nodiscard" # Use scheduled fstrim instead of synchronous discard
@@ -330,7 +342,16 @@
                               # a whole cluster on every tiny in-place-ish rewrite (SQLite/LevelDB WAL,
                               # systemd journal) is a known GC/checkpoint stall pattern under f2fs, worst
                               # when the volume is mostly full. See linux-f2fs-devel deadlock reports.
-                              # "nocompress_extension=db,db-wal,db-shm,sqlite,sqlite-wal,sqlite-shm,ldb,log,journal,lock"
+                              # "nocompress_extension=db"
+                              # "nocompress_extension=db-wal"
+                              # "nocompress_extension=db-shm"
+                              # "nocompress_extension=sqlite"
+                              # "nocompress_extension=sqlite-wal"
+                              # "nocompress_extension=sqlite-shm"
+                              # "nocompress_extension=ldb"
+                              # "nocompress_extension=log"
+                              # "nocompress_extension=journal"
+                              # "nocompress_extension=lock"
                               "gc_merge"
                               "noatime"
                               "nodiscard" # Use scheduled fstrim instead of synchronous discard
