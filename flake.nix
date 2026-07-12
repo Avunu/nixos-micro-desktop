@@ -295,12 +295,14 @@
                               # f2fs mount options are comma-split at the top level, so each excluded
                               # extension needs its own repeated nocompress_extension=... entry — a single
                               # comma-joined value gets torn into unrecognized tokens and fails root mount.
+                              # Each extension is also capped at 7 chars (F2FS_EXTENSION_LEN=8 incl. NUL) —
+                              # "sqlite-wal"/"sqlite-shm" (10 chars) overflow that and get rejected with
+                              # "invalid extension length/number", failing the mount entirely. Omitted below;
+                              # rely on the shorter db-wal/db-shm convention instead.
                               "nocompress_extension=db"
                               "nocompress_extension=db-wal"
                               "nocompress_extension=db-shm"
                               "nocompress_extension=sqlite"
-                              "nocompress_extension=sqlite-wal"
-                              "nocompress_extension=sqlite-shm"
                               "nocompress_extension=ldb"
                               "nocompress_extension=log"
                               "nocompress_extension=journal"
@@ -346,8 +348,6 @@
                               # "nocompress_extension=db-wal"
                               # "nocompress_extension=db-shm"
                               # "nocompress_extension=sqlite"
-                              # "nocompress_extension=sqlite-wal"
-                              # "nocompress_extension=sqlite-shm"
                               # "nocompress_extension=ldb"
                               # "nocompress_extension=log"
                               # "nocompress_extension=journal"
