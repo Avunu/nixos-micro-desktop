@@ -305,7 +305,7 @@
                               # a whole cluster on every tiny in-place-ish rewrite (SQLite/LevelDB WAL,
                               # systemd journal) is a known GC/checkpoint stall pattern under f2fs, worst
                               # when the volume is mostly full. See linux-f2fs-devel deadlock reports.
-                              "nocompress_extension=db,db-wal,db-shm,sqlite,sqlite-wal,sqlite-shm,ldb,log,journal,lock"
+                              # "nocompress_extension=db,db-wal,db-shm,sqlite,sqlite-wal,sqlite-shm,ldb,log,journal,lock"
                               "gc_merge"
                               "noatime"
                               "nodiscard" # Use scheduled fstrim instead of synchronous discard
