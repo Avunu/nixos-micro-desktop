@@ -239,7 +239,6 @@
                 (mkIf (cfg.bootMode == "legacy") {
                   grub = {
                     enable = mkDefault true;
-                    device = cfg.diskDevice;
                   };
                 })
                 ({ timeout = mkDefault 2; })
