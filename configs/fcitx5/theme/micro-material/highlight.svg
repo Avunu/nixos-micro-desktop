@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Selected-candidate pill: the #3584e4 accent, radius 6. 9-sliced via
+     [InputPanel/Highlight/Margin]=8 on a 20x20 canvas (4px stretchable
+     center). Rendered to PNG at build time (rsvg-convert). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <rect x="0" y="0" width="20" height="20" rx="6" ry="6" fill="#3584e4"/>
+</svg>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Candidate-panel background: dark Material surface (#242226 at ~96% over a
+     #1c1c1f 1px border, radius 12). 9-sliced by classicui via
+     [InputPanel/Background/Margin]=16, so the 48x48 canvas leaves a 16px
+     stretchable center. Rendered to PNG at build time (rsvg-convert) because
+     classicui loads PNG via cairo. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <rect x="0.5" y="0.5" width="47" height="47" rx="12" ry="12"
+        fill="#242226" fill-opacity="0.96"
+        stroke="#1c1c1f" stroke-width="1"/>
+</svg>

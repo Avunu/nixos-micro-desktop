@@ -69,7 +69,11 @@ binds {
     Super+P hotkey-overlay-title="Toggle Notepad" { spawn "dms" "ipc" "notepad" "toggle"; }
     Super+Page_Down { focus-workspace-down; }
     Super+Page_Up { focus-workspace-up; }
-    Super+Period { expel-window-from-column; }
+    // Super+Period is deliberately NOT bound to expel-window here: it is the
+    // fcitx5 unicode/emoji picker trigger (Super+.) and must reach the focused
+    // app, where fcitx5 intercepts it and commits the glyph at the caret.
+    // expel-window-from-column moves to Super+Shift+Period.
+    Super+Shift+Period { expel-window-from-column; }
     Super+Q { close-window; }
     Super+R { switch-preset-column-width; }
     Super+Right { focus-column-right; }
@@ -103,7 +107,11 @@ binds {
     Super+T { spawn "ghostty"; }
     Super+U { focus-workspace-down; }
     Super+Up { focus-window-up; }
-    Super+V hotkey-overlay-title="Toggle Clipboard Manager" { spawn "dms" "ipc" "clipboard" "toggle"; }
+    // Super+V is deliberately NOT bound here: it is the fcitx5 clipboard-history
+    // picker trigger and must reach the focused app, where fcitx5 intercepts it
+    // and commits the picked entry at the caret (paste-at-cursor). A niri bind
+    // would swallow it before the input method ever sees it. This replaces DMS's
+    // clipboard manager (was: spawn "dms" "ipc" "clipboard" "toggle").
     Super+X hotkey-overlay-title="Toggle Power Menu" { spawn "dms" "ipc" "powermenu" "toggle"; }
     Super+Alt+L hotkey-overlay-title="Toggle Lock Screen" { spawn "dms" "ipc" "lock" "lock"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "audio" "decrement" "3"; }
