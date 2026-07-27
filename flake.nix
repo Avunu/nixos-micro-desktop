@@ -8,6 +8,12 @@
       };
       url = "github:nix-community/disko";
     };
+    niri = {
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+      url = "github:niri-wm/niri";
+    };
     nix-packagekit = {
       inputs = {
         nixpkgs.follows = "nixpkgs";
@@ -466,16 +472,12 @@
                       gst_all_1.gst-plugins-ugly
                       gst_all_1.gstreamer
                       gtk4.out
-                      # kdePackages.breeze
-                      # kdePackages.breeze-gtk
-                      # kdePackages.breeze-icons
                       key-rack
                       libdbusmenu
                       libheif
                       libheif.out
                       libmtp
                       libsecret
-                      # libsForQt5.qt5ct
                       loupe
                       lxqt.libdbusmenu-lxqt
                       matugen
@@ -485,11 +487,9 @@
                       mission-center
                       morewaita-icon-theme
                       nautilus
-                      niri
                       packagekit
                       papers
                       playerctl
-                      # qt6Packages.qt6ct
                       ripgrep
                       satty
                       shared-mime-info
@@ -867,6 +867,7 @@
                 };
                 niri = {
                   enable = mkDefault true;
+                  package = inputs.niri.packages.x86_64-linux.default;
                   useNautilus = mkDefault true;
                 };
                 nix-ld = {
