@@ -8,11 +8,16 @@
       };
       url = "github:nix-community/disko";
     };
+    # niri-flake builds niri itself rather than relying on nixpkgs' in-tree
+    # package (currently broken upstream) or the official niri flake (also
+    # fails to build at the moment). It publishes pre-built niri-stable /
+    # niri-unstable to the niri.cachix.org binary cache, which
+    # nixosModules.niri wires up automatically.
     niri = {
-      # inputs = {
-      #   nixpkgs.follows = "nixpkgs";
-      # };
-      url = "github:niri-wm/niri";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+      url = "github:sodiboo/niri-flake";
     };
     nix-packagekit = {
       inputs = {
@@ -865,10 +870,16 @@
                     pinentryPackage = mkDefault pkgs.pinentry-gnome3;
                   };
                 };
+                # niri-flake disables nixpkgs' own programs.niri module (which
+                # provided the niri-specific xdg-desktop-portal profile), so
+                # file-chooser/notification portal backends now come from
+                # xdg.portal.config.common below for niri sessions too.
+                # Package defaults to niri-flake's niri-stable, served from
+                # the niri.cachix.org binary cache (niri-flake.cache.enable,
+                # on by default) — avoids building niri from source, which
+                # currently fails both in nixpkgs and niri's own flake.
                 niri = {
                   enable = mkDefault true;
-                  package = inputs.niri.packages.x86_64-linux.default;
-                  useNautilus = mkDefault true;
                 };
                 nix-ld = {
                   enable = mkDefault true;
@@ -952,9 +963,7 @@
                     configHome = "/home/${cfg.username}";
                     enable = mkDefault true;
                   };
-                  sessionPackages = with pkgs; [
-                    niri
-                  ];
+                  # niri-flake's module already adds programs.niri.package here.
                 };
                 fprintd = {
                   enable = mkDefault true;
@@ -1129,7 +1138,10 @@
               };
 
               systemd = {
-                packages = [ pkgs.niri ];
+                # niri-flake's module doesn't register systemd.packages itself;
+                # do it here so the niri.service unit exists (referenced by the
+                # pipewire user service below).
+                packages = [ config.programs.niri.package ];
                 services = {
                   cups-browsed-resume = {
                     after = [
@@ -1432,9 +1444,9 @@
                       "org.freedesktop.impl.portal.Settings" = "gnome";
                     };
                   };
+                  # niri-flake's module already adds programs.niri.package here.
                   configPackages = with pkgs; [
                     gnome-keyring
-                    niri
                   ];
                   enable = mkDefault true;
                   extraPortals = with pkgs; [
@@ -1462,6 +1474,7 @@
 
             imports = [
               inputs.disko.nixosModules.disko
+              inputs.niri.nixosModules.niri
               inputs.nix-packagekit.nixosModules.default
             ];
 
