@@ -9,9 +9,9 @@
       url = "github:nix-community/disko";
     };
     niri = {
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
+      # inputs = {
+      #   nixpkgs.follows = "nixpkgs";
+      # };
       url = "github:niri-wm/niri";
     };
     nix-packagekit = {
