@@ -14,9 +14,9 @@
     # niri-unstable to the niri.cachix.org binary cache, which
     # nixosModules.niri wires up automatically.
     niri = {
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
+      # inputs = {
+      #   nixpkgs.follows = "nixpkgs";
+      # };
       url = "github:sodiboo/niri-flake";
     };
     nix-packagekit = {
@@ -824,10 +824,8 @@
                   allowBroken = true;
                   allowUnfree = true;
                   allowUnfreePredicate = _: true;
-                  permittedInsecurePackages = [
-                    "electron-39.8.10"
-                  ];
                 };
+                overlays = [ inputs.niri.overlays.niri ];
               };
 
               powerManagement = {
@@ -880,6 +878,7 @@
                 # currently fails both in nixpkgs and niri's own flake.
                 niri = {
                   enable = mkDefault true;
+                  package = pkgs.niri-unstable;
                 };
                 nix-ld = {
                   enable = mkDefault true;
