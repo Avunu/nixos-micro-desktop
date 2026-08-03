@@ -23,8 +23,8 @@ Set `microDesktop.desktopShell` in your local flake. All three share the same ba
 
 | desktopShell | Compositor | Shell | Greeter |
 | --- | --- | --- | --- |
-| dms (default) | niri | DankMaterialShell | DMS greeter |
-| noctalia | niri | Noctalia | Noctalia greeter |
+| dms | niri | DankMaterialShell | DMS greeter |
+| noctalia (default) | niri | Noctalia | Noctalia greeter |
 | gnome | Mutter | GNOME Shell | GDM |
 
 `dms` is the default until Noctalia v5 reaches a stable release — nixpkgs currently packages a v5 beta. Everything comes from `cache.nixos.org`; no shell requires an extra flake input.

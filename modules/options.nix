@@ -12,7 +12,7 @@ with lib;
         ];
       };
       desktopShell = mkOption {
-        default = "dms";
+        default = "noctalia";
         description = ''
           Which desktop shell to run.
 
