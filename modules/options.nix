@@ -21,9 +21,7 @@ with lib;
           - `noctalia`: Noctalia on niri, with the Noctalia greeter.
 
           All three share the same GNOME core apps and services; only the
-          shell, compositor and greeter differ. `dms` is the default until
-          Noctalia v5 reaches a stable release in nixpkgs — the packaged
-          version is currently a v5 beta.
+          shell, compositor and greeter differ. `noctalia` is the default
         '';
         type = types.enum [
           "gnome"
