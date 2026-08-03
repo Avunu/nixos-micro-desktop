@@ -1,0 +1,15 @@
+    // Noctalia has a clipboard panel (`panel-toggle clipboard`), but Super+V is
+    // reserved for the fcitx5 clipboard-history picker on every desktopShell —
+    // see the note in binds-common.kdl. Left unbound deliberately.
+    Super+Alt+L hotkey-overlay-title="Toggle Lock Screen" { spawn "noctalia" "msg" "session" "lock"; }
+    Super+Alt+N allow-when-locked=true hotkey-overlay-title="Toggle Night Mode" { spawn "noctalia" "msg" "nightlight-toggle"; }
+    Super+Comma hotkey-overlay-title="Toggle Settings" { spawn "noctalia" "msg" "settings-toggle"; }
+    Super+N hotkey-overlay-title="Toggle Control Center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
+    Super+Space hotkey-overlay-title="Toggle Application Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    Super+X hotkey-overlay-title="Toggle Power Menu" { spawn "noctalia" "msg" "panel-toggle" "session"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down" "3"; }
+    XF86AudioMicMute allow-when-locked=true { spawn "noctalia" "msg" "mic-mute"; }
+    XF86AudioMute allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-up" "3"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down" "5"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "noctalia" "msg" "brightness-up" "5"; }

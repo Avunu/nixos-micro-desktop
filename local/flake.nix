@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     microdesktop = {
-      url = "github:Avunu/nixos-micro-desktop/niri";
+      url = "github:Avunu/nixos-micro-desktop";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -32,6 +32,9 @@
                 hostName = hostName;
                 diskDevice = "/dev/sda";
                 bootMode = "uefi"; # Options: "uefi" or "legacy"
+                # Options: "dms" (niri + DankMaterialShell), "noctalia"
+                # (niri + Noctalia), or "gnome" (GNOME Shell on Mutter).
+                desktopShell = "dms";
                 timeZone = "America/New_York";
                 locale = "en_US.UTF-8";
                 username = username;

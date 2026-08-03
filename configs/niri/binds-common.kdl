@@ -1,43 +1,5 @@
-input {
-    keyboard {
-        xkb {
-            layout ""
-            model ""
-            rules ""
-            variant ""
-        }
-        repeat-delay 600
-        repeat-rate 25
-        track-layout "global"
-    }
-    touchpad {
-        tap
-        natural-scroll
-    }
-}
-screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
-layout {
-    gaps 16
-    struts {
-        left 0
-        right 0
-        top 0
-        bottom 0
-    }
-    focus-ring { width 4; }
-    border { off; }
-    default-column-width
-    center-focused-column "never"
-}
-cursor {
-    xcursor-theme "default"
-    xcursor-size 24
-}
-binds {
     Print hotkey-overlay-title="Screenshot (Interactive)" { screenshot; }
-    Super+Alt+N allow-when-locked=true hotkey-overlay-title="Toggle Night Mode" { spawn "dms" "ipc" "night" "toggle"; }
     Super+C { center-column; }
-    Super+Comma hotkey-overlay-title="Toggle Settings" { spawn "dms" "ipc" "settings" "toggle"; }
     Super+Ctrl+Down { move-window-down; }
     Super+Ctrl+End { move-column-to-last; }
     Super+Ctrl+H { move-column-left; }
@@ -65,8 +27,6 @@ binds {
     Super+L { focus-column-right; }
     Super+Left { focus-column-left; }
     Super+Minus { set-column-width "-10%"; }
-    Super+N hotkey-overlay-title="Toggle Notification Center" { spawn "dms" "ipc" "notifications" "toggle"; }
-    Super+P hotkey-overlay-title="Toggle Notepad" { spawn "dms" "ipc" "notepad" "toggle"; }
     Super+Page_Down { focus-workspace-down; }
     Super+Page_Up { focus-workspace-up; }
     // Super+Period is deliberately NOT bound to expel-window here: it is the
@@ -103,23 +63,13 @@ binds {
     Super+Shift+Slash { show-hotkey-overlay; }
     Super+Shift+U { move-workspace-down; }
     Super+Shift+Up { focus-monitor-up; }
-    Super+Space hotkey-overlay-title="Toggle Application Launcher" { spawn "dms" "ipc" "spotlight" "toggle"; }
     Super+T { spawn "ghostty"; }
     Super+U { focus-workspace-down; }
     Super+Up { focus-window-up; }
     // Super+V is deliberately NOT bound here: it is the fcitx5 clipboard-history
     // picker trigger and must reach the focused app, where fcitx5 intercepts it
     // and commits the picked entry at the caret (paste-at-cursor). A niri bind
-    // would swallow it before the input method ever sees it. This replaces DMS's
-    // clipboard manager (was: spawn "dms" "ipc" "clipboard" "toggle").
-    Super+X hotkey-overlay-title="Toggle Power Menu" { spawn "dms" "ipc" "powermenu" "toggle"; }
-    Super+Alt+L hotkey-overlay-title="Toggle Lock Screen" { spawn "dms" "ipc" "lock" "lock"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "audio" "decrement" "3"; }
-    XF86AudioMicMute allow-when-locked=true { spawn "dms" "ipc" "audio" "micmute"; }
-    XF86AudioMute allow-when-locked=true { spawn "dms" "ipc" "audio" "mute"; }
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "dms" "ipc" "audio" "increment" "3"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "dms" "ipc" "brightness" "decrement" "5" ""; }
-    XF86MonBrightnessUp allow-when-locked=true { spawn "dms" "ipc" "brightness" "increment" "5" ""; }
+    // would swallow it before the input method ever sees it. This replaces the
+    // shell's own clipboard manager under every desktopShell.
     Super+Alt+XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Decrease Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "5%-"; }
     Super+Alt+XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title="Increase Keyboard Backlight" { spawn "brightnessctl" "--device=*::kbd_backlight" "set" "+5%"; }
-}

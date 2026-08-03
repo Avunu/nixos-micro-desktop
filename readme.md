@@ -9,8 +9,8 @@ If you really care about declarative systems, you probably want to use Nix direc
 ## Features
 
 * Latest kernel for optimal hardware support
-* Niri tiling Wayland compositor with DankMaterialShell
-* Beautiful DankMaterialShell greeter for login
+* Three interchangeable desktop shells — see below
+* GNOME core apps and services shared across all of them
 * Network Manager with VPN support
 * Flatpak integration for easy application management
 * Optimized audio setup with PipeWire
@@ -18,6 +18,30 @@ If you really care about declarative systems, you probably want to use Nix direc
 * Automatic system maintenance (TRIM, garbage collection)
 * Enhanced XDG portal integration for better desktop experience
 * And much more!
+
+## Desktop shells
+
+Set `microDesktop.desktopShell` in your local flake. All three share the same
+base system — kernel and filesystem tuning, GNOME core apps and services,
+PipeWire, printing and scanning, portals, and the fcitx5 clipboard-history
+(`Super+V`) and emoji (`Super+.`) pickers. Only the shell, compositor and
+greeter change.
+
+| `desktopShell` | Compositor | Shell | Greeter |
+| --- | --- | --- | --- |
+| `dms` (default) | niri | DankMaterialShell | DMS greeter |
+| `noctalia` | niri | Noctalia | Noctalia greeter |
+| `gnome` | Mutter | GNOME Shell | GDM |
+
+`dms` is the default until Noctalia v5 reaches a stable release — nixpkgs
+currently packages a v5 beta. Everything comes from `cache.nixos.org`; no shell
+requires an extra flake input.
+
+The `gnome` option deliberately does *not* use
+`services.desktopManager.gnome.enable`, which would pull in the full GNOME
+application suite. It assembles the session from `gnome-session`,
+`gnome-shell` and GDM instead, keeping the app set the same as the other two
+shells.
 
 ## Installation
 
