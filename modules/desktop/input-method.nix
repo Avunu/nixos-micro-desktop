@@ -104,6 +104,10 @@ in
               };
             };
             globalOptions = {
+              # Add this block to control the candidate menu item count
+              globalSection = {
+                PageSize = 30;
+              };
               # Disable IM trigger / group-switch hotkeys (single IM only) —
               # every "Hotkey/*Keys" entry below set to {} is disabled.
               # Candidate nav for both pickers: Up/Down = prev/next candidate,
