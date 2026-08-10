@@ -223,8 +223,13 @@ in
     };
 
     programs = {
+      # Off unless microDesktop.enableAppImage is set: the FHS sandbox this
+      # builds carries the full 222 MB glibc locale archive, taken from
+      # pkgs.glibcLocales rather than from i18n.supportedLocales, which undoes
+      # the locale trim in system/users.nix on its own. See the option for the
+      # two alternatives that were measured and rejected.
       appimage = {
-        enable = mkDefault true;
+        enable = mkDefault cfg.enableAppImage;
       };
       dconf = {
         enable = mkDefault true;

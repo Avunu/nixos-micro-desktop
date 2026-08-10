@@ -34,13 +34,42 @@ with lib;
         description = "Disk device for installation";
         type = types.str;
       };
-      # The three enable* options below carry `visible = false`, which keeps
+      # The four enable* options below carry `visible = false`, which keeps
       # them out of the installer wizard. nixos-install-helper derives its
       # prompts from this option tree (see lib/options-to-schema.nix), so every
       # visible option becomes a question someone has to answer during install.
-      # These three are closure trims for hardware most machines do not have —
-      # a consumer flake can still set them, but nobody should be asked about a
-      # fingerprint reader at the install prompt.
+      # These four are closure trims for capabilities most machines do not need
+      # — a consumer flake can still set them, but nobody should be asked about
+      # a fingerprint reader at the install prompt.
+      enableAppImage = mkOption {
+        default = false;
+        description = ''
+          Register the AppImage MIME handler and the FHS runtime that executes
+          them.
+
+          Off by default, and the reason is worth stating because it is not
+          obvious from the size of the feature. `buildFHSEnv` puts the full
+          glibc locale archive — 222 MB, every locale glibc supports — into the
+          sandbox rootfs at /usr/lib/locale, so that an AppImage asking for any
+          locale finds one. It takes it from `pkgs.glibcLocales` directly,
+          which means it ignores `i18n.supportedLocales`: this system trims its
+          own archive to two locales and 2 MB, and then AppImage support hands
+          the other 220 MB back.
+
+          There is no cheap way to align the two. Overriding `glibcLocales`
+          globally takes the whole system off the binary cache (measured: 3422
+          derivations rebuilt from source), and threading a trimmed archive
+          into `buildFHSEnv` alone defeats callPackage's splicing, which
+          rebuilds glibc and gcc locally and returns only 165 MB of the 222.
+
+          Software here installs through GNOME Software and the nix-profile
+          PackageKit backend, so AppImage is a fallback path rather than the
+          main one. Set this to true if you need it; it is one line and the
+          cost is understood.
+        '';
+        type = types.bool;
+        visible = false;
+      };
       enableFileIndexing = mkOption {
         default = false;
         description = ''
