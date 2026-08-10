@@ -70,6 +70,11 @@ in
           enable = mkDefault true;
         };
         enable = mkDefault true;
+        # Socket-activate cupsd rather than starting it at boot. browsed above
+        # will wake it as soon as it discovers a printer, so on a machine that
+        # has one this changes little; on a machine that does not, cupsd never
+        # starts at all.
+        startWhenNeeded = mkDefault true;
         webInterface = mkDefault false;
       };
       samba-wsdd = {

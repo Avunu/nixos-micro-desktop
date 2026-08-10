@@ -74,7 +74,6 @@ in
             dsearch
             ffmpeg-headless
             ffmpegthumbnailer
-            fprintd
             gcr_4
             gdk-pixbuf
             ghostty
@@ -126,7 +125,13 @@ in
         MU_QT_QPA_PLATFORM = "wayland";
         NIXPKGS_ALLOW_UNFREE = "1";
         OCL_ICD_VENDORS = "/run/opengl-driver/etc/OpenCL/vendors";
-        PROTOC = "${pkgs.protobuf}/bin/protoc";
+        # PROTOC and SDL_SOUNDFONTS were removed here. Both were string-valued
+        # environment variables whose only effect was to pull their package
+        # into the system closure: protobuf (73 MB) so that something could
+        # compile a .proto at runtime, and soundfont-fluid (141 MB) so that SDL
+        # could synthesize MIDI. Neither has a consumer on this desktop. An
+        # environment variable interpolating a store path is a closure
+        # reference like any other.
         QML_DISABLE_DISK_CACHE = "1";
         QSG_RHI_BACKEND = "vulkan";
         QT_QPA_PLATFORM = "wayland";
@@ -136,9 +141,9 @@ in
         SAL_ENABLESKIA = "1";
         SAL_FORCESKIA = "1";
         SAL_SKIA = "vulkan";
-        SDL_SOUNDFONTS = "${pkgs.soundfont-fluid}/share/soundfonts/FluidR3_GM.sf2";
         SDL_VIDEODRIVER = "wayland";
-        # SQLite performance: use /tmp (tmpfs) for temp files instead of f2fs
+        # SQLite performance: use /tmp (tmpfs, see boot.tmp.useTmpfs) for temp
+        # files instead of the compressed f2fs root
         SQLITE_TMPDIR = "/tmp";
         TERMINAL = getExe pkgs.ghostty;
         XDG_SESSION_TYPE = "wayland";
@@ -275,14 +280,26 @@ in
         gnome-settings-daemon = {
           enable = mkDefault true;
         };
+        # Content indexing, off unless microDesktop.enableFileIndexing is set.
+        #
+        # localsearch walks $HOME on a schedule and re-reads every file it can
+        # parse to keep a full-text index current; tinysparql is the store it
+        # writes into. What that buys is content search inside Nautilus. What
+        # it costs is a recurring crawl over the user's data on a machine whose
+        # root filesystem is transparently compressed, so every re-read is also
+        # a decompression.
+        #
+        # File-name search still works with this off, and `dsearch` (in
+        # systemPackages above) covers fuzzy filesystem search independently —
+        # it has no tinysparql dependency.
         localsearch = {
-          enable = mkDefault true;
+          enable = mkDefault cfg.enableFileIndexing;
         };
         sushi = {
           enable = mkDefault true;
         };
         tinysparql = {
-          enable = mkDefault true;
+          enable = mkDefault cfg.enableFileIndexing;
         };
       };
       gvfs = {

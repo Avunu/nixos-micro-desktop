@@ -194,10 +194,24 @@ in
           # and ignores the kernel score entirely, so it needs telling
           # separately. Unlike OOMScoreAdjust this one is a cgroup xattr
           # and does apply unprivileged.
+          #
+          # The three cgroup weights are the other half of the same idea, on
+          # the axes an OOM score does not cover. system/nix.nix holds
+          # nix-daemon and the hourly rebuild to a reduced share of CPU and
+          # I/O; these raise the compositor's share above the default so that
+          # a rebuild competing for the disk cannot stall a repaint.
+          #
+          # MemoryLow, not MemoryMin: MemoryLow makes the compositor's pages
+          # the last ones reclaimed, while MemoryMin makes them unreclaimable
+          # and turns a memory squeeze into a kill somewhere else on the
+          # system. The protection wanted here is the soft one.
           niri = {
             overrideStrategy = "asDropin";
             serviceConfig = {
+              CPUWeight = 200;
+              IOWeight = 200;
               ManagedOOMPreference = "omit";
+              MemoryLow = "512M";
               OOMScoreAdjust = -900;
             };
           };

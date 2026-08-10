@@ -116,10 +116,19 @@ in
           # system/memory.nix): the compositor must sort below applications,
           # which sit at +300. Applied to the template so every instance
           # (@wayland, @x11) inherits it.
+          # CPUWeight/IOWeight/MemoryLow mirror the niri drop-in in
+          # desktop/niri.nix: they raise the shell's share of CPU and disk
+          # above the reduced share system/nix.nix gives nix-daemon and the
+          # hourly rebuild, so a rebuild cannot stall a repaint. MemoryLow
+          # rather than MemoryMin, so a memory squeeze slows the shell instead
+          # of killing something else.
           "org.gnome.Shell@" = {
             overrideStrategy = "asDropin";
             serviceConfig = {
+              CPUWeight = 200;
+              IOWeight = 200;
               ManagedOOMPreference = "omit";
+              MemoryLow = "512M";
               OOMScoreAdjust = -900;
             };
           };
