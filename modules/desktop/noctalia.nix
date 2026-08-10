@@ -69,8 +69,21 @@ in
           # exist because DMS has a measured lock-screen leak. Noctalia has no
           # such measurement behind it, and a ceiling picked without one is
           # just a number that will eventually kill a working session.
+          #
+          # No overrideStrategy = "asDropin" here, unlike the niri, dms and
+          # GNOME Shell blocks. That setting makes NixOS emit the unit as a
+          # drop-in *instead of* a unit file, which is right only when a
+          # package already supplies the base unit: programs.niri and
+          # programs.dms-shell both declare systemd.packages, so niri.service
+          # and dms.service exist on disk and the drop-in has something to
+          # attach to. programs.noctalia declares no systemd.packages — the
+          # unit exists solely as its own systemd.user.services.noctalia — so
+          # asDropin here left a noctalia.service.d directory with no
+          # noctalia.service, and systemd ignores a drop-in for a unit that
+          # does not exist. The service silently stopped existing rather than
+          # failing. Plain attributes merge with the upstream definition, which
+          # is what was wanted all along.
           noctalia = {
-            overrideStrategy = "asDropin";
             serviceConfig = {
               CPUWeight = 200;
               IOWeight = 200;
