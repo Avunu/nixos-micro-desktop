@@ -34,6 +34,47 @@ with lib;
         description = "Disk device for installation";
         type = types.str;
       };
+      # The three enable* options below carry `visible = false`, which keeps
+      # them out of the installer wizard. nixos-install-helper derives its
+      # prompts from this option tree (see lib/options-to-schema.nix), so every
+      # visible option becomes a question someone has to answer during install.
+      # These three are closure trims for hardware most machines do not have —
+      # a consumer flake can still set them, but nobody should be asked about a
+      # fingerprint reader at the install prompt.
+      enableFileIndexing = mkOption {
+        default = false;
+        description = ''
+          Index the user's files for content search (localsearch/tinysparql).
+
+          Off by default: the indexer walks and re-reads $HOME on a schedule
+          and adds ~400 MB to the closure. With it off, Nautilus search still
+          matches file names, just not file contents.
+        '';
+        type = types.bool;
+        visible = false;
+      };
+      enableFingerprint = mkOption {
+        default = false;
+        description = ''
+          Enable fingerprint authentication (fprintd with the Goodix TOD driver).
+
+          Off by default: the driver is specific to one Goodix sensor family and
+          costs ~300 MB on every machine, including the ones with no reader.
+        '';
+        type = types.bool;
+        visible = false;
+      };
+      enableScanning = mkOption {
+        default = false;
+        description = ''
+          Enable scanner support (SANE, with the airscan/eSCL backend).
+
+          Off by default: the backend collection is ~230 MB of per-vendor
+          drivers. Most modern network MFPs work over airscan alone.
+        '';
+        type = types.bool;
+        visible = false;
+      };
       enableSsh = mkOption {
         default = false;
         description = "Enable SSH server";

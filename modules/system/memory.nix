@@ -73,6 +73,13 @@ in
     boot = {
       kernel = {
         sysctl = {
+          # Stop the kernel compacting memory speculatively in the background.
+          # Compaction exists to produce contiguous high-order pages, and with
+          # transparent_hugepage=madvise on the kernel command line almost
+          # nothing here asks for them — so proactive compaction is CPU and
+          # page migration spent on a supply nobody is drawing from. On-demand
+          # compaction still happens when an allocation actually needs it.
+          "vm.compaction_proactiveness" = mkDefault 0;
           "vm.dirty_background_ratio" = mkDefault 5; # Start background writeback early
           "vm.dirty_ratio" = mkDefault 10; # default; elevated values increase unreclaimable memory pressure
           # Single-page swap reads (optimal for zram).  If a disk swap file is
