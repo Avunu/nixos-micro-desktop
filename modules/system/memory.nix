@@ -82,9 +82,16 @@ in
           "vm.compaction_proactiveness" = mkDefault 0;
           "vm.dirty_background_ratio" = mkDefault 5; # Start background writeback early
           "vm.dirty_ratio" = mkDefault 10; # default; elevated values increase unreclaimable memory pressure
-          # Single-page swap reads (optimal for zram).  If a disk swap file is
-          # present (e.g. via devWorkstation.extraConfig), this makes disk swap
-          # extremely slow — acceptable only as a last-resort safety net.
+          # Single-page swap reads, which is what zram wants: a zram fault is
+          # a decompression, so reading seven neighbouring pages that nobody
+          # asked for is seven decompressions wasted. zram is the swap of
+          # consequence here — it sits at priority 100, above the disk swap
+          # partition microDesktop.swapSizeGiB creates (see system/storage.nix)
+          # — so it is the tier to tune for. The cost is that the disk
+          # partition, once anything reaches it, reads a page at a time and is
+          # correspondingly slow. That tier is a last-resort safety net and a
+          # hibernation target, not a working set, so the trade is the right
+          # way round.
           "vm.page-cluster" = mkDefault 0;
           "vm.swappiness" = mkDefault 100; # zram benefits from eager compression; 100 avoids OOM before zram fills
           "vm.vfs_cache_pressure" = mkDefault 50; # Keep inodes/dentries cached longer for SQLite

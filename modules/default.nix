@@ -6,6 +6,7 @@
     ./system/memory.nix
     ./system/network.nix
     ./system/nix.nix
+    ./system/storage.nix
     ./system/users.nix
     ./desktop/common.nix
     ./desktop/input-method.nix

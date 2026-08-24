@@ -143,7 +143,7 @@ in
         SAL_SKIA = "vulkan";
         SDL_VIDEODRIVER = "wayland";
         # SQLite performance: use /tmp (tmpfs, see boot.tmp.useTmpfs) for temp
-        # files instead of the compressed f2fs root
+        # files instead of the compressed root filesystem
         SQLITE_TMPDIR = "/tmp";
         TERMINAL = getExe pkgs.ghostty;
         XDG_SESSION_TYPE = "wayland";

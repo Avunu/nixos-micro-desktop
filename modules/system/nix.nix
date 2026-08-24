@@ -71,9 +71,9 @@ in
       #
       # What it saves is not in question: a Nix store carries a great many
       # byte-identical files across generations and packages, and no compression
-      # ratio touches a duplicate, so this and the f2fs zstd in boot.nix save
-      # different things and neither substitutes for the other. The question is
-      # only when it runs.
+      # ratio touches a duplicate, so this and the root-filesystem zstd in
+      # system/storage.nix save different things and neither substitutes for
+      # the other. The question is only when it runs.
       #
       # auto-optimise-store (set below until now) ran it inline: every
       # substituted path hashed and hard-linked before nix would call the build

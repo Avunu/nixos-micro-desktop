@@ -13,6 +13,7 @@ If you really care about declarative systems, you probably want to use Nix direc
 -   Flatpak integration for easy application management
 -   Optimized audio setup with PipeWire
 -   Printer and scanner support out of the box
+-   Choice of f2fs or BTRFS root, with zstd compression either way
 -   Automatic system maintenance (TRIM, garbage collection)
 -   Enhanced XDG portal integration for better desktop experience
 -   And much more!
@@ -29,22 +30,57 @@ Set `microDesktop.desktopShell` in your local flake. All three share the same ba
 
 The `gnome` option deliberately does _not_ use `services.desktopManager.gnome.enable`, which would pull in the full GNOME application suite. It assembles the session from `gnome-session`, `gnome-shell` and GDM instead, keeping the app set the same as the other two shells.
 
+## Storage
+
+The module pulls in [disko](https://github.com/nix-community/disko) and declares the whole partition table from `diskDevice`, `bootMode`, `rootFilesystem` and `swapSizeGiB`, so it expects to own the disk. Set these in your local flake before installing.
+
+| Option | Type | Default |  |
+| --- | --- | --- | --- |
+| diskDevice | string | /dev/sda | install target |
+| bootMode | uefi \| legacy | uefi | systemd-boot on an ESP, or GRUB on a BIOS boot partition plus an ext4 `/boot` |
+| rootFilesystem | f2fs \| btrfs | f2fs | install-time; migrates nothing |
+| compressionLevel | fast \| balanced \| max | fast | zstd 1 / 6 / 12; safe to change later |
+| swapSizeGiB | int | 8 | 0 omits the partition (and hibernation) |
+
+### f2fs or BTRFS
+
+`f2fs` is what this module has always installed and is still the default. `btrfs` is where it is going, and is the better pick on a new install:
+
+| | f2fs | btrfs |
+| --- | --- | --- |
+| compression | `compress_algorithm=zstd:N`, cluster scales with the level | `compress-force=zstd:N` in fixed 128 KB extents |
+| freed space | fewer bytes written, but `df` does not move | returned to the filesystem — `df` moves |
+| trim | `nodiscard` plus a daily `fstrim` timer | `discard=async`, no timer |
+| layout | one flat root | `@`, `@home`, `@nix`, `@log` subvolumes |
+| fsck | skipped (chokes on the `/nix` symlink count) | none to run at boot |
+
+`rootFilesystem` is an install-time decision. disko derives the mkfs arguments, the mount options and the partition shape from it; it reformats nothing and migrates nothing, so changing it on an installed machine only changes which drivers and tools are in the closure. Get it right at install time, or reinstall.
+
+`compressionLevel` is not install-time. Compression is recorded per extent (btrfs) or per cluster (f2fs), so a changed tier applies from the next write on and shows up as the store turns over. On btrfs, `btrfs filesystem defragment -r -czstd /` forces the issue.
+
+### Swap
+
+Two tiers. zram sits on top at priority 100 with lz4, so compressed RAM fills before anything reaches the disk; the `swapSizeGiB` partition underneath it is a hibernation target and a last-resort overflow, not a working set. disko marks it `resumeDevice`, so hibernation works without any `resume_offset` bookkeeping — which is the main reason this is a partition rather than a swapfile on the root. At `swapSizeGiB = 0` there is no partition, no `boot.resumeDevice`, and no hibernation: zram alone.
+
+**Upgrading an existing install:** set `swapSizeGiB = 0`. Machines installed before this option existed have no swap partition on the disk, and a nonzero value emits a `swapDevices` entry plus a `boot.resumeDevice` pointing at a partition that is not there — the swap unit fails and the resume generator waits out its device timeout before giving up. The machine still boots, just slower and with failed units. A fresh install gets the partition and needs no such thing.
+
 ## Installation
 
 Follow these steps to install NixOS Micro Desktop:
 
-1.  **Install NixOS with BTRFS root**
+1.  **Boot the NixOS installer**
     
-    -   Download the latest NixOS ISO
-    -   During installation, ensure you set up your root partition as BTRFS
+    -   Download the latest NixOS ISO and boot the target machine from it
+    -   Do not partition anything: the module declares the whole table through disko and formats the disk itself
 2.  **Download and customize the sample flake**
     
-    -   Once your system is up and running, download the sample flake to `/etc/nixos/`:
+    -   Copy the sample flake to `/etc/nixos/`:
         
         ```
-        sudo curl -o /etc/nixos/flake.nix https://raw.githubusercontent.com/Avunu/nixos-micro-desktop/main/local-flake.nix
+        sudo curl -o /etc/nixos/flake.nix https://raw.githubusercontent.com/Avunu/nixos-micro-desktop/main/local/flake.nix
         ```
         
+    -   Set at least `diskDevice`, `bootMode` and `rootFilesystem` — see [Storage](#storage) above
     -   Customize the flake according to your needs:
         
         ```

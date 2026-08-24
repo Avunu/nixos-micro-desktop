@@ -176,10 +176,9 @@ in
           enable = mkDefault cfg.enableFingerprint;
         };
       };
-      fstrim = {
-        enable = mkDefault true;
-        interval = mkDefault "daily";
-      };
+      # services.fstrim lives in system/storage.nix: whether a timer-driven
+      # trim is wanted at all follows from the root filesystem's discard mount
+      # option, which follows from microDesktop.rootFilesystem.
       fwupd = {
         enable = mkDefault true;
       };

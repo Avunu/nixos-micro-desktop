@@ -11,6 +11,49 @@ with lib;
           "legacy"
         ];
       };
+      compressionLevel = mkOption {
+        default = "fast";
+        description = ''
+          How hard the root filesystem compresses. Applies under both
+          `rootFilesystem` values — the zstd level is the one knob the two
+          have in common, and the tiers mean the same thing on either.
+
+          - `fast`: zstd level 1. Close to free on the CPU, and already most
+            of the win — on a real Nix store level 1 alone accounts for
+            roughly half the bytes in the files large enough to compress.
+            The right answer on any machine whose disk is not the binding
+            constraint.
+          - `balanced`: zstd level 6.
+          - `max`: zstd level 12. For the case this option exists for — a
+            small soldered eMMC, where the disk runs out long before the
+            patience does.
+
+          What the tiers trade is write throughput, and on these CPUs that
+          is the part to think about: zstd's own figures put level 12 at
+          well under a tenth of level 1's compression speed. `max` suits a
+          machine that substitutes its packages from the binary cache; it is
+          a poor fit for one that builds them. Reads cost the same at every
+          level.
+
+          Unlike `rootFilesystem`, safe to change on an installed machine.
+          Compression is recorded per extent (btrfs) or per cluster (f2fs),
+          so what is already written keeps decompressing exactly as before
+          and the new level applies from the next write on. Nothing is
+          recompressed in place — a changed tier shows up as the store turns
+          over, or immediately on a fresh install. On btrfs,
+          `btrfs filesystem defragment -r -czstd` forces the issue.
+
+          On f2fs this also moves the compression cluster size (16/32/64 KB),
+          because f2fs only gains ratio at the higher levels if zstd has more
+          history to work against. btrfs compresses in a fixed 128 KB extent
+          and needs no equivalent.
+        '';
+        type = types.enum [
+          "fast"
+          "balanced"
+          "max"
+        ];
+      };
       desktopShell = mkOption {
         default = "noctalia";
         description = ''
@@ -134,6 +177,36 @@ with lib;
         description = "System locale";
         type = types.str;
       };
+      rootFilesystem = mkOption {
+        default = "f2fs";
+        description = ''
+          Which filesystem to put on the root partition.
+
+          - `f2fs`: a flat root with transparent zstd compression, a daily
+            fstrim and `nodiscard`. What this module has always installed.
+          - `btrfs`: zstd compression via `compress-force`, `discard=async`,
+            small files inlined into a single-profile metadata tree, and an
+            `@` / `@home` / `@nix` / `@log` subvolume layout.
+
+          `f2fs` is still the default, but `btrfs` is where this module is
+          going: it returns what compression saves to `df` rather than only
+          writing fewer bytes, it has subvolumes and snapshots, and it has a
+          fsck worth running. Set it to `btrfs` on new installs unless you
+          have a reason not to.
+
+          Note what this option is NOT. It is an install-time decision: disko
+          derives the mkfs arguments, the mount options and the partition
+          content shape from it. It migrates nothing and reformats nothing,
+          so changing it on an installed machine changes only which
+          filesystem drivers and tools are in the closure — the disk keeps
+          whatever it was formatted with. Get it right at install time, or
+          reinstall.
+        '';
+        type = types.enum [
+          "f2fs"
+          "btrfs"
+        ];
+      };
       sshPasswordAuth = mkOption {
         default = true;
         description = "Allow password authentication for SSH";
@@ -148,6 +221,44 @@ with lib;
         default = "25.11";
         description = "NixOS state version";
         type = types.str;
+      };
+      swapSizeGiB = mkOption {
+        default = 8;
+        description = ''
+          Size of the disk swap partition, in GiB. 0 leaves it out entirely.
+
+          This is the second swap tier, not the first: zram sits above it at
+          priority 100 (see `zramSwap` in system/storage.nix), so the kernel
+          fills compressed RAM before it touches the disk. What the partition
+          actually buys is hibernation, which needs a resume device at least
+          as large as RAM, plus somewhere to go when zram is full instead of
+          the OOM killer.
+
+          Which makes 8 GiB a default, not a recommendation. Size it against
+          the machine in front of you: at least RAM if you want hibernation
+          to work, and rather less than 8 GiB is reasonable on a small disk
+          where the space is worth more than a tier that is only reached
+          under real pressure. At 0 there is no swap partition, no
+          `swapDevices` entry, no `boot.resumeDevice` and no hibernation —
+          zram alone.
+
+          Install-time, like `rootFilesystem`, but harmless to change
+          afterwards rather than dangerous: nothing repartitions on rebuild,
+          so a new value simply has no effect on an installed machine. The
+          one exception is 0, which drops the `swapDevices` entry and so
+          stops activating a partition that is still sitting on the disk.
+
+          Which is the setting an *existing* machine wants, and the one
+          upgrade note on this whole option. Installs made before this option
+          existed have no swap partition on the disk, but a nonzero value
+          still emits a `swapDevices` entry and a `boot.resumeDevice`
+          pointing at `/dev/disk/by-partlabel/disk-main-swap`. Nothing there
+          will find it: the swap unit fails and the resume generator waits
+          out its device timeout before giving up, so the machine boots, just
+          slower and with failed units. Set this to 0 on any machine
+          installed before the partition existed, or reinstall to get one.
+        '';
+        type = types.ints.unsigned;
       };
       timeZone = mkOption {
         default = "America/New_York";

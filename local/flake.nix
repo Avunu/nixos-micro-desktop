@@ -32,6 +32,17 @@
                 hostName = hostName;
                 diskDevice = "/dev/sda";
                 bootMode = "uefi"; # Options: "uefi" or "legacy"
+                # Root filesystem. "f2fs" is the current default; "btrfs" is
+                # where this module is going and is the better pick on a new
+                # install. Install-time only — it reformats nothing.
+                rootFilesystem = "f2fs"; # Options: "f2fs" or "btrfs"
+                # zstd level for the root filesystem: 1 / 6 / 12. Safe to
+                # change on an installed machine; applies from the next write.
+                compressionLevel = "fast"; # Options: "fast", "balanced", "max"
+                # Disk swap partition, in GiB. 0 omits it (and hibernation).
+                # zram sits above this, so it is only reached under real
+                # pressure. Size it at least as large as RAM to hibernate.
+                swapSizeGiB = 8;
                 # Options: "dms" (niri + DankMaterialShell), "noctalia"
                 # (niri + Noctalia), or "gnome" (GNOME Shell on Mutter).
                 desktopShell = "dms";

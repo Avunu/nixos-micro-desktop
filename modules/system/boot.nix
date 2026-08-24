@@ -75,20 +75,17 @@ in
       plymouth = {
         enable = mkDefault true;
       };
-      supportedFilesystems = {
-        ext3 = mkDefault false;
-        ntfs3 = mkDefault false;
-        xfs = mkDefault false;
-        zfs = mkDefault false;
-      };
+      # boot.supportedFilesystems lives in system/storage.nix: which drivers
+      # and tools are worth carrying follows from microDesktop.rootFilesystem.
       swraid = {
         enable = mkDefault false;
       };
-      # /tmp on tmpfs. The root filesystem is f2fs with transparent zstd
-      # compression, so every short-lived temp file written there is compressed
-      # on the way in and decompressed on the way out, and then discarded. That
-      # is the worst case for the compression settings below. It also makes the
-      # SQLITE_TMPDIR="/tmp" in desktop/common.nix mean what its comment says.
+      # /tmp on tmpfs. The root filesystem carries transparent zstd
+      # compression under either microDesktop.rootFilesystem, so every
+      # short-lived temp file written there would be compressed on the way in
+      # and decompressed on the way out, and then discarded. That is the worst
+      # case for those settings. It also makes the SQLITE_TMPDIR="/tmp" in
+      # desktop/common.nix mean what its comment says.
       #
       # Paired with systemd.services.nix-daemon.environment.TMPDIR="/var/tmp"
       # in system/nix.nix: tmpfs pages are charged to the cgroup that allocated
@@ -106,128 +103,6 @@ in
       # loaded. console.font is not set anywhere here, and services.kmscon
       # (see system/hardware.nix) replaces the kernel VT console outright, so
       # the consolefonts were installed on every machine and read by nothing.
-    };
-
-    disko = {
-      devices = mkDefault {
-        disk = {
-          main = {
-            content = mkMerge [
-              (mkIf (cfg.bootMode == "uefi") {
-                partitions = {
-                  ESP = {
-                    content = {
-                      extraArgs = [
-                        "-n"
-                        "ESP"
-                      ];
-                      format = "vfat";
-                      mountOptions = [
-                        "noatime"
-                        "umask=0077"
-                      ];
-                      mountpoint = "/boot";
-                      type = "filesystem";
-                    };
-                    size = "1G";
-                    type = "EF00";
-                  };
-                  root = {
-                    content = {
-                      extraArgs = [
-                        "-O"
-                        "extra_attr,compression" # Enable compression feature at format time
-                        "-l"
-                        "root"
-                      ];
-                      format = "f2fs";
-                      mountOptions = [
-                        "atgc"
-                        "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
-                        "compress_cache" # Cache decompressed pages for hot data (SQLite, desktop apps)
-                        "compress_chksum"
-                        "compress_extension=*" # Compress all files by default
-                        # ...except frequently-rewritten small WAL/journal/lock files: recompressing
-                        # a whole cluster on every tiny in-place-ish rewrite (SQLite/LevelDB WAL,
-                        # systemd journal) is a known GC/checkpoint stall pattern under f2fs, worst
-                        # when the volume is mostly full. See linux-f2fs-devel deadlock reports.
-                        # f2fs mount options are comma-split at the top level, so each excluded
-                        # extension needs its own repeated nocompress_extension=... entry — a single
-                        # comma-joined value gets torn into unrecognized tokens and fails root mount.
-                        # Each extension is also capped at 7 chars (F2FS_EXTENSION_LEN=8 incl. NUL) —
-                        # "sqlite-wal"/"sqlite-shm" (10 chars) overflow that and get rejected with
-                        # "invalid extension length/number", failing the mount entirely. Omitted below;
-                        # rely on the shorter db-wal/db-shm convention instead.
-                        "nocompress_extension=db"
-                        "nocompress_extension=db-wal"
-                        "nocompress_extension=db-shm"
-                        "nocompress_extension=sqlite"
-                        "nocompress_extension=ldb"
-                        "nocompress_extension=log"
-                        "nocompress_extension=journal"
-                        "nocompress_extension=lock"
-                        "gc_merge"
-                        "noatime"
-                        "nodiscard" # Use scheduled fstrim instead of synchronous discard
-                      ];
-                      mountpoint = "/";
-                      type = "filesystem";
-                    };
-                    size = "100%";
-                  };
-                };
-                type = "gpt";
-              })
-              (mkIf (cfg.bootMode == "legacy") {
-                partitions = {
-                  boot = {
-                    size = "1M";
-                    type = "EF02";
-                  };
-                  root = {
-                    content = {
-                      extraArgs = [
-                        "-O"
-                        "extra_attr,compression" # Enable compression feature at format time
-                        "-l"
-                        "root"
-                      ];
-                      format = "f2fs";
-                      mountOptions = [
-                        "atgc"
-                        "compress_algorithm=zstd:1" # Level 1: minimal CPU overhead, reduces I/O bandwidth
-                        "compress_cache" # Cache decompressed pages for hot data (SQLite, desktop apps)
-                        "compress_chksum"
-                        # "compress_extension=*" # Compress all files by default
-                        "gc_merge"
-                        "noatime"
-                        "nodiscard" # Use scheduled fstrim instead of synchronous discard
-                      ];
-                      mountpoint = "/";
-                      type = "filesystem";
-                    };
-                    size = "100%";
-                  };
-                };
-                type = "gpt";
-              })
-            ];
-            device = cfg.diskDevice;
-            type = "disk";
-          };
-        };
-      };
-    };
-
-    fileSystems = {
-      "/" = {
-        # disable fsck with f2fs until it runs correctly with the large amount of /nix symlinks
-        noCheck = mkDefault true;
-      };
-    };
-
-    zramSwap = {
-      enable = mkDefault true;
     };
   };
 }
