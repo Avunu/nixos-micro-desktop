@@ -27,8 +27,6 @@ Set `microDesktop.desktopShell` in your local flake. All three share the same ba
 | noctalia (default) | niri | Noctalia | Noctalia greeter |
 | gnome | Mutter | GNOME Shell | GDM |
 
-`dms` is the default until Noctalia v5 reaches a stable release — nixpkgs currently packages a v5 beta. Everything comes from `cache.nixos.org`; no shell requires an extra flake input.
-
 The `gnome` option deliberately does _not_ use `services.desktopManager.gnome.enable`, which would pull in the full GNOME application suite. It assembles the session from `gnome-session`, `gnome-shell` and GDM instead, keeping the app set the same as the other two shells.
 
 ## Installation
@@ -36,9 +34,11 @@ The `gnome` option deliberately does _not_ use `services.desktopManager.gnome.en
 Follow these steps to install NixOS Micro Desktop:
 
 1.  **Install NixOS with BTRFS root**
+    
     -   Download the latest NixOS ISO
     -   During installation, ensure you set up your root partition as BTRFS
 2.  **Download and customize the sample flake**
+    
     -   Once your system is up and running, download the sample flake to `/etc/nixos/`:
         
         ```
@@ -58,6 +58,7 @@ Follow these steps to install NixOS Micro Desktop:
         ```
         
 3.  **Delete the old configuration.nix**
+    
     -   Remove the old configuration file:
         
         ```
@@ -65,6 +66,7 @@ Follow these steps to install NixOS Micro Desktop:
         ```
         
 4.  **Rebuild and reboot**
+    
     -   Rebuild your system using the new flake:
         
         ```
