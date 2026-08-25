@@ -253,10 +253,20 @@ with lib;
           existed have no swap partition on the disk, but a nonzero value
           still emits a `swapDevices` entry and a `boot.resumeDevice`
           pointing at `/dev/disk/by-partlabel/disk-main-swap`. Nothing there
-          will find it: the swap unit fails and the resume generator waits
-          out its device timeout before giving up, so the machine boots, just
-          slower and with failed units. Set this to 0 on any machine
-          installed before the partition existed, or reinstall to get one.
+          will find it. Stage 1 waits 15s for a resume device that is not
+          coming and gives up; stage 2 leaves the swap unit failed but does
+          not hold the boot for it. The machine comes up — 15s slower, with
+          a unit red in `systemctl --failed`.
+
+          It degrades that way only because `system/storage.nix` makes it:
+          `resumeflags=x-systemd.device-timeout=` on the kernel command line
+          bounds stage 1, `nofail` on the fstab entry unblocks stage 2.
+          Without the first, stage 1 does not fail — it hangs, silently and
+          forever. Read the comment on `boot.kernelParams` there before
+          touching either.
+
+          Set this to 0 on any machine installed before the partition
+          existed, or reinstall to get one.
         '';
         type = types.ints.unsigned;
       };

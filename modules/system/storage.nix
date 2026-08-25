@@ -193,6 +193,18 @@ let
         mountpoint = "/";
       };
 
+  # How long either boot stage may wait for the swap partition before it
+  # gives up and carries on without it. Both places that consume this are
+  # guarding the same case — a `swapSizeGiB` above 0 on a disk that has no
+  # such partition — and neither of them bounds the wait on its own.
+  #
+  # 15s is chosen against the only wait that is real: the swap partition
+  # lives on the same disk as the root filesystem, so if the disk has
+  # enumerated at all the partition is already there. The number only has
+  # to outlast enumeration on a slow controller, not cover a device that
+  # might still show up.
+  swapDeviceTimeout = "15s";
+
   # ── Partitions shared by both boot modes ────────────────────────
   #
   # Defined once here because the uefi and legacy tables differ only in
@@ -210,6 +222,23 @@ let
       # trims this area. "once" does it at swapon and then leaves the
       # device alone, rather than issuing a discard on every page freed.
       discardPolicy = "once";
+      # Stage 2's half of the missing-partition guard; see the resumeflags
+      # comment on boot.kernelParams below for stage 1's, which is the one
+      # that actually hangs.
+      #
+      # These reach fstab as the swap entry's options, where nofail moves
+      # the generated .swap unit out of swap.target.requires and into
+      # swap.target.wants — a swap device that is not there stops being a
+      # failure of swap.target — and the device timeout replaces systemd's
+      # 90s default wait on the .device unit. disko also passes these to
+      # `swapon --options=` when it first activates the partition, which
+      # ignores both (verified against util-linux 2.42): nofail there does
+      # not suppress a genuine install-time error.
+      mountOptions = [
+        "defaults"
+        "nofail"
+        "x-systemd.device-timeout=${swapDeviceTimeout}"
+      ];
     };
   };
 
@@ -233,6 +262,32 @@ in
 {
   config = {
     boot = {
+      # `resumeDevice = true` on the swap partition above becomes
+      # `boot.resumeDevice`, which — because boot.initrd.systemd is on, see
+      # system/boot.nix — nixpkgs puts on the kernel command line as
+      # `resume=/dev/disk/by-partlabel/disk-main-swap`. In stage 1
+      # systemd-hibernate-resume-generator reads that and writes a drop-in
+      # on the matching .device unit. Its fallback, when nothing supplies a
+      # timeout, is `JobTimeoutSec=infinity`.
+      #
+      # That is not a slow path, it is a stuck one. The generator also binds
+      # systemd-hibernate-resume.service to that device with BindsTo= and
+      # orders it Before=local-fs-pre.target, so on a disk with no such
+      # partition stage 1 waits on a device job that can never time out:
+      # the root filesystem is never mounted, nothing fails, nothing is
+      # logged, and behind plymouth there is not even a message. Every
+      # machine installed before swapSizeGiB existed is that disk.
+      #
+      # resumeflags= is the documented channel for handing that generator
+      # mount options (systemd-hibernate-resume-generator(8)), and
+      # x-systemd.device-timeout= is the only one that means anything for a
+      # swap device: supplied, it writes JobRunningTimeoutSec= instead and
+      # the wait becomes finite. It defaults to rootflags=, which is unset
+      # here — root comes from fstab — so nothing is being displaced.
+      kernelParams = mkIf (cfg.swapSizeGiB > 0) [
+        "resumeflags=x-systemd.device-timeout=${swapDeviceTimeout}"
+      ];
+
       # The root filesystem in use is added to this set automatically —
       # nixpkgs derives it from `fileSystems` at normal priority, which
       # would quietly override an mkDefault false here — so the one that
