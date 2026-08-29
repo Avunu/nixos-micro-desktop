@@ -133,14 +133,33 @@ in
         # environment variable interpolating a store path is a closure
         # reference like any other.
         QML_DISABLE_DISK_CACHE = "1";
-        QSG_RHI_BACKEND = "vulkan";
+        # QSG_RHI_BACKEND was removed here. It forced Qt Quick's Vulkan
+        # rendering backend on every Qt 6 application on the system, and the
+        # shell it was presumably meant to accelerate does not honour it:
+        # inspecting a running Noctalia process shows libEGL_mesa, libGLESv2
+        # and libgallium mapped and no libvulkan at all — Quickshell selects
+        # OpenGL regardless. So it bought the shell nothing while silently
+        # moving every other Qt 6 app onto the less-travelled of Qt's two
+        # backends. Vulkan itself is fine here (ANV reports a conformant 1.4
+        # device on Gen9); forcing it globally, unmeasured, is what was wrong.
+        # Qt picks OpenGL by default and any app that wants otherwise can set
+        # this for itself.
         QT_QPA_PLATFORM = "wayland";
         QT_QPA_PLATFORMTHEME = "gtk3";
         QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
         QT_STYLE_OVERRIDE = "Fusion";
         SAL_ENABLESKIA = "1";
         SAL_FORCESKIA = "1";
-        SAL_SKIA = "vulkan";
+        # SAL_SKIA was removed here, for the same reason as QSG_RHI_BACKEND
+        # above but with a sharper failure mode. Skia's only render methods on
+        # Linux are "vulkan" and "raster" — there is no OpenGL middle ground —
+        # so pinning "vulkan" means that on any machine where LibreOffice
+        # declines the driver, and it maintains a denylist that has covered
+        # Intel entries before, the fallback is Skia *raster*: the whole
+        # document surface drawn on the CPU, on a system already fighting for
+        # CPU. Leaving it unset keeps SAL_FORCESKIA above (Skia stays on) and
+        # lets LibreOffice pick the render method its own denylist says is
+        # safe on the hardware in front of it.
         SDL_VIDEODRIVER = "wayland";
         # SQLite performance: use /tmp (tmpfs, see boot.tmp.useTmpfs) for temp
         # files instead of the compressed root filesystem

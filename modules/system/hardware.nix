@@ -40,6 +40,38 @@ let
 in
 {
   config = {
+    boot = {
+      kernel = {
+        sysctl = {
+          # GPU utilisation on Intel is published through the i915/xe PMU, and
+          # those are system-wide perf events. The kernel default of 2 refuses
+          # them to any process without CAP_PERFMON, so every unprivileged GPU
+          # monitor — mission-center (shipped in desktop/common.nix), nvtop,
+          # intel_gpu_top — reports zero or near-zero GPU load on Intel
+          # hardware no matter what the GPU is actually doing.
+          #
+          # That failure is worth fixing precisely because it is silent and
+          # indistinguishable from an idle GPU: it invites the conclusion that
+          # hardware acceleration is broken and sends people rebuilding a
+          # graphics stack that was working the whole time. Measured on Kaby
+          # Lake here, the desktop drew ~11% of the render engine while the
+          # monitor showed nothing.
+          #
+          # A capability wrapper would be the narrower fix and does not work:
+          # mission-center execs its gatherer by absolute store path, so
+          # nothing in /run/wrappers/bin is ever consulted.
+          #
+          # 0 rather than -1 — raw tracepoints and kernel-address profiling
+          # stay restricted, and this lifts only the CPU-event restriction
+          # that level 1 adds. It does widen what an unprivileged local
+          # process can measure about the rest of the machine, timing side
+          # channels being the realistic concern, so a system with untrusted
+          # local users should put this back to 2.
+          "kernel.perf_event_paranoid" = mkDefault 0;
+        };
+      };
+    };
+
     # ── Closure trims applied as package overrides ────────────────
     nixpkgs.overlays = [
       (_final: prev: {
@@ -212,6 +244,33 @@ in
       power-profiles-daemon = {
         enable = mkDefault true;
       };
+      # Intel's thermal daemon, which exists to walk the package back from its
+      # trip points by lowering RAPL limits and clocks *before* the hardware
+      # has to. Without it the only thing between a boosting CPU and its
+      # thermal ceiling is the ceiling itself, and the hardware's response to
+      # hitting it — PROCHOT — is an abrupt clamp rather than a taper.
+      #
+      # On a thin chassis whose firmware leaves PL1 at PL2 (no sustained-power
+      # step-down), that produces a sawtooth: the part boosts to its turbo
+      # ceiling, reaches the trip point in milliseconds, gets clamped, cools,
+      # boosts again. Measured on a 15 W-class i7-8550U here at roughly four
+      # package throttle transitions per second under ordinary desktop load,
+      # for hours. A compositor's render thread that lands inside one of those
+      # clamp windows misses its frame deadline, which is felt as stutter
+      # under load — and, because the GPU is genuinely idle throughout, reads
+      # as a missing acceleration path rather than as a power problem.
+      #
+      # This complements power-profiles-daemon above rather than competing
+      # with it: PPD picks the governor and energy-performance preference,
+      # thermald manages the thermal envelope those run inside. Fedora and
+      # Ubuntu both ship the pair.
+      #
+      # --adaptive (what the module passes when configFile is null) uses the
+      # firmware's own DPTF tables where the machine has them and falls back
+      # to thermald's built-in model where it does not.
+      thermald = {
+        enable = mkDefault true;
+      };
       udev = {
         # I/O scheduler selection, which is really about making IOWeight= mean
         # something.
@@ -237,6 +296,27 @@ in
       };
       upower = {
         enable = mkDefault true;
+      };
+    };
+
+    systemd = {
+      services = {
+        # thermald is Intel-only: on anything else it fails its own cpuid
+        # check and exits, which would leave a failed unit on every AMD
+        # machine this module installs on. ExecCondition makes systemd skip
+        # the unit instead — an exit in 1..254 marks the start as "condition
+        # not met" rather than as a failure, so the unit stays clean and
+        # `systemctl --failed` stays empty.
+        #
+        # Guarded on services.thermald.enable because this attribute set is
+        # merged whether or not the upstream module produced a unit; on its
+        # own it would define a service with an ExecCondition and no
+        # ExecStart, which systemd refuses.
+        thermald = mkIf config.services.thermald.enable {
+          serviceConfig = {
+            ExecCondition = "${pkgs.gnugrep}/bin/grep -q GenuineIntel /proc/cpuinfo";
+          };
+        };
       };
     };
   };
