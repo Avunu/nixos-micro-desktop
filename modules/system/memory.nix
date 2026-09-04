@@ -178,6 +178,20 @@ in
         # kernel's own reaction. The NixOS oomd module only wires up the
         # pressure-based knobs, so set the swap one directly.
         "-".sliceConfig.ManagedOOMSwap = mkDefault "kill";
+
+        # Every GUI app (a code editor, a browser, anything launched onto
+        # the desktop) lands in app.slice, same as nix-daemon.service gets
+        # MemoryHigh below it. Without a cap here the first sign of trouble
+        # is the global 90% swap-kill above picking whichever app cgroup
+        # happens to be carrying a runaway job — observed when a `nix
+        # flake check -L` run (evaluation plus several parallel NixOS VM
+        # tests, unbounded by max-jobs) ballooned inside a VS Code scope
+        # and oomd killed the editor rather than the job. MemoryHigh only
+        # throttles reclaim — pushing the offending app into zram, same as
+        # the nix-daemon case — so a heavy but finite job slows down
+        # instead of taking the whole session's swap budget with it before
+        # the hard kill ever has to choose a victim.
+        "app".sliceConfig.MemoryHigh = mkDefault "70%";
       };
 
       timers = {
