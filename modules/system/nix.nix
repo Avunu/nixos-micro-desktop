@@ -94,6 +94,23 @@ in
       };
       settings = {
         auto-optimise-store = mkDefault false;
+        # max-jobs defaults to "auto" (one slot per hardware thread — 48 on
+        # this box), and Nix's scheduler fills every slot it has with zero
+        # regard for memory: it only tracks CPU availability. That is fine
+        # for ordinary compiles but not for `nix flake check -L` and
+        # nixosTests, which the system-features list below allows to run
+        # (kvm, nixos-test, big-parallel) — each is a qemu guest holding
+        # several GiB of its own, and enough of them scheduled at once has
+        # driven this machine past its 125 GiB RAM and 78 GiB swap combined,
+        # tripping the swap-based oomd kill in system/memory.nix against
+        # whatever cgroup happened to be carrying the most swap (observed:
+        # the editor hosting the job, not the job itself). Capping
+        # concurrency here bounds the worst case instead of relying on
+        # MemoryHigh throttling and the oomd kill to catch it after the
+        # fact. Lower than the 48 the hardware could otherwise fill,
+        # bounded so that even an unlucky run stacked with several VM tests
+        # stays well inside RAM before swap enters the picture at all.
+        max-jobs = mkDefault 8;
         # Free space on demand, not just on the weekly gc timer.
         #
         # system-upgrade below rebuilds hourly from nixpkgs-unstable, so
