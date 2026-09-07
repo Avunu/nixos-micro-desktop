@@ -285,7 +285,7 @@ in
         implementation = mkDefault "broker";
         packages = with pkgs; [
           dconf
-          gcr
+          gcr_4
           gnome-keyring
           libdbusmenu
           lxqt.libdbusmenu-lxqt
