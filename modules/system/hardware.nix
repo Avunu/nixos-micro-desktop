@@ -219,10 +219,10 @@ in
         # a modern disk means the journal grows to gigabytes of archived boots
         # before anything reclaims it. The hourly rebuild in system/nix.nix
         # makes this system unusually chatty, so bound it explicitly.
-        extraConfig = mkDefault ''
-          SystemMaxUse=512M
-          SystemMaxFileSize=64M
-        '';
+        settings.Journal = mkDefault {
+          SystemMaxUse = "512M";
+          SystemMaxFileSize = "64M";
+        };
       };
       kmscon = {
         config = {
