@@ -10,11 +10,13 @@
     ./system/users.nix
     ./desktop/common.nix
     ./desktop/input-method.nix
-    # One of these three activates on microDesktop.desktopShell; niri.nix is
-    # shared by dms and noctalia.
+    # One compositor/shell pair activates on microDesktop.desktopShell:
+    # gnome.nix (GNOME), niri.nix + dms.nix (DankMaterialShell on niri), or
+    # umbriel.nix + noctalia.nix (Noctalia on umbriel).
     ./desktop/gnome.nix
     ./desktop/niri.nix
     ./desktop/dms.nix
+    ./desktop/umbriel.nix
     ./desktop/noctalia.nix
   ];
 }

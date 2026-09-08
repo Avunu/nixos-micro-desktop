@@ -20,12 +20,12 @@ If you really care about declarative systems, you probably want to use Nix direc
 
 ## Desktop shells
 
-Set `microDesktop.desktopShell` in your local flake. All three share the same base system — kernel and filesystem tuning, GNOME core apps and services, PipeWire, printing and scanning, portals, and the fcitx5 clipboard-history (`Super+V`) and emoji (`Super+.`) pickers. Only the shell, compositor and greeter change.
+Set `microDesktop.desktopShell` in your local flake. All three share the same base system — kernel and filesystem tuning, GNOME core apps and services, PipeWire, printing and scanning, portals, and the fcitx5 clipboard-history (`Super+V`) picker. The fcitx5 emoji/unicode picker is `Super+.` under `dms`/`gnome`, and `Super+;` under `noctalia` (umbriel binds `Super+.` to a layout action by default). Only the shell, compositor and greeter change.
 
 | desktopShell | Compositor | Shell | Greeter |
 | --- | --- | --- | --- |
 | dms | niri | DankMaterialShell | DMS greeter |
-| noctalia (default) | niri | Noctalia | Noctalia greeter |
+| noctalia (default) | umbriel | Noctalia | Noctalia greeter |
 | gnome | Mutter | GNOME Shell | GDM |
 
 The `gnome` option deliberately does _not_ use `services.desktopManager.gnome.enable`, which would pull in the full GNOME application suite. It assembles the session from `gnome-session`, `gnome-shell` and GDM instead, keeping the app set the same as the other two shells.

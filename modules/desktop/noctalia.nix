@@ -29,7 +29,7 @@ in
     # systemPackages (the polkit module links /share/polkit-1).
     #
     # Unlike the DMS greeter, this one bundles its own wlroots compositor and
-    # so does not launch through niri.
+    # so does not launch through umbriel.
     environment = {
       systemPackages = [ pkgs.noctalia-greeter ];
     };

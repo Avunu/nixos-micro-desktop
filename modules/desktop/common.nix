@@ -7,10 +7,14 @@
 with lib;
 let
   cfg = config.microDesktop;
+
+  # Only meaningful for dms/noctalia (the mkIf below never applies to gnome).
+  shellUnit = if cfg.desktopShell == "noctalia" then "noctalia.service" else "dms.service";
 in
 {
-  config = {
-    environment = {
+  config = mkMerge [
+    {
+      environment = {
       etc = {
         # Fix Electron CHROME_DESKTOP on NixOS: preload script that derives
         # the correct .desktop name from process.argv at JS init time.
@@ -528,5 +532,46 @@ in
         };
       };
     };
-  };
+    }
+
+    # Shared by dms and noctalia: greetd/PAM defaults and the shell-tool
+    # packages consumed by whichever shell is running (not by the
+    # compositor). GNOME uses GDM, not greetd, and has no use for these.
+    (mkIf (cfg.desktopShell != "gnome") {
+      environment = {
+        systemPackages = with pkgs; [
+          (writeShellScriptBin "restart-shell" ''
+            systemctl --user restart ${shellUnit}
+          '')
+          brightnessctl
+          cava
+          cliphist
+          gammastep
+          grim
+          matugen
+          playerctl
+          satty
+          slurp
+          wlr-randr
+        ];
+      };
+
+      security.pam.services.greetd.enableGnomeKeyring = mkDefault true;
+
+      services.greetd = {
+        enable = mkDefault true;
+        settings.default_session.user = mkDefault "greeter";
+      };
+
+      systemd.services.greetd.serviceConfig = {
+        StandardError = "journal";
+        StandardInput = "tty";
+        StandardOutput = "tty";
+        TTYReset = true;
+        TTYVHangup = true;
+        TTYVTDisallocate = true;
+        Type = "idle";
+      };
+    })
+  ];
 }

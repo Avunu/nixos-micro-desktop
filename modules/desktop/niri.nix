@@ -8,26 +8,17 @@ with lib;
 let
   cfg = config.microDesktop;
 
-  # Both non-GNOME shells run on niri; only the bar/panel/greeter differ.
-  usesNiri = cfg.desktopShell != "gnome";
+  # niri is dms's compositor only; noctalia runs on umbriel (see umbriel.nix).
+  usesNiri = cfg.desktopShell == "dms";
 
-  shellUnit = if cfg.desktopShell == "noctalia" then "noctalia.service" else "dms.service";
-
-  shellBinds =
-    if cfg.desktopShell == "noctalia" then
-      ../../configs/niri/binds-noctalia.kdl
-    else
-      ../../configs/niri/binds-dms.kdl;
-
-  # /etc/niri/config.kdl is assembled here rather than shipped as one file per
-  # shell: the two shells differ only in ~13 IPC binds, and a whole duplicated
-  # config drifts. Concatenated rather than relying on niri's `include` merging
-  # two `binds` blocks, so there is exactly one authoritative system config.
+  # /etc/niri/config.kdl is assembled here rather than shipped as a single
+  # static file, so a system config change doesn't require touching the
+  # binds file directly.
   niriGlobalConfig = pkgs.writeText "niri-global.kdl" (
     builtins.readFile ../../configs/niri/base.kdl
     + "binds {\n"
     + builtins.readFile ../../configs/niri/binds-common.kdl
-    + builtins.readFile shellBinds
+    + builtins.readFile ../../configs/niri/binds-dms.kdl
     + "}\n"
   );
 
@@ -49,9 +40,7 @@ let
       include "/etc/niri/config.kdl"
       include "custom.kdl"
     ''
-    + optionalString (cfg.desktopShell == "dms") (
-      concatMapStrings (f: "include \"dms/${f}.kdl\"\n") dmsIncludes
-    )
+    + concatMapStrings (f: "include \"dms/${f}.kdl\"\n") dmsIncludes
   );
 in
 {
@@ -63,21 +52,6 @@ in
           source = niriGlobalConfig;
         };
       };
-      systemPackages = with pkgs; [
-        (writeShellScriptBin "restart-shell" ''
-          systemctl --user restart ${shellUnit}
-        '')
-        brightnessctl
-        cava
-        cliphist
-        gammastep
-        grim
-        matugen
-        playerctl
-        satty
-        slurp
-        wlr-randr
-      ];
       variables = {
         XDG_CURRENT_DESKTOP = "niri";
         XDG_SESSION_DESKTOP = "niri";
@@ -92,29 +66,11 @@ in
       };
     };
 
-    security = {
-      pam = {
-        services = {
-          greetd = {
-            enableGnomeKeyring = mkDefault true;
-          };
-        };
-      };
-    };
-
     services = {
       displayManager = {
         defaultSession = "niri";
         # niri's own module already adds programs.niri.package to
         # sessionPackages, and systemd.packages registers niri.service.
-      };
-      greetd = {
-        enable = mkDefault true;
-        settings = {
-          default_session = {
-            user = mkDefault "greeter";
-          };
-        };
       };
       iio-niri = {
         enable = mkDefault true;
@@ -137,12 +93,10 @@ in
           # Create custom.kdl only if it doesn't exist (user's personal overrides)
           [ -f "$NIRI_CONFIG_DIR/custom.kdl" ] || touch "$NIRI_CONFIG_DIR/custom.kdl"
 
-          ${optionalString (cfg.desktopShell == "dms") ''
-            mkdir -p "$NIRI_CONFIG_DIR/dms"
-            for f in ${concatStringsSep " " dmsIncludes}; do
-              [ -f "$NIRI_CONFIG_DIR/dms/$f.kdl" ] || touch "$NIRI_CONFIG_DIR/dms/$f.kdl"
-            done
-          ''}
+          mkdir -p "$NIRI_CONFIG_DIR/dms"
+          for f in ${concatStringsSep " " dmsIncludes}; do
+            [ -f "$NIRI_CONFIG_DIR/dms/$f.kdl" ] || touch "$NIRI_CONFIG_DIR/dms/$f.kdl"
+          done
 
           chown -R ${cfg.username}:users "$USER_HOME/.config"
           fi
@@ -151,20 +105,6 @@ in
     };
 
     systemd = {
-      services = {
-        greetd = {
-          serviceConfig = {
-            StandardError = "journal";
-            StandardInput = "tty";
-            StandardOutput = "tty";
-            TTYReset = true;
-            TTYVHangup = true;
-            TTYVTDisallocate = true;
-            Type = "idle";
-          };
-        };
-      };
-
       user = {
         services = {
           # Make the compositor the last thing on the machine to be

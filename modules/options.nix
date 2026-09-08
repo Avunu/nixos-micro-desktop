@@ -61,7 +61,7 @@ with lib;
 
           - `gnome`: GNOME Shell on Mutter, with GDM.
           - `dms`: DankMaterialShell on niri, with the DMS greeter.
-          - `noctalia`: Noctalia on niri, with the Noctalia greeter.
+          - `noctalia`: Noctalia on umbriel, with the Noctalia greeter.
 
           All three share the same GNOME core apps and services; only the
           shell, compositor and greeter differ. `noctalia` is the default
