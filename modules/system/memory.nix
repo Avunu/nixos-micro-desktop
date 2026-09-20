@@ -189,7 +189,32 @@ in
         # pool, same as the nix-daemon case — so a heavy but finite job
         # slows down instead of taking the whole session's swap budget
         # with it before the hard kill ever has to choose a victim.
-        "app".sliceConfig.MemoryHigh = mkDefault "70%";
+        #
+        # That last sentence used to be true unconditionally; under zswap
+        # it only holds up to a point. Per cgroup-v2.rst, memory.zswap.current
+        # "is also considered when checking the memory.max limit" — a page
+        # pushed into the zswap pool is still compressed RAM, and it never
+        # leaves app.slice's memory.current the way a page swapped to zram
+        # used to. Reclaim under MemoryHigh can therefore thrash instead of
+        # making room: the slice keeps re-hitting its ceiling, PSI pressure
+        # climbs, and oomd's pressure kill (enableUserSlices above) ends up
+        # killing the very editor scope this was meant to protect — observed
+        # with VS Code's own test-suite runs, not just a stray `nix flake
+        # check`.
+        #
+        # MemoryZSwapMax bounds how much of that compressed pool app.slice
+        # may hold before overflow spills to the real disk swap partition
+        # (system/storage.nix) instead — which, being genuine disk-backed
+        # swap, *does* leave memory.current again. 15%, under the 20%
+        # system-wide zswap.max_pool_percent, leaves headroom for other
+        # slices while giving a large burst somewhere to go besides
+        # thrashing against MemoryHigh. MemoryHigh moves up alongside it —
+        # 70% was calibrated to zram's looser accounting and is now a
+        # harder ceiling than intended for the same workload.
+        "app".sliceConfig = {
+          MemoryHigh = mkDefault "85%";
+          MemoryZSwapMax = mkDefault "15%";
+        };
       };
 
       timers = {
