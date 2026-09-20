@@ -227,20 +227,20 @@ with lib;
         description = ''
           Size of the disk swap partition, in GiB. 0 leaves it out entirely.
 
-          This is the second swap tier, not the first: zram sits above it at
-          priority 100 (see `zramSwap` in system/storage.nix), so the kernel
-          fills compressed RAM before it touches the disk. What the partition
-          actually buys is hibernation, which needs a resume device at least
-          as large as RAM, plus somewhere to go when zram is full instead of
-          the OOM killer.
+          zswap sits in front of it (see the `zswap.*` kernel params in
+          system/storage.nix, active whenever this is above 0), compressing
+          pages into a RAM-resident pool before the kernel ever touches the
+          disk. What the partition actually buys is hibernation, which needs
+          a resume device at least as large as RAM, plus somewhere to go
+          when the zswap pool is full instead of the OOM killer.
 
           Which makes 8 GiB a default, not a recommendation. Size it against
           the machine in front of you: at least RAM if you want hibernation
           to work, and rather less than 8 GiB is reasonable on a small disk
           where the space is worth more than a tier that is only reached
           under real pressure. At 0 there is no swap partition, no
-          `swapDevices` entry, no `boot.resumeDevice` and no hibernation —
-          zram alone.
+          `swapDevices` entry, no `boot.resumeDevice`, no hibernation, and
+          zswap has nothing to compress into — no swap at all.
 
           Install-time, like `rootFilesystem`, but harmless to change
           afterwards rather than dangerous: nothing repartitions on rebuild,

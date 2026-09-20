@@ -40,7 +40,7 @@
                 # change on an installed machine; applies from the next write.
                 compressionLevel = "fast"; # Options: "fast", "balanced", "max"
                 # Disk swap partition, in GiB. 0 omits it (and hibernation).
-                # zram sits above this, so it is only reached under real
+                # zswap sits above this, so it is only reached under real
                 # pressure. Size it at least as large as RAM to hibernate.
                 swapSizeGiB = 8;
                 # Options: "dms" (niri + DankMaterialShell), "noctalia"

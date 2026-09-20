@@ -195,9 +195,10 @@ in
           # boot.nix puts /tmp on tmpfs, and tmpfs pages are charged to whoever
           # allocated them — so an unpacked source tree under /tmp counts
           # against the MemoryHigh below, and reclaiming it pushes that tree
-          # into zram. That is one part of the system compressing into RAM
-          # exactly what another part is standing by to compress onto a disk
-          # that has room. These two settings have to move together.
+          # into the zswap pool. That is one part of the system compressing
+          # into RAM exactly what another part is standing by to compress
+          # onto a disk that has room. These two settings have to move
+          # together.
           environment.TMPDIR = mkDefault "/var/tmp";
           serviceConfig = {
             CPUWeight = mkDefault 50;

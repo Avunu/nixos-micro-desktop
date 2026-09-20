@@ -82,18 +82,13 @@ in
           "vm.compaction_proactiveness" = mkDefault 0;
           "vm.dirty_background_ratio" = mkDefault 5; # Start background writeback early
           "vm.dirty_ratio" = mkDefault 10; # default; elevated values increase unreclaimable memory pressure
-          # Single-page swap reads, which is what zram wants: a zram fault is
-          # a decompression, so reading seven neighbouring pages that nobody
-          # asked for is seven decompressions wasted. zram is the swap of
-          # consequence here — it sits at priority 100, above the disk swap
-          # partition microDesktop.swapSizeGiB creates (see system/storage.nix)
-          # — so it is the tier to tune for. The cost is that the disk
-          # partition, once anything reaches it, reads a page at a time and is
-          # correspondingly slow. That tier is a last-resort safety net and a
-          # hibernation target, not a working set, so the trade is the right
-          # way round.
-          "vm.page-cluster" = mkDefault 0;
-          "vm.swappiness" = mkDefault 100; # zram benefits from eager compression; 100 avoids OOM before zram fills
+          # zswap benefits from eager swapping: a page sent to swap lands in
+          # its RAM-resident compressed pool first (see the zswap kernel
+          # params in system/storage.nix), which is nearly as cheap as not
+          # swapping at all, and only spills to the disk swap partition once
+          # that pool fills. 100 favors swap over reclaim and avoids OOM
+          # before the pool is exhausted.
+          "vm.swappiness" = mkDefault 100;
           "vm.vfs_cache_pressure" = mkDefault 50; # Keep inodes/dentries cached longer for SQLite
         };
       };
@@ -172,11 +167,14 @@ in
       slices = {
         # ManagedOOMSwap=kill: when swap crosses SwapUsedLimit (90% by
         # default) oomd kills the cgroup with the highest swap usage.
-        # This is the earliest trustworthy signal available here — zram
-        # is the only swap of consequence and it filled to 100% before
-        # every one of the recorded OOM storms, minutes ahead of the
-        # kernel's own reaction. The NixOS oomd module only wires up the
-        # pressure-based knobs, so set the swap one directly.
+        # This is the earliest trustworthy signal available here: the
+        # zswap pool in front of the disk swap partition (see
+        # system/storage.nix) is what fills first under real pressure,
+        # minutes ahead of the kernel's own OOM reaction — the same
+        # dynamic that previously made zram's fill level the leading
+        # indicator, before this module switched to zswap. The NixOS
+        # oomd module only wires up the pressure-based knobs, so set the
+        # swap one directly.
         "-".sliceConfig.ManagedOOMSwap = mkDefault "kill";
 
         # Every GUI app (a code editor, a browser, anything launched onto
@@ -187,10 +185,10 @@ in
         # flake check -L` run (evaluation plus several parallel NixOS VM
         # tests, unbounded by max-jobs) ballooned inside a VS Code scope
         # and oomd killed the editor rather than the job. MemoryHigh only
-        # throttles reclaim — pushing the offending app into zram, same as
-        # the nix-daemon case — so a heavy but finite job slows down
-        # instead of taking the whole session's swap budget with it before
-        # the hard kill ever has to choose a victim.
+        # throttles reclaim — pushing the offending app into the zswap
+        # pool, same as the nix-daemon case — so a heavy but finite job
+        # slows down instead of taking the whole session's swap budget
+        # with it before the hard kill ever has to choose a victim.
         "app".sliceConfig.MemoryHigh = mkDefault "70%";
       };
 

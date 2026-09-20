@@ -286,6 +286,25 @@ in
       # here — root comes from fstab — so nothing is being displaced.
       kernelParams = mkIf (cfg.swapSizeGiB > 0) [
         "resumeflags=x-systemd.device-timeout=${swapDeviceTimeout}"
+        # ── zswap ────────────────────────────────────────────────────
+        # No native NixOS module for this, so it's plain kernel command
+        # line. A RAM-resident compressed cache in front of the swap
+        # partition above: pages get compressed into it first and only
+        # spill to the partition once the pool is full, so the partition
+        # is reached under real pressure rather than on every swap-out.
+        #
+        # lz4 over the zstd default for the same reason system/storage.nix
+        # picked it for zram: cheap decompression matters more than ratio
+        # when CPU is the scarce resource on these machines.
+        #
+        # zsmalloc is the only allocator left as of 6.10 (z3fold and zbud
+        # were both removed) — named explicitly rather than left to
+        # whatever the kernel still defaults to.
+        "zswap.enabled=1"
+        "zswap.compressor=lz4"
+        "zswap.zpool=zsmalloc"
+        "zswap.max_pool_percent=20"
+        "zswap.shrinker_enabled=1"
       ];
 
       # The root filesystem in use is added to this set automatically —
@@ -411,24 +430,6 @@ in
         enable = mkDefault (cfg.rootFilesystem == "f2fs");
         interval = mkDefault "daily";
       };
-    };
-
-    # ── zram ──────────────────────────────────────────────────────
-    zramSwap = {
-      enable = mkDefault true;
-      # lz4 rather than the zstd default. For a swap device the number
-      # that matters is how long a fault takes to come back, not how
-      # small the page got: zstd compresses perhaps 30% better and costs
-      # several times as much CPU to decompress, and on these machines
-      # that CPU is the scarce resource. Compressed swap is only worth
-      # having while reading it back stays cheaper than reading the disk
-      # it replaces.
-      algorithm = mkDefault "lz4";
-      # Explicit because the ordering carries weight: zram has to
-      # outrank the disk swap partition disko creates (which lands at
-      # priority -1), or the kernel will page out to the disk while
-      # compressed RAM sits unused.
-      priority = mkDefault 100;
     };
   };
 }

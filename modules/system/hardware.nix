@@ -192,8 +192,8 @@ in
 
     services = {
       # bpftune dynamically overrides swappiness/watermarks at runtime,
-      # which conflicts with zram tuning. Disabled until per-sysctl
-      # exclusion is supported upstream.
+      # which conflicts with the swap sysctls tuned in system/memory.nix.
+      # Disabled until per-sysctl exclusion is supported upstream.
       bpftune = {
         enable = mkDefault false;
       };
