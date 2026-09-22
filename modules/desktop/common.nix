@@ -253,6 +253,9 @@ in
       dconf = {
         enable = mkDefault true;
       };
+      fish = {
+        enable = mkDefault true;
+      };
       gnupg = {
         agent = {
           enable = mkDefault true;
