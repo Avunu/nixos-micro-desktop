@@ -33,7 +33,7 @@ in
       defaultPackages = mkDefault [ ];
       shells = with pkgs; [
         bash
-        nushell
+        fish
       ];
     };
 
@@ -103,7 +103,7 @@ in
     };
 
     users = {
-      defaultUserShell = pkgs.nushell;
+      defaultUserShell = pkgs.fish;
       users = {
         ${cfg.username} = {
           extraGroups = [
