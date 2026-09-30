@@ -58,7 +58,6 @@ in
             # Aspell Dictionaries
             (pkgs.aspellWithDicts (dicts: [
               dicts.en
-              dicts.en-computers
             ]))
             # Hunspell Dictionaries
             (pkgs.hunspell.withDicts (dicts: [
