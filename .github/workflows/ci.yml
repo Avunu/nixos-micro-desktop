@@ -20,22 +20,33 @@
 #
 # Triggers, one job:
 #
-#   * `pull_request` — builds and checks, never publishes (below).
-#   * `push` to `main` — publishes.
+#   * `pull_request` — the required check, and ALSO where the cache gets
+#     filled for Dependabot's flake-lock bumps (below). That second part is
+#     load-bearing: dependabot-auto-merge.yml merges them as GITHUB_TOKEN,
+#     and GitHub raises no `push` event for a merge its own token performs.
+#     If publishing waited for `main` it would never happen for exactly the
+#     pull requests this pipeline exists for. A store path is a function of
+#     the flake's inputs, not of the commit that carried them, so what such a
+#     pull request builds is what its squash-merge produces.
+#   * `push` to `main` — human merges and direct pushes.
 #   * `schedule`, nightly — republishes whatever an earlier run could not push
 #     and catches nixpkgs or installer drift no commit caused.
 #   * `workflow_dispatch`, to re-run by hand.
 #
-# Publishes only from `main`, never from a pull request. Whoever holds
-# CACHIX_AUTH_TOKEN can upload a signed NAR under ANY store path, and
+# What may publish, and why that is narrower than "any pull request". Whoever
+# holds CACHIX_AUTH_TOKEN can upload a signed NAR under ANY store path, and
 # input-addressed paths are not checked against their contents, so a token
 # exposed to pull-request code could plant a path that every machine then
-# substitutes as trusted. Merged code publishes soon enough: the push to
-# `main` builds and publishes within the hour of the merge.
+# substitutes as trusted. So the publish step runs only for runs of `main`
+# and for a pull request that Dependabot authored from a `dependabot/nix/`
+# branch of this repository — a change to flake.lock and nothing else.
+# Every other pull request builds and does not publish.
 #
-# For the same reason CACHIX_AUTH_TOKEN belongs under Actions secrets ONLY.
-# Do not add it to the Dependabot secret store: Dependabot pull requests have
-# no business holding it, and none of them publish.
+# Secrets on a Dependabot pull request resolve against the SEPARATE Dependabot
+# secret store, so CACHIX_AUTH_TOKEN has to be added twice: once under Actions
+# secrets (main, nightly) and once under Dependabot secrets. Miss the second
+# and every auto-merged bump builds green and publishes nothing; the publish
+# step says so rather than passing quietly.
 name: ci
 
 on:
@@ -172,13 +183,23 @@ jobs:
       # rather than a hang. Empty is normal: it means this lock was already
       # published.
       #
-      # Never on a pull request (see the header): the step, and so the token,
-      # only exist on runs of `main`. `continue-on-error`, because a cache is
-      # an optimisation. A failed push must not turn a green build red; the
+      # Only where the header says (runs of `main`; Dependabot's nix pull
+      # requests). The author is `pull_request.user.login`, NOT `github.actor`:
+      # the actor is whoever triggered the run and changes on a manual re-run,
+      # while the author of a Dependabot branch never does. The repository
+      # comparison keeps a fork's branch of the same name from qualifying.
+      #
+      # `continue-on-error`, because a cache is an optimisation. A failed push
+      # must not turn a green build red and hold a Dependabot merge; the
       # nightly run publishes what this one could not, and the worst case in
       # between is today's behaviour, a machine that builds locally.
       - name: Publish to Cachix
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        if: >-
+          (github.event_name != 'pull_request' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'pull_request' &&
+           github.event.pull_request.user.login == 'dependabot[bot]' &&
+           github.event.pull_request.head.repo.full_name == github.repository &&
+           startsWith(github.event.pull_request.head.ref, 'dependabot/nix/'))
         continue-on-error: true
         env:
           CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -186,7 +207,8 @@ jobs:
           set -euo pipefail
           if [ -z "${CACHIX_AUTH_TOKEN:-}" ]; then
             echo "::warning::CACHIX_AUTH_TOKEN is empty on this run, so nothing was"\
-                 "published. Add it under Actions secrets."
+                 "published. On a Dependabot pull request it means the token is missing"\
+                 "from the DEPENDABOT secret store; otherwise, from Actions secrets."
             exit 0
           fi
           xargs -r cachix push nixos-micro-desktop < unsigned.txt
@@ -220,3 +242,25 @@ jobs:
             echo
             echo "Cachix's open-source tier is 5 GB and collects least-recently-used first."
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # The single status check the branch ruleset on `main` names, and the one
+  # dependabot-auto-merge.yml asserts exists before it arms auto-merge. One
+  # aggregate rather than the job itself so that adding a second job later
+  # never means editing the ruleset — and so the name stays `ci` however the
+  # jobs above are reorganised.
+  ci:
+    if: always()
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gate
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "job results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" = "failure" ] || [ "$result" = "cancelled" ]; then
+              echo "::error::a required job reported '$result'"
+              exit 1
+            fi
+          done
