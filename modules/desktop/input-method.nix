@@ -30,13 +30,31 @@ in
     # patch adds a clipboard-only `PageSize` option (max 30, same as "Number
     # of entries") and pads the row labels, since rows past the tenth have no
     # digit selection key and classicui throws on a missing label.
+    #
+    # Only fcitx5-with-addons is pointed at the patched package; the top-level
+    # `fcitx5` is left alone on purpose. The Qt5/Qt6 input-method modules, the
+    # GTK one and fcitx5-configtool all depend on `fcitx5`, so patching it
+    # there would rebuild every one of them locally — the Qt ones, and the
+    # KDE-framework configtool above all, are by far the slowest builds on
+    # this system. Left alone they stay the cache.nixos.org builds, which is
+    # safe: the patch touches only the clipboard addon, so nothing they link
+    # against changes, and the picker lives in the daemon, not in them.
+    #
+    # The module builds its package from `pkgs.qt6Packages.fcitx5-with-addons`,
+    # so that is the attribute the override has to land on.
     nixpkgs.overlays = [
       (_final: prev: {
-        fcitx5 = prev.fcitx5.overrideAttrs (old: {
-          patches = (old.patches or [ ]) ++ [
-            ../../configs/fcitx5/patches/clipboard-page-size.patch
-          ];
-        });
+        qt6Packages = prev.qt6Packages.overrideScope (
+          _qfinal: qprev: {
+            fcitx5-with-addons = qprev.fcitx5-with-addons.override {
+              fcitx5 = prev.fcitx5.overrideAttrs (old: {
+                patches = (old.patches or [ ]) ++ [
+                  ../../configs/fcitx5/patches/clipboard-page-size.patch
+                ];
+              });
+            };
+          }
+        );
       })
     ];
 

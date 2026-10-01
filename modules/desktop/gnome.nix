@@ -119,7 +119,7 @@ in
           # CPUWeight/IOWeight/MemoryLow mirror the niri drop-in in
           # desktop/niri.nix: they raise the shell's share of CPU and disk
           # above the reduced share system/nix.nix gives nix-daemon and the
-          # hourly rebuild, so a rebuild cannot stall a repaint. MemoryLow
+          # scheduled rebuild, so a rebuild cannot stall a repaint. MemoryLow
           # rather than MemoryMin, so a memory squeeze slows the shell instead
           # of killing something else.
           "org.gnome.Shell@" = {

@@ -130,6 +130,14 @@ Follow these steps to install NixOS Micro Desktop:
 
 The beauty of NixOS Micro Desktop lies in its customizability. Feel free to modify the flake to add or remove packages, change system settings, or tweak the GNOME environment to your liking.
 
+## Binary cache
+
+Installed machines download the few packages this configuration builds itself instead of compiling them: the patched fcitx5 behind the clipboard picker, the trimmed firmware, and the NixOS system derivations. They come from [nixos-micro-desktop.cachix.org](https://nixos-micro-desktop.cachix.org); everything else still comes from cache.nixos.org. CI builds the `install` system from this repository's `flake.lock` and pushes whatever cache.nixos.org doesn't have. The `build` job in `.github/workflows/ci.yml` does this on every push to `main` and nightly; pull requests build but never publish. The module adds the substituter, and `flake.nix` declares it in `nixConfig` for deploys and development machines.
+
+A machine only downloads those paths when its nixpkgs is the revision CI built. On any other revision it builds them locally, as it did before the cache existed.
+
+CI publishes with the `CACHIX_AUTH_TOKEN` secret. Add it under Actions secrets only. The job publishes from `main` alone, so the token must not go in the Dependabot secret store; `.github/workflows/ci.yml` explains why.
+
 ## Contributing
 
 We welcome contributions! If you have improvements or bug fixes, please open a pull request or issue on our GitHub repository.

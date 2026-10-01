@@ -1,6 +1,21 @@
 {
   description = "NixOS Micro Desktop";
 
+  # The project's binary cache, filled by .github/workflows/ci.yml with what
+  # cache.nixos.org cannot serve (the patched fcitx5, the trimmed firmware,
+  # the system derivations). Nix asks before honouring a flake's `nixConfig`
+  # — `accept-flake-config`, answering yes the first time, or
+  # `--accept-flake-config` — and everyone else gets a warning and a local
+  # build, which is fine. That friction is the correct amount for "this flake
+  # would like to add a party who can sign store paths". Same key as
+  # modules/system/nix.nix; keep them equal.
+  nixConfig = {
+    extra-substituters = [ "https://nixos-micro-desktop.cachix.org" ];
+    extra-trusted-public-keys = [
+      "nixos-micro-desktop.cachix.org-1:Azi3atXTHyECtU/pvC6nvWDoF1BeTuczu8RT3+Yt7ds="
+    ];
+  };
+
   inputs = {
     disko = {
       inputs = {
