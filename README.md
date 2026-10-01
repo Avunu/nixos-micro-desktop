@@ -30,6 +30,14 @@ Set `microDesktop.desktopShell` in your local flake. All three share the same ba
 
 The `gnome` option deliberately does _not_ use `services.desktopManager.gnome.enable`, which would pull in the full GNOME application suite. It assembles the session from `gnome-session`, `gnome-shell` and GDM instead, keeping the app set the same as the other two shells.
 
+### niri configuration and NiriMod
+
+On the niri shells, [NiriMod](https://github.com/srinivasr/nirimod) (a visual niri editor) is installed and provisioned for the user on every activation:
+
+- `~/.config/niri/config.kdl` is owned by Nix and overwritten each time. It includes `/etc/niri/config.kdl`, then `nirimod.kdl`, then the shell's generated files (`noctalia.kdl`, or `dms/*.kdl`).
+- `~/.config/niri/nirimod.kdl` is yours: created empty if missing, never overwritten. An old `custom.kdl` is renamed to it once.
+- `~/.config/nirimod/settings.json` is seeded with a baseline and merged on later activations, so your preferences survive. Only `config_path` is forced, so NiriMod always edits `nirimod.kdl` and never the Nix-owned `config.kdl`.
+
 ## Storage
 
 The module pulls in [disko](https://github.com/nix-community/disko) and declares the whole partition table from `diskDevice`, `bootMode`, `rootFilesystem` and `swapSizeGiB`, so it expects to own the disk. Set these in your local flake before installing.

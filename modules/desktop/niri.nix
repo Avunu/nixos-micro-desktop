@@ -44,14 +44,44 @@ let
     "wpblur"
   ];
 
+  # Noctalia writes its generated theme (focus-ring/border colours) here and
+  # expects the user config to include it. Like the DMS files above, niri
+  # refuses to load a config whose `include` target is missing.
+  shellIncludes = optional (cfg.desktopShell == "noctalia") "noctalia";
+
+  # Include order is precedence order: later files win. NiriMod's file comes
+  # before the shell-generated ones so a shell's theme/outputs are never
+  # shadowed by a stale visual-editor setting.
   niriHomeConfig = pkgs.writeText "niri-home.kdl" (
     ''
       include "/etc/niri/config.kdl"
-      include "custom.kdl"
+      include "nirimod.kdl"
     ''
+    + concatMapStrings (f: "include \"${f}.kdl\"\n") shellIncludes
     + optionalString (cfg.desktopShell == "dms") (
       concatMapStrings (f: "include \"dms/${f}.kdl\"\n") dmsIncludes
     )
+  );
+
+  # NiriMod is a visual editor for niri. It is pointed at nirimod.kdl rather
+  # than config.kdl: config.kdl is rewritten from the nix store on every
+  # activation, so anything NiriMod saved there would be lost, whereas
+  # nirimod.kdl is user state that this module only ever creates, never
+  # overwrites.
+  #
+  # Baseline for ~/.config/nirimod/settings.json. NiriMod rewrites this file
+  # itself (dismissed prompts, preferences), so the activation script merges
+  # rather than copies — see below.
+  nirimodSettings = pkgs.writeText "nirimod-settings.json" (
+    builtins.toJSON {
+      auto_backup = true;
+      auto_update = false; # nix owns the package; the in-app updater cannot
+      backup_limit = 10;
+      backup_path = "";
+      config_path = "/home/${cfg.username}/.config/niri/nirimod.kdl";
+      kofi_v3_dont_show = true;
+      kofi_v4_dont_show = true;
+    }
   );
 in
 {
@@ -73,6 +103,7 @@ in
         gammastep
         grim
         matugen
+        nirimod
         playerctl
         satty
         slurp
@@ -123,28 +154,56 @@ in
 
     system = {
       activationScripts = {
-        # Install user niri config to ~/.config/niri/config.kdl
+        # Provision the user's niri and NiriMod config.
+        #
+        # config.kdl is Nix-owned and overwritten every time. Everything else
+        # is created only when missing, so it is safe to edit by hand or
+        # through NiriMod.
         niriUserConfig = ''
           USER_HOME="/home/${cfg.username}"
           NIRI_CONFIG_DIR="$USER_HOME/.config/niri"
+          NIRIMOD_CONFIG_DIR="$USER_HOME/.config/nirimod"
 
           if [ -d "$USER_HOME" ]; then
-          mkdir -p "$NIRI_CONFIG_DIR"
+            mkdir -p "$NIRI_CONFIG_DIR" "$NIRIMOD_CONFIG_DIR"
 
-          # Always update config.kdl from the nix store
-          cp ${niriHomeConfig} "$NIRI_CONFIG_DIR/config.kdl"
+            cp ${niriHomeConfig} "$NIRI_CONFIG_DIR/config.kdl"
 
-          # Create custom.kdl only if it doesn't exist (user's personal overrides)
-          [ -f "$NIRI_CONFIG_DIR/custom.kdl" ] || touch "$NIRI_CONFIG_DIR/custom.kdl"
-
-          ${optionalString (cfg.desktopShell == "dms") ''
-            mkdir -p "$NIRI_CONFIG_DIR/dms"
-            for f in ${concatStringsSep " " dmsIncludes}; do
-              [ -f "$NIRI_CONFIG_DIR/dms/$f.kdl" ] || touch "$NIRI_CONFIG_DIR/dms/$f.kdl"
+            # nirimod.kdl replaces the old hand-edited custom.kdl as the
+            # user's own layer. Carry existing content over once.
+            if [ ! -e "$NIRI_CONFIG_DIR/nirimod.kdl" ] && [ -f "$NIRI_CONFIG_DIR/custom.kdl" ]; then
+              mv "$NIRI_CONFIG_DIR/custom.kdl" "$NIRI_CONFIG_DIR/nirimod.kdl"
+            fi
+            for f in nirimod ${concatStringsSep " " shellIncludes}; do
+              [ -f "$NIRI_CONFIG_DIR/$f.kdl" ] || touch "$NIRI_CONFIG_DIR/$f.kdl"
             done
-          ''}
 
-          chown -R ${cfg.username}:users "$USER_HOME/.config"
+            ${optionalString (cfg.desktopShell == "dms") ''
+              mkdir -p "$NIRI_CONFIG_DIR/dms"
+              for f in ${concatStringsSep " " dmsIncludes}; do
+                [ -f "$NIRI_CONFIG_DIR/dms/$f.kdl" ] || touch "$NIRI_CONFIG_DIR/dms/$f.kdl"
+              done
+            ''}
+
+            # Baseline <- existing <- Nix-owned keys. Missing keys are filled
+            # in and the user's own preferences survive, but config_path is
+            # always forced back to nirimod.kdl: left at NiriMod's default it
+            # would edit config.kdl, which is overwritten above.
+            SETTINGS="$NIRIMOD_CONFIG_DIR/settings.json"
+            SETTINGS_NEW="$SETTINGS.new"
+            if [ -f "$SETTINGS" ] && ${pkgs.jq}/bin/jq -e . "$SETTINGS" >/dev/null 2>&1; then
+              ${pkgs.jq}/bin/jq -S -s '.[0] * .[1] * {config_path: .[0].config_path}' \
+                ${nirimodSettings} "$SETTINGS" > "$SETTINGS_NEW"
+            else
+              ${pkgs.jq}/bin/jq -S . ${nirimodSettings} > "$SETTINGS_NEW"
+            fi
+            if cmp -s "$SETTINGS_NEW" "$SETTINGS"; then
+              rm -f "$SETTINGS_NEW"
+            else
+              mv "$SETTINGS_NEW" "$SETTINGS"
+            fi
+
+            chown -R ${cfg.username}:users "$USER_HOME/.config"
           fi
         '';
       };
