@@ -83,8 +83,8 @@ in
       #
       # auto-optimise-store (set below until now) ran it inline: every
       # substituted path hashed and hard-linked before nix would call the build
-      # done, while someone was waiting. system-upgrade below rebuilds hourly
-      # from nixpkgs-unstable, so that was happening every hour, in the
+      # done, while someone was waiting. system-upgrade below rebuilds daily
+      # from nixpkgs-unstable, so that was happening on every upgrade, in the
       # foreground, on a desktop someone is using. The timer does the same work
       # when nobody is typing.
       #
@@ -119,7 +119,7 @@ in
         max-jobs = mkDefault 8;
         # Free space on demand, not just on the weekly gc timer.
         #
-        # system-upgrade below rebuilds hourly from nixpkgs-unstable, so
+        # system-upgrade below rebuilds daily from nixpkgs-unstable, so
         # the store can gain many gigabytes between two runs of a weekly
         # collector. When the root filesystem actually reached 100% the
         # failure was not graceful: nix started taking SIGBUS on its mmap
@@ -135,13 +135,29 @@ in
           "flakes"
           "cgroups"
         ];
+        # nixos-micro-desktop.cachix.org is this project's own cache, filled
+        # by .github/workflows/ci.yml with only what cache.nixos.org cannot
+        # serve: the patched fcitx5, the trimmed linux-firmware copy, and the
+        # NixOS system derivations. It only helps a machine whose nixpkgs is
+        # the revision CI built; any other builds those paths locally, as it
+        # did before.
+        #
+        # Adding a substituter is a trust decision: whoever holds this cache's
+        # signing key can put any store path on any machine running this
+        # module, the power cache.nixos.org already has. The keypair is
+        # generated and held by Cachix, so no private key lives in this
+        # repository; CI pushes with an auth token alone. Priority 42 sits
+        # behind cache.nixos.org (40) and nix-community (41). Same key as
+        # `nixConfig` in flake.nix; keep them equal.
         substituters = [
           "https://cache.nixos.org?priority=40"
           "https://nix-community.cachix.org?priority=41"
+          "https://nixos-micro-desktop.cachix.org?priority=42"
         ];
         trusted-public-keys = [
           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+          "nixos-micro-desktop.cachix.org-1:Azi3atXTHyECtU/pvC6nvWDoF1BeTuczu8RT3+Yt7ds="
         ];
         trusted-users = [
           "root"
@@ -187,7 +203,7 @@ in
         #
         # memory.nix already keeps an out-of-memory event from selecting the
         # compositor. This is the same idea on the two axes it does not cover:
-        # CPU and I/O. The offender it is aimed at is this module's own hourly
+        # CPU and I/O. The offender it is aimed at is this module's own scheduled
         # rebuild — a `nixos-rebuild switch` against nixpkgs-unstable can
         # substitute or build several gigabytes without warning, and the
         # resulting page-cache eviction is felt as a session that stops
@@ -276,7 +292,8 @@ in
           # makes the session swap too, for as long as it runs (once, 1h42m).
           # So the condition below skips the run unless at least this share of
           # RAM is available — the same 25% the unit is allowed to use. The
-          # timer is hourly, so a skipped run is retried at the next hour; a
+          # timer is daily, so a skipped run is not retried until the next
+          # day's (`systemctl start system-upgrade` runs it by hand); a
           # machine that is never that idle still upgrades at boot.
           environment.UPGRADE_MIN_AVAILABLE_PERCENT = mkDefault "25";
           serviceConfig = {
@@ -338,7 +355,7 @@ in
         system-upgrade = {
           timerConfig = {
             # A default, so a host can move it without mkForce.
-            OnCalendar = mkDefault "hourly";
+            OnCalendar = mkDefault "daily";
             Persistent = true;
             Unit = "system-upgrade.service";
           };

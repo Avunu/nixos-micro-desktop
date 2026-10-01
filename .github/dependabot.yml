@@ -1,13 +1,56 @@
 version: 2
 
 updates:
-  # Nix flake inputs
+  # Nix flake inputs.
+  #
+  # Daily, because the lock is what the binary cache is built from. Every
+  # installed machine runs `nix flake update` daily (system-upgrade) and lands
+  # on whatever nixos-unstable is at that moment; the cache in ci.yml only
+  # helps a machine whose nixpkgs is a revision CI has already built. So this
+  # lock has to chase nixos-unstable as closely as the machines do. ("daily"
+  # is weekdays only in Dependabot's vocabulary.)
+  #
+  # What keeps it moving without a person is dependabot-auto-merge.yml: every
+  # one of these pull requests is handed to GitHub's auto-merge, so a green
+  # `ci` lands it and a red one waits. Nothing here relaxes a check — the
+  # build is the reviewer, because nobody can meaningfully read a nixpkgs
+  # bump, and it is how installed machines get their security updates.
+  #
+  # `cooldown` is switched OFF here, and it has to be said because it is on by
+  # default: Dependabot applies a three-day quarantine to every version update
+  # even when none is configured. That is a supply-chain measure aimed at
+  # freshly published registry packages. nixos-unstable is not that — a
+  # revision reaches the branch only after Hydra has built and tested the
+  # channel — and three days is precisely the gap that would leave this lock
+  # behind every machine, which defeats the purpose stated above.
+  # `exclude: ["*"]` is the documented way to go to zero; the `semver-*-days`
+  # keys do not apply to flake inputs, which are commits, not versions.
   - package-ecosystem: nix
     directory: /
     schedule:
-      interval: weekly
+      interval: daily
+    cooldown:
+      exclude: ["*"]
     commit-message:
       prefix: chore
     groups:
       nix:
+        patterns: ["*"]
+
+  # The CI in .github/workflows/ci.yml. Every action there is pinned to a
+  # commit SHA (a tag can be moved; a SHA cannot), and Dependabot updates the
+  # SHA and its `# vX` comment together. Without this the pins silently rot.
+  # The cooldown is the supply-chain control: these actions run with the
+  # repository's tokens, and a malicious release is usually caught and yanked
+  # within days. Security updates are separate and are not delayed.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 5
+    commit-message:
+      prefix: chore
+    groups:
+      actions:
         patterns: ["*"]

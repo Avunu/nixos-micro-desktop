@@ -217,7 +217,7 @@ in
       journald = {
         # systemd's default is 10% of the filesystem, capped at 4 GB, which on
         # a modern disk means the journal grows to gigabytes of archived boots
-        # before anything reclaims it. The hourly rebuild in system/nix.nix
+        # before anything reclaims it. The scheduled rebuild in system/nix.nix
         # makes this system unusually chatty, so bound it explicitly.
         settings.Journal = mkDefault {
           SystemMaxUse = "512M";
@@ -236,7 +236,7 @@ in
       # Nothing here writes to /var/log. The generated logrotate config has two
       # stanzas, both monthly, for /var/log/btmp and /var/log/wtmp — and NixOS
       # schedules it hourly and runs a config check at every boot and every
-      # nixos-rebuild switch, which on this system is also hourly. journald
+      # nixos-rebuild switch, which on this system is daily. journald
       # bounds its own storage above.
       logrotate = {
         enable = mkDefault false;

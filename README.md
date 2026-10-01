@@ -130,6 +130,30 @@ Follow these steps to install NixOS Micro Desktop:
 
 The beauty of NixOS Micro Desktop lies in its customizability. Feel free to modify the flake to add or remove packages, change system settings, or tweak the GNOME environment to your liking.
 
+## Binary cache
+
+Installed machines download the few packages this configuration builds itself instead of compiling them: the patched fcitx5 behind the clipboard picker, the trimmed firmware, and the NixOS system derivations. They come from [nixos-micro-desktop.cachix.org](https://nixos-micro-desktop.cachix.org); everything else still comes from cache.nixos.org. CI builds the `install` system from this repository's `flake.lock` and pushes whatever cache.nixos.org doesn't have. The module adds the substituter, and `flake.nix` declares it in `nixConfig` for deploys and development machines.
+
+A machine only downloads those paths when its nixpkgs is the revision CI built. On any other revision it builds them locally, as it did before the cache existed.
+
+CI publishes with the `CACHIX_AUTH_TOKEN` secret. Add it under **both** Actions secrets and Dependabot secrets: Dependabot's pull requests resolve secrets against the separate store, so with only the first, every auto-merged bump builds green and publishes nothing. The job publishes from `main`, nightly, and from Dependabot's flake-lock pull requests only; every other pull request builds without publishing. `.github/workflows/ci.yml` explains why.
+
+## Continuous integration
+
+Two workflows under `.github/workflows/`.
+
+|  |  |
+| --- | --- |
+| ci.yml | evaluates both systems, builds the `install` system, and publishes to `nixos-micro-desktop.cachix.org` exactly the paths cache.nixos.org cannot serve — on `main`, nightly, and on Dependabot's flake-lock pull requests |
+| dependabot-auto-merge.yml | hands each Dependabot pull request to GitHub's auto-merge, so a green `ci` merges it and a red one leaves it sitting there |
+
+The loop they close: every installed machine runs `nix flake update` daily and lands on nixos-unstable's head; Dependabot bumps this lock daily with no cooldown (`.github/dependabot.yml`); `ci.yml` builds that lock on the pull request and publishes before auto-merge lands it. A machine whose update picks a revision CI has built downloads its upgrade. One that beats CI to a fresh revision builds those paths itself, once, which is what every machine did before the cache existed.
+
+Auto-merge needs two repository settings that no file can carry, and the workflow refuses to run without them:
+
+-   **Settings → General → Pull Requests → Allow auto-merge.**
+-   **A ruleset on `main` that requires the `ci` status check.** Without it there is nothing for auto-merge to wait for, so `dependabot-auto-merge.yml` stops with an error instead of merging untested. Add the repository admin role to the ruleset's bypass list if you want direct pushes to `main` to keep working.
+
 ## Contributing
 
 We welcome contributions! If you have improvements or bug fixes, please open a pull request or issue on our GitHub repository.

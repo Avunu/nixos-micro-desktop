@@ -256,7 +256,7 @@ in
           #
           # The three cgroup weights are the other half of the same idea, on
           # the axes an OOM score does not cover. system/nix.nix holds
-          # nix-daemon and the hourly rebuild to a reduced share of CPU and
+          # nix-daemon and the scheduled rebuild to a reduced share of CPU and
           # I/O; these raise the compositor's share above the default so that
           # a rebuild competing for the disk cannot stall a repaint.
           #
