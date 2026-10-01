@@ -23,6 +23,23 @@ let
 in
 {
   config = {
+    # Patched fcitx5: lets the clipboard picker show more than 10 rows per
+    # page. Upstream's clipboard addon takes its page size from the global
+    # Behavior/DefaultPageSize, which is capped at 10 (IntConstrain(1, 10)) —
+    # a larger value is rejected on load and silently falls back to 5. The
+    # patch adds a clipboard-only `PageSize` option (max 30, same as "Number
+    # of entries") and pads the row labels, since rows past the tenth have no
+    # digit selection key and classicui throws on a missing label.
+    nixpkgs.overlays = [
+      (_final: prev: {
+        fcitx5 = prev.fcitx5.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [
+            ../../configs/fcitx5/patches/clipboard-page-size.patch
+          ];
+        });
+      })
+    ];
+
     environment = {
       pathsToLink = [
         # fcitx5 classicui themes (micro-material) resolve via
@@ -75,6 +92,9 @@ in
                   ClearPasswordAfter = 30;
                   IgnorePasswordFromPasswordManager = "True";
                   "Number of entries" = 30;
+                  # Rows shown at once (needs the fcitx5 patch above; the
+                  # entries past this page are reached with Right/Page_Down).
+                  PageSize = 20;
                   ShowPassword = "False";
                 };
                 sections = {
@@ -104,10 +124,6 @@ in
               };
             };
             globalOptions = {
-              # Add this block to control the candidate menu item count
-              globalSection = {
-                PageSize = 30;
-              };
               # Disable IM trigger / group-switch hotkeys (single IM only) —
               # every "Hotkey/*Keys" entry below set to {} is disabled.
               # Candidate nav for both pickers: Up/Down = prev/next candidate,

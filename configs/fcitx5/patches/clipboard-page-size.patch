@@ -1,0 +1,46 @@
+--- a/src/modules/clipboard/clipboard.h
++++ b/src/modules/clipboard/clipboard.h
+@@ -55,6 +55,14 @@
+     Option<int, IntConstrain> numOfEntries{this, "Number of entries",
+                                            _("Number of entries"), 5,
+                                            IntConstrain(3, 30)};
++    Option<int, IntConstrain, DefaultMarshaller<int>, ToolTipAnnotation>
++        pageSize{this,
++                 "PageSize",
++                 _("Candidates per page"),
++                 0,
++                 IntConstrain(0, 30),
++                 {},
++                 {_("0 means use the global default candidates per page.")}};
+     ConditionalHidden<isAndroid(),
+                       OptionWithAnnotation<bool, ToolTipAnnotation>>
+         ignorePasswordFromPasswordManager{
+--- a/src/modules/clipboard/clipboard.cpp
++++ b/src/modules/clipboard/clipboard.cpp
+@@ -226,7 +226,12 @@
+     inputContext->inputPanel().reset();
+ 
+     auto candidateList = std::make_unique<CommonCandidateList>();
+-    candidateList->setPageSize(instance_->globalConfig().defaultPageSize());
++    // The global page size is capped at 10, which is too small for a
++    // clipboard history, so the clipboard can override it.
++    const int pageSize = config_.pageSize.value() > 0
++                             ? config_.pageSize.value()
++                             : instance_->globalConfig().defaultPageSize();
++    candidateList->setPageSize(pageSize);
+ 
+     // Append first item from history_.
+     auto iter = history_.begin();
+@@ -250,7 +255,11 @@
+         candidateList->append<ClipboardCandidateWord>(this, iter->text,
+                                                       iter->passwordTimestamp);
+     }
+-    candidateList->setSelectionKey(selectionKeys_);
++    // Only the first ten rows of a page have a selection key. Pad with empty
++    // keys so every row of a taller page still has a (blank) label.
++    auto labelKeys = selectionKeys_;
++    labelKeys.resize(std::max(labelKeys.size(), static_cast<size_t>(pageSize)));
++    candidateList->setSelectionKey(labelKeys);
+     candidateList->setLayoutHint(CandidateLayoutHint::Vertical);
+ 
+     Text auxUp(_("Clipboard (Press BackSpace/Delete to clear history):"));
