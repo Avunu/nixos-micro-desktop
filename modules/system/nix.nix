@@ -66,6 +66,12 @@ in
         automatic = mkDefault true;
         dates = mkDefault "weekly";
         options = mkDefault "--delete-older-than 7d";
+        # NixOS defaults this one to 0 while giving nix-optimise 30 minutes, so
+        # when both catch up at once — Persistent timers fire on the first boot
+        # after a missed run, and on a laptop that is most weeks — the collector
+        # and the optimiser start in the same second, alongside everything else
+        # that boot is catching up on. A spread keeps them apart.
+        randomizedDelaySec = mkDefault "45min";
       };
       # Store deduplication, moved off the interactive path.
       #
@@ -232,6 +238,25 @@ in
           unitConfig = {
             ConditionACPower = mkForce "";
           };
+          # Nice and the idle CPU class keep it off the processor, and the idle
+          # I/O class would keep it off the disk — but only under BFQ, which
+          # NVMe does not run (see system/hardware.nix). What a person at the
+          # machine actually feels is the page cache: the pass reads every file
+          # in the store, ~100 GB on a well-used desktop, and on a machine with
+          # a few GB of RAM that evicts every editor, browser and library the
+          # session had cached, so the desktop faults back in from disk for the
+          # next hour. Page cache is charged to the cgroup that read it, so a
+          # MemoryHigh here makes the pass recycle its own cache instead of
+          # everyone else's; the process itself needs well under 100 MB.
+          #
+          # The bandwidth cap is blk-throttle, which holds under any scheduler,
+          # and bounds the bursts: a measured pass averaged about 25 MB/s, so it
+          # costs little time. "/nix/store" rather than a device node, so it
+          # follows whatever disk the store is on.
+          serviceConfig = {
+            MemoryHigh = mkDefault "512M";
+            IOReadBandwidthMax = mkDefault "/nix/store 50M";
+          };
         };
 
         system-upgrade = {
@@ -242,12 +267,40 @@ in
             networkmanager
           ];
           restartIfChanged = false;
+          # Wait for a quiet hour rather than land on a busy one.
+          #
+          # A rebuild here costs up to its MemoryHigh below (25% of RAM) and was
+          # measured holding exactly that for its whole run — 1.9 GB on an 8 GB
+          # laptop, with another 1–2.8 GB pushed to swap. Started while the
+          # session already needs that memory, it does not just run slowly: it
+          # makes the session swap too, for as long as it runs (once, 1h42m).
+          # So the condition below skips the run unless at least this share of
+          # RAM is available — the same 25% the unit is allowed to use. The
+          # timer is hourly, so a skipped run is retried at the next hour; a
+          # machine that is never that idle still upgrades at boot.
+          environment.UPGRADE_MIN_AVAILABLE_PERCENT = mkDefault "25";
           serviceConfig = {
             Environment = "HOME=/root";
-            # Skip gracefully (result=condition, no restart) when on a metered connection
-            ExecCondition = pkgs.writeShellScript "check-not-metered" ''
+            # Skip gracefully (result=condition, no restart) when on a metered
+            # connection, or while the machine is too busy (see above).
+            ExecCondition = pkgs.writeShellScript "check-upgrade-conditions" ''
               if ${pkgs.networkmanager}/bin/nmcli -g GENERAL.METERED dev show 2>/dev/null | grep -qi "yes"; then
                 echo "Network connection is metered, skipping system upgrade" >&2
+                exit 1
+              fi
+
+              total=0
+              avail=0
+              while read -r key value _; do
+                case $key in
+                  MemTotal:) total=$value ;;
+                  MemAvailable:) avail=$value ;;
+                esac
+              done < /proc/meminfo
+              want=''${UPGRADE_MIN_AVAILABLE_PERCENT:-0}
+              have=$(( total > 0 ? avail * 100 / total : 100 ))
+              if [ "$have" -lt "$want" ]; then
+                echo "Only $have% of memory available (want $want%), skipping system upgrade until the machine is less busy" >&2
                 exit 1
               fi
             '';
@@ -261,6 +314,14 @@ in
             # costs hundreds of megabytes on its own, before any build starts.
             CPUWeight = mkDefault 20;
             IOWeight = mkDefault 20;
+            # IOWeight only means something under BFQ, and NVMe runs "none"
+            # (system/hardware.nix). These caps are blk-throttle, which holds
+            # under any scheduler: a measured rebuild wrote 2–21 GB, in bursts
+            # that otherwise take the whole device. As root, nix builds in this
+            # unit's own cgroup rather than the daemon's, so they apply to the
+            # builds too. On a slower disk (eMMC) they never bind.
+            IOReadBandwidthMax = mkDefault "/nix/store 100M";
+            IOWriteBandwidthMax = mkDefault "/nix/store 100M";
             MemoryHigh = mkDefault "25%";
             Nice = mkDefault 19;
           };
@@ -276,7 +337,8 @@ in
       timers = {
         system-upgrade = {
           timerConfig = {
-            OnCalendar = "hourly";
+            # A default, so a host can move it without mkForce.
+            OnCalendar = mkDefault "hourly";
             Persistent = true;
             Unit = "system-upgrade.service";
           };
