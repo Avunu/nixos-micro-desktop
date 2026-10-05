@@ -18,7 +18,7 @@
 # why the lock has to trail nixos-unstable closely: dependabot.yml bumps it
 # daily with no cooldown, and the machines upgrade daily.
 #
-# Triggers, one job:
+# Triggers:
 #
 #   * `pull_request` — the required check, and ALSO where the cache gets
 #     filled for Dependabot's flake-lock bumps (below). That second part is
@@ -32,6 +32,29 @@
 #   * `schedule`, nightly — republishes whatever an earlier run could not push
 #     and catches nixpkgs or installer drift no commit caused.
 #   * `workflow_dispatch`, to re-run by hand.
+#
+# What runs for a given change. The build is the expensive part (and the only
+# part that can publish), so a `changes` job decides first, from the files a
+# pull request or push touched, which of the others have anything to say:
+#
+#   * `build + publish binary cache` — flake.nix, flake.lock, modules/,
+#     configs/, scripts/, installer/: everything that can change what the
+#     installed system is. Plus this file, so a change to the pipeline is
+#     exercised before it lands rather than by the nightly run.
+#   * `nixfmt` — any *.nix, and flake.lock, since a nixpkgs bump moves the
+#     formatter the check runs.
+#   * Neither — the README, .github/ other than this file, .vscode/,
+#     local/install.sh. The `ci` check still reports, green, in seconds.
+#
+# `schedule` and `workflow_dispatch` always run everything: they exist to
+# catch what no commit caused. A push to `main` is judged by the range it
+# brought in, so a docs-only push after a red build does not retry it; the
+# nightly run does.
+#
+# This is a job-level `if`, not a `paths:` filter on the trigger, on purpose.
+# A workflow skipped by `paths:` never reports its status, and a required
+# check that never reports leaves the pull request pending forever — the
+# ruleset on `main` names `ci`, so `ci` has to exist on every pull request.
 #
 # What may publish, and why that is narrower than "any pull request". Whoever
 # holds CACHIX_AUTH_TOKEN can upload a signed NAR under ANY store path, and
@@ -68,8 +91,94 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    name: what changed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      build: ${{ steps.scope.outputs.build }}
+      format: ${{ steps.scope.outputs.format }}
+    steps:
+      # Full history: a push's `before` commit has to be reachable to diff
+      # against. The repository is small.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          build_re='^(flake\.nix|flake\.lock|modules/|configs/|scripts/|installer/|\.github/workflows/ci\.yml$)'
+          format_re='(\.nix|^flake\.lock)$'
+
+          # Anything this cannot diff is treated as "everything changed": a
+          # needless build is the cheap way to be wrong.
+          case "$EVENT" in
+            pull_request)
+              # HEAD is GitHub's merge of the pull request into its base, so
+              # its first parent is that base and this is the pull request's
+              # own change.
+              range="HEAD^1 HEAD" ;;
+            push)
+              if [ -n "$BEFORE" ] && [ "${BEFORE//0/}" != "" ] \
+                 && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+                range="$BEFORE HEAD"
+              else
+                range=""
+              fi ;;
+            *)
+              range="" ;;
+          esac
+
+          if [ -z "$range" ]; then
+            echo "$EVENT: no range to diff; running everything"
+            echo "build=true"  >> "$GITHUB_OUTPUT"
+            echo "format=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # shellcheck disable=SC2086
+          files="$(git diff --name-only $range)"
+          echo "changed files ($range):"
+          printf '  %s\n' $files
+
+          if grep -Eq "$build_re" <<<"$files"; then b=true; else b=false; fi
+          if grep -Eq "$format_re" <<<"$files"; then f=true; else f=false; fi
+          echo "build=$b"  | tee -a "$GITHUB_OUTPUT"
+          echo "format=$f" | tee -a "$GITHUB_OUTPUT"
+
+  # Cheap and separate from the build because it has a wider trigger:
+  # local/flake.nix is formatted by it but is not part of any system built
+  # below.
+  #
+  # `--inputs-from .` resolves `nixpkgs` through this flake's own lock
+  # rather than the runner's registry, so the formatter is the one the
+  # lock pins and a registry drift cannot make this step flap.
+  format:
+    name: nixfmt
+    needs: changes
+    if: needs.changes.outputs.format == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+        with:
+          determinate: false
+
+      - name: nixfmt --check
+        run: |
+          nix run --inputs-from . nixpkgs#nixfmt -- --check \
+            flake.nix local/flake.nix modules/*.nix modules/*/*.nix
+
   build:
     name: build + publish binary cache
+    needs: changes
+    if: needs.changes.outputs.build == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -118,14 +227,6 @@ jobs:
         with:
           name: nixos-micro-desktop
           skipPush: true
-
-      # `--inputs-from .` resolves `nixpkgs` through this flake's own lock
-      # rather than the runner's registry, so the formatter is the one the
-      # lock pins and a registry drift cannot make this step flap.
-      - name: nixfmt --check
-        run: |
-          nix run --inputs-from . nixpkgs#nixfmt -- --check \
-            flake.nix local/flake.nix modules/*.nix modules/*/*.nix
 
       # Evaluation alone, both systems, before the build: the cheap gate for
       # an overlay argument or NixOS option that a nixpkgs bump renamed
@@ -250,7 +351,7 @@ jobs:
   # jobs above are reorganised.
   ci:
     if: always()
-    needs: [build]
+    needs: [changes, format, build]
     runs-on: ubuntu-latest
     steps:
       - name: Gate
@@ -258,6 +359,8 @@ jobs:
           RESULTS: ${{ join(needs.*.result, ' ') }}
         run: |
           echo "job results: $RESULTS"
+          # `skipped` is a pass: it is what a job reports when `changes`
+          # found nothing for it to check.
           for result in $RESULTS; do
             if [ "$result" = "failure" ] || [ "$result" = "cancelled" ]; then
               echo "::error::a required job reported '$result'"
