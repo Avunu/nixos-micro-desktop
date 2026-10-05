@@ -144,7 +144,7 @@ Two workflows under `.github/workflows/`.
 
 |  |  |
 | --- | --- |
-| ci.yml | evaluates both systems, builds the `install` system, and publishes to `nixos-micro-desktop.cachix.org` exactly the paths cache.nixos.org cannot serve — on `main`, nightly, and on Dependabot's flake-lock pull requests |
+| ci.yml | checks `nixfmt`, and evaluates both systems, builds the `install` system, and publishes to `nixos-micro-desktop.cachix.org` exactly the paths cache.nixos.org cannot serve — on `main`, nightly, and on Dependabot's flake-lock pull requests. A change only runs the parts it can affect: the build for `flake.nix`, `flake.lock`, `modules/`, `configs/`, `scripts/`, `installer/` or `ci.yml`; `nixfmt` for any `*.nix` or `flake.lock`; a docs-only change just reports a green `ci`. Nightly and manual runs do everything |
 | dependabot-auto-merge.yml | hands each Dependabot pull request to GitHub's auto-merge, so a green `ci` merges it and a red one leaves it sitting there |
 
 The loop they close: every installed machine runs `nix flake update` daily and lands on nixos-unstable's head; Dependabot bumps this lock daily with no cooldown (`.github/dependabot.yml`); `ci.yml` builds that lock on the pull request and publishes before auto-merge lands it. A machine whose update picks a revision CI has built downloads its upgrade. One that beats CI to a fresh revision builds those paths itself, once, which is what every machine did before the cache existed.
