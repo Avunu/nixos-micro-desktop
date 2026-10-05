@@ -1,165 +1,135 @@
-NixOS Micro Desktop
+# NixOS Micro Desktop
 
-NixOS Micro Desktop is an OpenSUSE Aeon-inspired desktop, but powered by NixOS. The goal is to create a NixOS configuration that's suitable for "family and friends".
+A modular NixOS configuration for modern, lean, self-maintaining Wayland desktops. One flake input and a short block of `microDesktop.*` options give you a disk layout, a tuned base system and your choice of desktop shell. The system then keeps itself current.
 
-If you really care about declarative systems, you probably want to use Nix directly to install and configure your computer. Micro Desktop, in contrast, provides the goodness of a minimal but functional system that can be provisioned using GNOME software, without tinkering with the underlying system.
+What you get
 
-## Features
-
--   Latest kernel for optimal hardware support
--   Three interchangeable desktop shells — see below
--   GNOME core apps and services shared across all of them
--   Network Manager with VPN support
--   Flatpak integration for easy application management
--   Optimized audio setup with PipeWire
--   Printer and scanner support out of the box
--   Choice of f2fs or BTRFS root, with zstd compression either way
--   Automatic system maintenance (TRIM, garbage collection)
--   Enhanced XDG portal integration for better desktop experience
--   And much more!
+-   **Three interchangeable shells** on one shared base: niri with Noctalia, niri with DankMaterialShell, or GNOME. [Details](#desktop-shells)
+-   **Declarative disks** via [disko](https://github.com/nix-community/disko): UEFI or legacy boot, f2fs or btrfs root with zstd, a swap partition for hibernation with zswap in front of it. [Details](#storage)
+-   **Self-updating.** A daily `nix flake update` and rebuild runs only when the lock changed and is throttled so it doesn't disturb the session. Weekly GC and store optimisation run alongside it, and the nix profile upgrades hourly. A [CI-fed binary cache](#updates-and-binary-cache) keeps most of this to downloads.
+-   **Software through GNOME Software.** Its PackageKit backend installs to the user's nix profile, so nobody has to touch Nix to add an app.
+-   **Tuned for responsiveness on modest hardware:**
+    -   Latest kernel, tmpfs `/tmp`, `transparent_hugepage=madvise`, BFQ on SATA/eMMC.
+    -   `systemd-oomd` with per-slice policy, so a runaway app is chosen before the compositor.
+    -   `thermald` and `power-profiles-daemon`.
+    -   Bounded journald, and CPU/IO/memory limits on the background rebuild.
+    -   Trimmed `linux-firmware` and locale archive to keep the closure small.
+-   **Shared desktop services:** PipeWire, NetworkManager (VPN plugins opt-in), Avahi, CUPS with browsed, Miracast sink, GNOME keyring and online accounts, XDG portals, nix-ld, fish and Ghostty.
+-   **Input method:** fcitx5 clipboard history (`Super+V`) and emoji picker (`Super+.`), with a patched 20-row clipboard page and a Material theme.
+-   **Unattended or guided install** through [nixos-install-helper](https://github.com/Avunu/nixos-install-helper). The installer menu is generated from the `microDesktop.*` options, so new options show up in it automatically.
 
 ## Desktop shells
 
-Set `microDesktop.desktopShell` in your local flake. All three share the same base system — kernel and filesystem tuning, GNOME core apps and services, PipeWire, printing and scanning, portals, and the fcitx5 clipboard-history (`Super+V`) and emoji (`Super+.`) pickers. Only the shell, compositor and greeter change.
+Set `microDesktop.desktopShell`. All three share the same base system, apps and services. Only the shell, compositor and greeter change.
 
 | desktopShell | Compositor | Shell | Greeter |
 | --- | --- | --- | --- |
-| dms | niri | DankMaterialShell | DMS greeter |
 | noctalia (default) | niri | Noctalia | Noctalia greeter |
+| dms | niri | DankMaterialShell | DMS greeter |
 | gnome | Mutter | GNOME Shell | GDM |
 
-The `gnome` option deliberately does _not_ use `services.desktopManager.gnome.enable`, which would pull in the full GNOME application suite. It assembles the session from `gnome-session`, `gnome-shell` and GDM instead, keeping the app set the same as the other two shells.
+`gnome` does not use `services.desktopManager.gnome.enable`. That would add the full GNOME app suite and force ibus, which conflicts with the fcitx5 pickers. The session is assembled from `gnome-session`, `gnome-shell` and GDM instead.
 
-### niri configuration and NiriMod
+### niri and NiriMod
 
-On the niri shells, [NiriMod](https://github.com/srinivasr/nirimod) (a visual niri editor) is installed and provisioned for the user on every activation:
+On the niri shells, [NiriMod](https://github.com/srinivasr/nirimod) (a visual niri editor) is installed and provisioned on every activation:
 
-- `~/.config/niri/config.kdl` is owned by Nix and overwritten each time. It includes `/etc/niri/config.kdl`, then `nirimod.kdl`, then the shell's generated files (`noctalia.kdl`, or `dms/*.kdl`).
-- `~/.config/niri/nirimod.kdl` is yours: created empty if missing, never overwritten. An old `custom.kdl` is renamed to it once.
-- `~/.config/nirimod/settings.json` is seeded with a baseline and merged on later activations, so your preferences survive. Only `config_path` is forced, so NiriMod always edits `nirimod.kdl` and never the Nix-owned `config.kdl`.
+-   `~/.config/niri/config.kdl` is Nix-owned and rewritten each time. It includes `/etc/niri/config.kdl`, then `nirimod.kdl`, then the shell's generated files.
+-   `~/.config/niri/nirimod.kdl` is yours. It is created empty if missing and never overwritten.
+-   `~/.config/nirimod/settings.json` is seeded once, then merged, so your preferences survive. Only `config_path` is forced, so NiriMod never edits the Nix-owned file.
 
 ## Storage
 
-The module pulls in [disko](https://github.com/nix-community/disko) and declares the whole partition table from `diskDevice`, `bootMode`, `rootFilesystem` and `swapSizeGiB`, so it expects to own the disk. Set these in your local flake before installing.
+disko declares the whole partition table, so the module expects to own the disk. Set these before installing:
 
-| Option | Type | Default |  |
-| --- | --- | --- | --- |
-| diskDevice | string | /dev/sda | install target |
-| bootMode | uefi \| legacy | uefi | systemd-boot on an ESP, or GRUB on a BIOS boot partition plus an ext4 `/boot` |
-| rootFilesystem | f2fs \| btrfs | f2fs | install-time; migrates nothing |
-| compressionLevel | fast \| balanced \| max | fast | zstd 1 / 6 / 12; safe to change later |
-| swapSizeGiB | int | 8 | 0 omits the partition (and hibernation) |
-
-### f2fs or BTRFS
-
-`f2fs` is what this module has always installed and is still the default. `btrfs` is where it is going, and is the better pick on a new install:
-
-| | f2fs | btrfs |
+| Option | Default | Notes |
 | --- | --- | --- |
-| compression | `compress_algorithm=zstd:N`, cluster scales with the level | `compress-force=zstd:N` in fixed 128 KB extents |
-| freed space | fewer bytes written, but `df` does not move | returned to the filesystem — `df` moves |
-| trim | `nodiscard` plus a daily `fstrim` timer | `discard=async`, no timer |
-| layout | one flat root | `@`, `@home`, `@nix`, `@log` subvolumes |
-| fsck | skipped (chokes on the `/nix` symlink count) | none to run at boot |
+| diskDevice | /dev/sda | Install target |
+| bootMode | uefi | uefi: systemd-boot on an ESP. legacy: GRUB, BIOS boot partition and ext4 /boot |
+| rootFilesystem | f2fs | f2fs or btrfs. Install-time only, nothing is migrated |
+| compressionLevel | fast | zstd 1 / 6 / 12 (fast / balanced / max). Safe to change later |
+| swapSizeGiB | 8 | 0 omits the partition and hibernation |
 
-`rootFilesystem` is an install-time decision. disko derives the mkfs arguments, the mount options and the partition shape from it; it reformats nothing and migrates nothing, so changing it on an installed machine only changes which drivers and tools are in the closure. Get it right at install time, or reinstall.
+**f2fs or btrfs.** f2fs is the default for compatibility with existing installs. btrfs is the better choice for a new install:
 
-`compressionLevel` is not install-time. Compression is recorded per extent (btrfs) or per cluster (f2fs), so a changed tier applies from the next write on and shows up as the store turns over. On btrfs, `btrfs filesystem defragment -r -czstd /` forces the issue.
+|  | f2fs | btrfs |
+| --- | --- | --- |
+| Compression | compress_algorithm=zstd:N | compress-force=zstd:N |
+| Freed space | Fewer bytes written, df doesn't move | Returned to the filesystem |
+| Trim | nodiscard and a daily fstrim | discard=async |
+| Layout | One flat root | @, @home, @nix, @log subvolumes |
 
-### Swap
+**Swap.** zswap (lz4, 20% RAM pool) compresses pages in memory first. The swap partition is its overflow and the hibernation target, which is why it's a partition rather than a swapfile.
 
-One backing device, with zswap in front of it. `zswap.*` kernel params (enabled whenever `swapSizeGiB` is above 0) compress pages into a RAM-resident pool before the kernel ever writes to disk — lz4, for the same reason it was picked for the compositor and everything else CPU-constrained on these machines: decompression speed matters more than ratio. The `swapSizeGiB` partition underneath is what the pool overflows into once it fills, and is also the hibernation target: disko marks it `resumeDevice`, so hibernation works without any `resume_offset` bookkeeping — which is the main reason this is a partition rather than a swapfile on the root. At `swapSizeGiB = 0` there is no partition, no `boot.resumeDevice`, no hibernation, and zswap has nothing to compress into: no swap at all.
-
-**Upgrading an existing install:** set `swapSizeGiB = 0`. Machines installed before this option existed have no swap partition on the disk, and a nonzero value emits a `swapDevices` entry plus a `boot.resumeDevice` pointing at a partition that is not there. Stage 1 waits 15s for a resume device that never appears and gives up; stage 2 leaves the swap unit failed without holding the boot for it. The machine comes up 15s slower with one unit red. A fresh install gets the partition and needs no such thing.
-
-That graceful failure is not systemd's own behaviour, it is bought. `boot.resumeDevice` becomes `resume=` on the kernel command line, and given a `resume=` with no timeout supplied alongside it, `systemd-hibernate-resume-generator` writes `JobTimeoutSec=infinity` onto the device unit — then binds `systemd-hibernate-resume.service` to that device and orders it before `local-fs-pre.target`. A missing partition therefore stalls stage 1 permanently: root is never mounted, no unit fails, nothing is logged, and plymouth holds the splash over it. `modules/system/storage.nix` bounds that with `resumeflags=x-systemd.device-timeout=15s` and takes the swap unit off the critical path with `nofail`. Both are load-bearing.
+**Machines installed before `swapSizeGiB` existed** must set it to `0`. A nonzero value points at a partition that isn't on the disk. `storage.nix` bounds the resulting wait (`resumeflags=x-systemd.device-timeout=15s`, `nofail`), so the machine boots 15 s slower with one failed unit instead of hanging. Both settings are load-bearing, so read the comments in [modules/system/storage.nix](modules/system/storage.nix) before touching them.
 
 ## Installation
 
-Follow these steps to install NixOS Micro Desktop:
+Boot the NixOS installer and **don't partition anything**, because disko formats the disk. Then use either route.
 
-1.  **Boot the NixOS installer**
-    
-    -   Download the latest NixOS ISO and boot the target machine from it
-    -   Do not partition anything: the module declares the whole table through disko and formats the disk itself
-2.  **Download and customize the sample flake**
-    
-    -   Copy the sample flake to `/etc/nixos/`:
-        
-        ```
-        sudo curl -o /etc/nixos/flake.nix https://raw.githubusercontent.com/Avunu/nixos-micro-desktop/main/local/flake.nix
-        ```
-        
-    -   Set at least `diskDevice`, `bootMode` and `rootFilesystem` — see [Storage](#storage) above
-    -   Customize the flake according to your needs:
-        
-        ```
-        sudo nano /etc/nixos/flake.nix
-        ```
-        
-    -   Update the flake:
-        
-        ```
-        sudo nix flake update /etc/nixos --extra-experimental-features nix-command flakes
-        ```
-        
-3.  **Delete the old configuration.nix**
-    
-    -   Remove the old configuration file:
-        
-        ```
-        sudo rm /etc/nixos/configuration.nix
-        ```
-        
-4.  **Rebuild and reboot**
-    
-    -   Rebuild your system using the new flake:
-        
-        ```
-        sudo nixos-rebuild switch --flake /etc/nixos#default
-        ```
-        
-    -   Reboot your system to apply all changes:
-        
-        ```
-        sudo reboot
-        ```
-        
+**Installer helper.** The flake exposes `apps` (configure, install, deploy) and ISOs from nixos-install-helper, with a menu derived from `microDesktop.*`:
 
-## Customization
+```sh
+nix flake show github:Avunu/nixos-micro-desktop
+```
 
-The beauty of NixOS Micro Desktop lies in its customizability. Feel free to modify the flake to add or remove packages, change system settings, or tweak the GNOME environment to your liking.
+**Manual, from the sample flake:**
 
-## Binary cache
+```sh
+sudo curl -o /etc/nixos/flake.nix \
+  https://raw.githubusercontent.com/Avunu/nixos-micro-desktop/main/local/flake.nix
+sudo nano /etc/nixos/flake.nix        # hostName, username, diskDevice, bootMode, rootFilesystem, …
+sudo rm /etc/nixos/configuration.nix
+sudo nixos-rebuild switch --flake /etc/nixos#<hostName> --accept-flake-config
+sudo reboot
+```
 
-Installed machines download the few packages this configuration builds itself instead of compiling them: the patched fcitx5 behind the clipboard picker, the trimmed firmware, and the NixOS system derivations. They come from [nixos-micro-desktop.cachix.org](https://nixos-micro-desktop.cachix.org); everything else still comes from cache.nixos.org. CI builds the `install` system from this repository's `flake.lock` and pushes whatever cache.nixos.org doesn't have. The module adds the substituter, and `flake.nix` declares it in `nixConfig` for deploys and development machines.
+`--accept-flake-config` lets Nix use the project's binary cache. Without it you get a warning and a local build.
 
-A machine only downloads those paths when its nixpkgs is the revision CI built. On any other revision it builds them locally, as it did before the cache existed.
+**Remote, with nixos-anywhere:** edit [local/flake.nix](local/flake.nix), then run `./install.sh <ip>` from inside `local/`.
 
-CI publishes with the `CACHIX_AUTH_TOKEN` secret. Add it under **both** Actions secrets and Dependabot secrets: Dependabot's pull requests resolve secrets against the separate store, so with only the first, every auto-merged bump builds green and publishes nothing. The job publishes from `main`, nightly, and from Dependabot's flake-lock pull requests only; every other pull request builds without publishing. `.github/workflows/ci.yml` explains why.
+## Options
 
-## Continuous integration
+Everything is under `microDesktop.*`. See [modules/options.nix](modules/options.nix) for full descriptions.
 
-Two workflows under `.github/workflows/`.
+| Option | Default |  |
+| --- | --- | --- |
+| desktopShell | noctalia | noctalia, dms or gnome |
+| hostName, username, initialPassword | nixos, user, password | Change the password after first login |
+| timeZone, locale, stateVersion | America/New_York, en_US.UTF-8, 25.11 |  |
+| diskDevice, bootMode, rootFilesystem, compressionLevel, swapSizeGiB |  | See Storage |
+| enableSsh, sshPasswordAuth, sshRootLogin | false, true, "yes" | Tighten these if you enable SSH |
+| enableVpn | false | NetworkManager OpenVPN, vpnc, OpenConnect and L2TP plugins |
+| extraPackages | [ ] | System packages for this machine |
+| enableAppImage, enableFileIndexing, enableFingerprint, enableScanning | false | Closure trims, hidden from the installer wizard (about 220–400 MB each) |
 
-|  |  |
-| --- | --- |
-| ci.yml | checks `nixfmt`, and evaluates both systems, builds the `install` system, and publishes to `nixos-micro-desktop.cachix.org` exactly the paths cache.nixos.org cannot serve — on `main`, nightly, and on Dependabot's flake-lock pull requests. A change only runs the parts it can affect: the build for `flake.nix`, `flake.lock`, `modules/`, `configs/`, `scripts/`, `installer/` or `ci.yml`; `nixfmt` for any `*.nix` or `flake.lock`; a docs-only change just reports a green `ci`. Nightly and manual runs do everything |
-| dependabot-auto-merge.yml | hands each Dependabot pull request to GitHub's auto-merge, so a green `ci` merges it and a red one leaves it sitting there |
+Anything else is plain NixOS. The module sets its defaults with `mkDefault`, so ordinary assignments in your flake override them.
 
-The loop they close: every installed machine runs `nix flake update` daily and lands on nixos-unstable's head; Dependabot bumps this lock daily with no cooldown (`.github/dependabot.yml`); `ci.yml` builds that lock on the pull request and publishes before auto-merge lands it. A machine whose update picks a revision CI has built downloads its upgrade. One that beats CI to a fresh revision builds those paths itself, once, which is what every machine did before the cache existed.
+## Updates and binary cache
 
-Auto-merge needs two repository settings that no file can carry, and the workflow refuses to run without them:
+Installed machines run `system-upgrade` daily. It updates `/etc/nixos/flake.lock`, rebuilds only if the lock changed, and skips when memory is tight. It runs at low CPU/IO priority, and `nix-daemon` has memory, CPU and IO guards of its own.
 
--   **Settings → General → Pull Requests → Allow auto-merge.**
--   **A ruleset on `main` that requires the `ci` status check.** Without it there is nothing for auto-merge to wait for, so `dependabot-auto-merge.yml` stops with an error instead of merging untested. Add the repository admin role to the ruleset's bypass list if you want direct pushes to `main` to keep working.
+CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) builds the `install` system from this repo's lock and pushes only what cache.nixos.org can't serve to [nixos-micro-desktop.cachix.org](https://nixos-micro-desktop.cachix.org). That covers the patched fcitx5, the trimmed firmware and the system derivations. Dependabot bumps the lock daily, and [dependabot-auto-merge.yml](.github/workflows/dependabot-auto-merge.yml) merges each bump once `ci` is green.
+
+A machine only gets cache hits when its nixpkgs revision is one CI has built. Otherwise it builds those few paths locally.
+
+Maintainer setup the workflows rely on:
+
+-   Add `CACHIX_AUTH_TOKEN` under both Actions secrets and Dependabot secrets.
+-   Enable **Allow auto-merge** in the repository settings.
+-   Add a ruleset on `main` that requires the `ci` check.
+
+## Repository layout
+
+```
+flake.nix            inputs, installer wiring, nixosModules.microDesktop
+local/               sample consumer flake and nixos-anywhere script
+modules/options.nix  the microDesktop.* option surface
+modules/system/      boot, hardware, memory, network, nix, storage, users
+modules/desktop/     common, input-method, niri, noctalia, dms, gnome
+configs/             niri KDL, GTK/Qt settings, fcitx5 theme and patch
+```
 
 ## Contributing
 
-We welcome contributions! If you have improvements or bug fixes, please open a pull request or issue on our GitHub repository.
-
-## Support
-
-If you need help or have questions, please open an issue on our GitHub repository or join our community chat.
-
-Enjoy your sleek, efficient, and customizable NixOS Micro Desktop!
+Issues and pull requests are welcome on [GitHub](https://github.com/Avunu/nixos-micro-desktop). `nix develop` (or direnv) gives you a dev shell with `update-flake` and `mcp-nixos`.

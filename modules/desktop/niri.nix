@@ -197,7 +197,7 @@ in
             else
               ${pkgs.jq}/bin/jq -S . ${nirimodSettings} > "$SETTINGS_NEW"
             fi
-            if cmp -s "$SETTINGS_NEW" "$SETTINGS"; then
+            if ${pkgs.diffutils}/bin/cmp -s "$SETTINGS_NEW" "$SETTINGS"; then
               rm -f "$SETTINGS_NEW"
             else
               mv "$SETTINGS_NEW" "$SETTINGS"
