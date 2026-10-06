@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/@avunu/docusystem/config.schema.json",
+  "name": "NixOS Micro Desktop",
+  "tagline": "A low-maintenance NixOS desktop inspired by openSUSE Aeon, set up once and then managed through GNOME Software and Flatpak.",
+  "slug": "nixos-micro-desktop",
+  "platform": "nixos",
+  "repo": "https://github.com/Avunu/nixos-micro-desktop",
+  "domain": "nixos-micro-desktop.avunu.net",
+  "license": "MIT"
+}

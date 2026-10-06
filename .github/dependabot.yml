@@ -49,8 +49,26 @@ updates:
       interval: weekly
     cooldown:
       default-days: 5
+      exclude:
+        - Avunu/docusystem
     commit-message:
       prefix: chore
     groups:
       actions:
         patterns: ["*"]
+
+  # The documentation site (docs-site/): @avunu/docusystem and the packages it brings. A person reviews
+  # these pull requests: a merge to the default branch publishes the site (see the auto-merge workflow, if any).
+  - package-ecosystem: npm
+    directory: /docs-site
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      exclude:
+        - "@avunu/docusystem"
+    groups:
+      docs-site-packages:
+        patterns: ["*"]
+    commit-message:
+      prefix: chore
