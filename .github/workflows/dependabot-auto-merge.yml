@@ -57,7 +57,11 @@ jobs:
     # triggered the run and changes on a manual re-run, while the author of
     # a Dependabot branch never does. The repository pin keeps a fork from
     # inheriting the automation.
+    # Updates of the documentation site's packages (docs-site/) and of the commit pin of its shared
+    # workflows (github-actions pull requests) are reviewed by a person: a merge to the default branch
+    # publishes the site.
     if: >-
+      !startsWith(github.head_ref, 'dependabot/npm_and_yarn/docs-site') && !startsWith(github.head_ref, 'dependabot/github_actions/') &&
       github.event.pull_request.user.login == 'dependabot[bot]' &&
       github.repository == 'Avunu/nixos-micro-desktop'
     runs-on: ubuntu-latest
