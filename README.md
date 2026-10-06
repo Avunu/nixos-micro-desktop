@@ -2,7 +2,7 @@
 
 A modular NixOS configuration for modern, lean, self-maintaining Wayland desktops. One flake input and a short block of `microDesktop.*` options give you a disk layout, a tuned base system and your choice of desktop shell. The system then keeps itself current.
 
-What you get
+## What you get
 
 -   **Three interchangeable shells** on one shared base: niri with Noctalia, niri with DankMaterialShell, or GNOME. [Details](#desktop-shells)
 -   **Declarative disks** via [disko](https://github.com/nix-community/disko): UEFI or legacy boot, f2fs or btrfs root with zstd, a swap partition for hibernation with zswap in front of it. [Details](#storage)
@@ -133,3 +133,7 @@ configs/             niri KDL, GTK/Qt settings, fcitx5 theme and patch
 ## Contributing
 
 Issues and pull requests are welcome on [GitHub](https://github.com/Avunu/nixos-micro-desktop). `nix develop` (or direnv) gives you a dev shell with `update-flake` and `mcp-nixos`.
+
+## License
+
+[MIT](LICENSE). Copyright (c) 2026 Avunu LLC.
