@@ -40,6 +40,59 @@ let
       fi
     '';
   };
+
+  # Hold a background job until the machine has been awake for a while.
+  #
+  # A calendar timer fires the moment it notices a missed run: on resume, which
+  # it always catches up on, and at boot when Persistent=true. A laptop is
+  # usually asleep or off at the scheduled hour, so that is most days, and
+  # either way it is when someone has just sat down and is opening their work.
+  # RandomizedDelaySec does not cover the resume case: systemd adds it to the
+  # scheduled time or to the manager's own startup, whichever is later, so
+  # after a night asleep it expired hours ago.
+  # Measured on an 8 GB laptop: the daily rebuild started two seconds into a
+  # resume and held 1.9 GB of RAM and 1.9 GB of swap for the next 8 minutes.
+  #
+  # So this waits until the later of boot and the last resume is at least $1
+  # minutes ago. sleep.target is StopWhenUnneeded, so its last deactivation is
+  # the most recent resume — but a due timer fires a moment *before* it stops,
+  # so a sleep.target that is still active means "resuming right now". The
+  # clock is re-read every minute, so a suspend mid-wait starts the count over.
+  waitUntilSettled = pkgs.writeShellApplication {
+    name = "wait-until-settled";
+    runtimeInputs = [
+      pkgs.coreutils
+      config.systemd.package
+    ];
+    text = ''
+      settle=$(( ''${1:-0} * 60 ))
+      announced=""
+      while :; do
+        now=$(date +%s)
+        read -r up _ < /proc/uptime
+        since=$(( now - ''${up%.*} ))
+        if systemctl -q is-active sleep.target; then
+          since=$now
+        else
+          resumed=$(systemctl show -P InactiveEnterTimestamp --timestamp=unix sleep.target)
+          resumed=''${resumed#@}
+          if [ -n "$resumed" ] && [ "$resumed" -gt "$since" ] && [ "$resumed" -le "$now" ]; then
+            since=$resumed
+          fi
+        fi
+
+        left=$(( since + settle - now ))
+        if [ "$left" -le 0 ]; then
+          exit 0
+        fi
+        if [ -z "$announced" ]; then
+          echo "Awake $(( (now - since) / 60 )) min since boot or resume; waiting $(( (left + 59) / 60 )) more before starting" >&2
+          announced=1
+        fi
+        sleep $(( left < 60 ? left : 60 ))
+      done
+    '';
+  };
 in
 {
   config = {
@@ -295,17 +348,25 @@ in
           # timer is daily, so a skipped run is not retried until the next
           # day's (`systemctl start system-upgrade` runs it by hand); a
           # machine that is never that idle still upgrades at boot.
+          #
+          # ...though not *at* boot, nor at resume: a run that passes the memory
+          # check then waits until the machine has been awake for
+          # UPGRADE_SETTLE_MINUTES (see waitUntilSettled above), so it does not
+          # land on the burst of apps and sync jobs that every login brings.
+          # The memory check stays ahead of the wait on purpose. Checked after
+          # it, a machine whose session is always busy by then would fail it
+          # every time and never upgrade, which is exactly the case the
+          # boot-time run exists for. The metered check comes after, because it
+          # is about the connection the download will actually use.
           environment.UPGRADE_MIN_AVAILABLE_PERCENT = mkDefault "25";
+          environment.UPGRADE_SETTLE_MINUTES = mkDefault "20";
           serviceConfig = {
             Environment = "HOME=/root";
-            # Skip gracefully (result=condition, no restart) when on a metered
-            # connection, or while the machine is too busy (see above).
+            # Skip gracefully (result=condition, no restart) while the machine
+            # is too busy or on a metered connection, after waiting for it to
+            # settle (see above). Type=oneshot leaves the start timeout off, so
+            # the wait cannot time the unit out.
             ExecCondition = pkgs.writeShellScript "check-upgrade-conditions" ''
-              if ${pkgs.networkmanager}/bin/nmcli -g GENERAL.METERED dev show 2>/dev/null | grep -qi "yes"; then
-                echo "Network connection is metered, skipping system upgrade" >&2
-                exit 1
-              fi
-
               total=0
               avail=0
               while read -r key value _; do
@@ -318,6 +379,14 @@ in
               have=$(( total > 0 ? avail * 100 / total : 100 ))
               if [ "$have" -lt "$want" ]; then
                 echo "Only $have% of memory available (want $want%), skipping system upgrade until the machine is less busy" >&2
+                exit 1
+              fi
+
+              # A broken wait should cost the delay, not the upgrade.
+              ${lib.getExe waitUntilSettled} "''${UPGRADE_SETTLE_MINUTES:-0}" || true
+
+              if ${pkgs.networkmanager}/bin/nmcli -g GENERAL.METERED dev show 2>/dev/null | grep -qi "yes"; then
+                echo "Network connection is metered, skipping system upgrade" >&2
                 exit 1
               fi
             '';
@@ -349,6 +418,27 @@ in
           };
           wants = [ "network-online.target" ];
         };
+
+        # The software centre's offline search index, from the nix-profile
+        # PackageKit backend enabled above. Every rebuild is a full evaluation
+        # of nixpkgs, measured at 14 CPU-minutes inside 2m21s — six of eight
+        # threads — and 2.4 GB at peak. Nothing waits on it (search reads
+        # whatever index already exists), so it gets the CPU only when nothing
+        # else wants it, and the same 25% memory ceiling as system-upgrade, so
+        # that its evaluation is what gets pushed into swap rather than the
+        # session. The idle I/O class binds only under BFQ (system/hardware.nix);
+        # the job reads about 100 MB, so it carries no bandwidth cap.
+        #
+        # Guarded like thermald in system/hardware.nix: on its own this would
+        # define a unit with no ExecStart, which systemd refuses.
+        nix-search-index = mkIf config.services.packagekit.backends.nix-profile.enable {
+          serviceConfig = {
+            CPUWeight = mkDefault "idle";
+            IOSchedulingClass = mkDefault "idle";
+            MemoryHigh = mkDefault "25%";
+            Nice = mkDefault 19;
+          };
+        };
       };
 
       timers = {
@@ -360,6 +450,20 @@ in
             Unit = "system-upgrade.service";
           };
           wantedBy = [ "timers.target" ];
+        };
+
+        # The backend starts the index 5 minutes after every boot, which is the
+        # middle of logging in. Its timer is monotonic, and monotonic timers
+        # pause in suspend, so unlike system-upgrade it never fires on resume and
+        # moving the boot offset is enough. 30–45 minutes also puts it after a
+        # boot-time upgrade (UPGRADE_SETTLE_MINUTES, then a few minutes' work)
+        # has usually finished. mkForce because the backend sets OnBootSec at
+        # normal priority.
+        nix-search-index = mkIf config.services.packagekit.backends.nix-profile.enable {
+          timerConfig = {
+            OnBootSec = mkForce "30min";
+            RandomizedDelaySec = mkDefault "15min";
+          };
         };
       };
 
