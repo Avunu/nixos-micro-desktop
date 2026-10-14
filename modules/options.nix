@@ -275,6 +275,22 @@ with lib;
         description = "System timezone";
         type = types.str;
       };
+      upgradeFlake = mkOption {
+        default = null;
+        example = "github:Owner/host-repo#default";
+        description = ''
+          Flake the daily system-upgrade timer switches to.
+
+          null (the default) upgrades the machine's own /etc/nixos: update its
+          lock file, then rebuild if anything moved. A flake reference instead
+          makes the machine track that flake as published — no local lock file
+          to update, the reference's own lock is what it runs — so a repo that
+          holds the machine's configuration is the one place it changes.
+          A private GitHub repo needs `access-tokens` in nix.conf for root.
+        '';
+        type = types.nullOr types.str;
+        visible = false;
+      };
       username = mkOption {
         default = "user";
         description = "Primary user name";
