@@ -20,25 +20,55 @@ let
         exec /run/wrappers/bin/pkexec "$0" "$@"
       fi
 
-      LOCK_FILE="/etc/nixos/flake.lock"
-      BEFORE=""
-      if [ -f "$LOCK_FILE" ]; then
-        BEFORE=$(sha256sum "$LOCK_FILE")
-      fi
+    ''
+    + (
+      if cfg.upgradeFlake == null then
+        ''
+          LOCK_FILE="/etc/nixos/flake.lock"
+          BEFORE=""
+          if [ -f "$LOCK_FILE" ]; then
+            BEFORE=$(sha256sum "$LOCK_FILE")
+          fi
 
-      ${lib.getExe pkgs.nix} flake update --flake /etc/nixos
+          ${lib.getExe pkgs.nix} flake update --flake /etc/nixos
 
-      AFTER=""
-      if [ -f "$LOCK_FILE" ]; then
-        AFTER=$(sha256sum "$LOCK_FILE")
-      fi
+          AFTER=""
+          if [ -f "$LOCK_FILE" ]; then
+            AFTER=$(sha256sum "$LOCK_FILE")
+          fi
 
-      if [ "$BEFORE" != "$AFTER" ]; then
-        ${lib.getExe pkgs.nixos-rebuild} switch --flake /etc/nixos
+          if [ "$BEFORE" != "$AFTER" ]; then
+            ${lib.getExe pkgs.nixos-rebuild} switch --flake /etc/nixos
+          else
+            echo "Flake lock unchanged, skipping rebuild" >&2
+          fi
+        ''
       else
-        echo "Flake lock unchanged, skipping rebuild" >&2
-      fi
-    '';
+        ''
+          # Tracking a published flake: there is no local lock to update, so
+          # the cheap "did anything move" test is the flake's own revision.
+          # --refresh on both calls: without it nix trusts a fetched tarball
+          # for tarball-ttl (an hour), and a push would wait out the cache.
+          FLAKE=${lib.escapeShellArg cfg.upgradeFlake}
+          STATE=/var/lib/system-upgrade/last-revision
+          REV=$(${lib.getExe pkgs.nix} flake metadata --refresh --json "''${FLAKE%%#*}" \
+            | ${lib.getExe pkgs.jq} -r '.revision // .locked.rev // .locked.narHash // empty')
+          LAST=$(cat "$STATE" 2>/dev/null || true)
+
+          if [ -n "$REV" ] && [ "$REV" = "$LAST" ] \
+              && [ "$(readlink -f /run/current-system)" = "$(cat "$STATE.system" 2>/dev/null || true)" ]; then
+            echo "$FLAKE unchanged at $REV, skipping rebuild" >&2
+            exit 0
+          fi
+
+          ${lib.getExe pkgs.nixos-rebuild} switch --refresh --flake "$FLAKE"
+
+          # Only after a successful switch, so a failed one is retried.
+          mkdir -p "$(dirname "$STATE")"
+          printf '%s\n' "$REV" > "$STATE"
+          readlink -f /run/current-system > "$STATE.system"
+        ''
+    );
   };
 
   # Hold a background job until the machine has been awake for a while.
