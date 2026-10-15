@@ -13,11 +13,38 @@ in
     boot = {
       consoleLogLevel = mkDefault 0;
       initrd = {
+        # Every disk controller this desktop might install to, because
+        # nothing generates a hardware-configuration.nix for it: the
+        # installer ISO loads every driver and sees the disk, then the
+        # installed initrd has only these plus NixOS's defaults (ahci, nvme,
+        # sd_mod, mmc_block, USB HID) — and with the controller's driver
+        # missing, stage 1 times out on /dev/disk/by-partlabel/disk-main-*
+        # for a disk that is right there. Detecting the hardware at install
+        # time is not an option: the install is offline, and a different
+        # module list is a different initrd, which the ISO does not carry.
+        # Only the listed modules and their dependencies land in the initrd.
         availableKernelModules = [
           "ahci"
           "ehci_pci"
           "nvme"
           "uhci_hcd"
+          # Intel VMD (Volume Management Device), on by default on many
+          # Intel workstations and laptops: the NVMe drive sits in a PCI
+          # domain only vmd exposes, so without it nvme never sees the disk
+          # (a Dell C620 workstation with a WD SN5100 behind VMD did exactly
+          # that).
+          "vmd"
+          # eMMC: mmc_block (a NixOS default) needs a host controller driver
+          # to have anything to talk to.
+          "sdhci_pci"
+          "sdhci_acpi"
+          # USB-attached disks.
+          "usb_storage"
+          "uas"
+          # Virtual machines (qemu/KVM, Proxmox, libvirt).
+          "virtio_pci"
+          "virtio_blk"
+          "virtio_scsi"
         ];
         # fbcon is built into the kernel (not a loadable module), so it
         # must not be listed here — doing so breaks the modules-shrunk
