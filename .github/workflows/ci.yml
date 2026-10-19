@@ -93,7 +93,7 @@ permissions:
 jobs:
   changes:
     name: what changed
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","nixos"]') }}
     timeout-minutes: 5
     outputs:
       build: ${{ steps.scope.outputs.build }}
@@ -161,12 +161,13 @@ jobs:
     name: nixfmt
     needs: changes
     if: needs.changes.outputs.format == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","nixos"]') }}
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+        if: runner.environment == 'github-hosted'
         with:
           determinate: false
 
@@ -179,7 +180,12 @@ jobs:
     name: build + publish binary cache
     needs: changes
     if: needs.changes.outputs.build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","nixos"]') }}
+    # The installer step that sets these is skipped on the self-hosted runner.
+    env:
+      NIX_CONFIG: |
+        accept-flake-config = true
+        narinfo-cache-negative-ttl = 0
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -188,6 +194,7 @@ jobs:
       # on, determinate-nixd tries to log into FlakeHub on every run and
       # annotates green builds with the failure.
       - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+        if: runner.environment == 'github-hosted'
         with:
           determinate: false
           # flake.nix declares the project cache in `nixConfig`. Accepting it
@@ -211,9 +218,18 @@ jobs:
       # `use-flakehub: false` — this isn't a FlakeHub flake, and without it
       # the action logs an authentication-failure annotation on every run.
       - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
+        if: runner.environment == 'github-hosted'
         with:
           diagnostic-endpoint: ""
           use-flakehub: false
+
+      # cachix-action installs `cachix` into the Nix user profile; on the
+      # self-hosted runner no installer step has put that profile on PATH.
+      - name: Put the Nix user profile on PATH
+        if: runner.environment == 'self-hosted'
+        run: |
+          echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
+          echo "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profile/bin" >> "$GITHUB_PATH"
 
       # Installs the `cachix` binary and configures the cache as a
       # substituter. Pushing is deliberately NOT delegated to this action: its
@@ -352,7 +368,7 @@ jobs:
   ci:
     if: always()
     needs: [changes, format, build]
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","nixos"]') }}
     steps:
       - name: Gate
         env:
