@@ -53,9 +53,9 @@ in
         nssmdns4 = mkDefault true;
         nssmdns6 = mkDefault true;
         publish = {
-          addresses = mkDefault true;
-          enable = mkDefault true;
-          workstation = mkDefault true;
+          publish-addresses = mkDefault true;
+          disable-publishing = mkDefault false;
+          publish-workstation = mkDefault true;
         };
       };
       openssh = mkIf cfg.enableSsh {
