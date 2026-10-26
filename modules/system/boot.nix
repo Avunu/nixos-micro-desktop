@@ -51,10 +51,8 @@ in
         # initrd build. The framebuffer console is configured via the
         # `fbcon=vc:2-6` kernel parameter below.
         systemd = {
-          enable = mkDefault true;
           tpm2.enable = mkDefault true;
         };
-        verbose = mkDefault false;
       };
       kernelPackages = mkDefault pkgs.linuxPackages_latest;
       kernelParams = [
