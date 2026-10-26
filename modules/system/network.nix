@@ -52,7 +52,7 @@ in
         enable = mkDefault true;
         nssmdns4 = mkDefault true;
         nssmdns6 = mkDefault true;
-        publish = {
+        settings.publish = {
           publish-addresses = mkDefault true;
           disable-publishing = mkDefault false;
           publish-workstation = mkDefault true;
