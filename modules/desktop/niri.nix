@@ -109,6 +109,31 @@ in
         slurp
         wlr-randr
       ];
+      sessionVariables = {
+        # Point Chromium and Electron apps at gnome-keyring.
+        #
+        # Chromium's os_crypt picks its password store from the desktop it
+        # detects, and "niri" is not one it recognises. With an unknown desktop
+        # it falls back to basic_text: Electron's safeStorage reports encryption
+        # as unavailable, so VSCode refuses to persist secrets and raises "An OS
+        # keyring couldn't be identified". The Secret Service
+        # itself is fine — gnome-keyring is running and unlocked by PAM; the
+        # apps just never try it.
+        #
+        # GNOME_DESKTOP_SESSION_ID is the legacy fallback Chromium consults
+        # only when XDG_CURRENT_DESKTOP and DESKTOP_SESSION match nothing, so
+        # it maps niri to the libsecret backend without renaming the desktop.
+        # Prepending GNOME to XDG_CURRENT_DESKTOP would do the same but also
+        # fire every OnlyShowIn=GNOME autostart entry. The one other reader is
+        # xdg-open's own fallback, which then uses `gio open` — the same
+        # mimeapps.list defaults it resolves today.
+        #
+        # This can't be a NODE_OPTIONS preload like the CHROME_DESKTOP fix in
+        # common.nix: packaged Electron apps (VSCode, Slack, ...) reject
+        # --require. An explicit --password-store flag, or "password-store" in
+        # ~/.vscode/argv.json, still takes precedence.
+        GNOME_DESKTOP_SESSION_ID = "this-is-deprecated";
+      };
       variables = {
         XDG_CURRENT_DESKTOP = "niri";
         XDG_SESSION_DESKTOP = "niri";
