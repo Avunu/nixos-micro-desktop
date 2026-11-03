@@ -74,7 +74,7 @@ in
           # GNOME Shell blocks. That setting makes NixOS emit the unit as a
           # drop-in *instead of* a unit file, which is right only when a
           # package already supplies the base unit: programs.niri and
-          # programs.dms-shell both declare systemd.packages, so niri.service
+          # programs.dux-shell both declare systemd.packages, so niri.service
           # and dms.service exist on disk and the drop-in has something to
           # attach to. programs.noctalia declares no systemd.packages — the
           # unit exists solely as its own systemd.user.services.noctalia — so

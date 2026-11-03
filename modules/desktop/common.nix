@@ -70,7 +70,7 @@ in
             adwaita-qt6
             darkly
             decibels
-            dsearch
+            dux-search
             ffmpeg-headless
             ffmpegthumbnailer
             gcr_4
@@ -228,7 +228,7 @@ in
         roboto-serif
         roboto-slab
 
-        # Greeter/shell fonts (DankMaterialShell and Noctalia both want these)
+        # Greeter/shell fonts (Dux Shell and Noctalia both want these)
         inter
         material-symbols
       ];
@@ -315,7 +315,7 @@ in
         # root filesystem is transparently compressed, so every re-read is also
         # a decompression.
         #
-        # File-name search still works with this off, and `dsearch` (in
+        # File-name search still works with this off, and `dux-search` (in
         # systemPackages above) covers fuzzy filesystem search independently —
         # it has no tinysparql dependency.
         localsearch = {
