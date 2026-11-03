@@ -2,3 +2,4 @@
 installer
 local/flake.lock
 result
+tmp
