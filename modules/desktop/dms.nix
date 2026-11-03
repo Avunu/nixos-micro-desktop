@@ -10,12 +10,14 @@ in
 {
   config = mkIf (cfg.desktopShell == "dms") {
     programs = {
-      # DMS Shell (nixpkgs native)
-      dms-shell = {
+      # Dux Shell (nixpkgs native; formerly DankMaterialShell). The CLI and
+      # the user unit keep their old names: `dms` and dms.service.
+      #
+      # The enableCalendarEvents, enableSystemMonitoring and enableVPN
+      # switches are gone upstream: system monitoring is built in and VPN
+      # backends are detected at runtime (see microDesktop.enableVpn).
+      dux-shell = {
         enable = mkDefault true;
-        enableCalendarEvents = mkDefault false; # todo: re-enable when khal is fixed upstream
-        enableSystemMonitoring = mkDefault true;
-        enableVPN = cfg.enableVpn;
         systemd = {
           enable = mkDefault true;
           target = "graphical-session.target";
@@ -25,7 +27,7 @@ in
 
     services = {
       displayManager = {
-        dms-greeter = {
+        dux-greeter = {
           compositor = {
             name = "niri";
           };

@@ -43,7 +43,7 @@
                 # zswap sits above this, so it is only reached under real
                 # pressure. Size it at least as large as RAM to hibernate.
                 swapSizeGiB = 8;
-                # Options: "dms" (niri + DankMaterialShell), "noctalia"
+                # Options: "dms" (niri + Dux Shell), "noctalia"
                 # (niri + Noctalia), or "gnome" (GNOME Shell on Mutter).
                 desktopShell = "dms";
                 timeZone = "America/New_York";

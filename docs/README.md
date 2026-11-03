@@ -4,7 +4,7 @@ A modular NixOS configuration for modern, lean, self-maintaining Wayland desktop
 
 ## What you get
 
--   **Three interchangeable shells** on one shared base: niri with Noctalia, niri with DankMaterialShell, or GNOME. [Details](#desktop-shells)
+-   **Three interchangeable shells** on one shared base: niri with Noctalia, niri with Dux Shell, or GNOME. [Details](#desktop-shells)
 -   **Declarative disks** via [disko](https://github.com/nix-community/disko): UEFI or legacy boot, f2fs or btrfs root with zstd, a swap partition for hibernation with zswap in front of it. [Details](#storage)
 -   **Self-updating.** A daily `nix flake update` and rebuild runs only when the lock changed and is throttled so it doesn't disturb the session. Weekly GC and store optimisation run alongside it, and the nix profile upgrades hourly. A [CI-fed binary cache](#updates-and-binary-cache) keeps most of this to downloads.
 -   **Software through GNOME Software.** Its PackageKit backend installs to the user's nix profile, so nobody has to touch Nix to add an app.
@@ -25,7 +25,7 @@ Set `microDesktop.desktopShell`. All three share the same base system, apps and 
 | desktopShell | Compositor | Shell | Greeter |
 | --- | --- | --- | --- |
 | noctalia (default) | niri | Noctalia | Noctalia greeter |
-| dms | niri | DankMaterialShell | DMS greeter |
+| dms | niri | Dux Shell | Dux greeter |
 | gnome | Mutter | GNOME Shell | GDM |
 
 `gnome` does not use `services.desktopManager.gnome.enable`. That would add the full GNOME app suite and force ibus, which conflicts with the fcitx5 pickers. The session is assembled from `gnome-session`, `gnome-shell` and GDM instead.

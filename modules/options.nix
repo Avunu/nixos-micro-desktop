@@ -60,7 +60,7 @@ with lib;
           Which desktop shell to run.
 
           - `gnome`: GNOME Shell on Mutter, with GDM.
-          - `dms`: DankMaterialShell on niri, with the DMS greeter.
+          - `dms`: Dux Shell on niri, with the Dux greeter.
           - `noctalia`: Noctalia on niri, with the Noctalia greeter.
 
           All three share the same GNOME core apps and services; only the
