@@ -123,6 +123,29 @@ let
       done
     '';
   };
+
+  # Boehm GC settings for the Nix evaluator, applied to the two units below
+  # that run a full evaluation unattended (system-upgrade, nix-search-index).
+  # They trade some evaluation CPU for a lower peak heap, which suits jobs that
+  # already run at Nice 19 inside a 25% MemoryHigh.
+  #
+  # - GC_INITIAL_HEAP_SIZE (32 MiB): Nix otherwise grows its heap up front to
+  #   a quarter of RAM, capped at 384 MiB, before it has evaluated anything.
+  # - GC_FREE_SPACE_DIVISOR (default 3): collect more often rather than grow
+  #   the heap.
+  # - GC_FORCE_UNMAP_ON_GCOLLECT: return freed heap pages to the kernel after
+  #   each collection, where otherwise they stay mapped and resident.
+  #
+  # Measured with `nix-instantiate '<nixpkgs/nixos>' -A system` on a 2 GB VM:
+  # 599 MB peak by default, 548 MB with all three
+  # (lowendspirit.com, "Shrinking NixOS RAM footprint").
+  # Set per unit rather than in environment.variables, which reaches login
+  # shells and not systemd services.
+  evalGcEnvironment = mapAttrs (_: mkDefault) {
+    GC_FORCE_UNMAP_ON_GCOLLECT = "1";
+    GC_FREE_SPACE_DIVISOR = "8";
+    GC_INITIAL_HEAP_SIZE = toString (32 * 1024 * 1024);
+  };
 in
 {
   config = {
@@ -388,8 +411,10 @@ in
           # every time and never upgrade, which is exactly the case the
           # boot-time run exists for. The metered check comes after, because it
           # is about the connection the download will actually use.
-          environment.UPGRADE_MIN_AVAILABLE_PERCENT = mkDefault "25";
-          environment.UPGRADE_SETTLE_MINUTES = mkDefault "20";
+          environment = evalGcEnvironment // {
+            UPGRADE_MIN_AVAILABLE_PERCENT = mkDefault "25";
+            UPGRADE_SETTLE_MINUTES = mkDefault "20";
+          };
           serviceConfig = {
             Environment = "HOME=/root";
             # Skip gracefully (result=condition, no restart) while the machine
@@ -462,6 +487,7 @@ in
         # Guarded like thermald in system/hardware.nix: on its own this would
         # define a unit with no ExecStart, which systemd refuses.
         nix-search-index = mkIf config.services.packagekit.backends.nix-profile.enable {
+          environment = evalGcEnvironment;
           serviceConfig = {
             CPUWeight = mkDefault "idle";
             IOSchedulingClass = mkDefault "idle";

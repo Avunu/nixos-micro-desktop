@@ -1,10 +1,39 @@
 {
+  config,
   lib,
   pkgs,
   ...
 }:
 with lib;
 let
+  cfg = config.microDesktop;
+
+  # Below this much RAM, microDesktop.transparentHugepages = "auto" leaves
+  # THP off. MemTotal, in KiB, so it sits under what the firmware and kernel
+  # keep back from the nominal size: every 8 GB machine stays under it, and
+  # every 12 GB machine is over it. See the option for the reasoning.
+  thpMadviseMinKiB = 10 * 1024 * 1024;
+
+  # The "auto" half that cannot be decided at evaluation time. The kernel
+  # boots with THP off, so a small machine never pays for the reserve. This
+  # turns it back on where RAM is plentiful enough that the reserve no longer
+  # matters. Writing the sysfs file stops or starts khugepaged and makes the
+  # kernel recompute min_free_kbytes either way (start_stop_khugepaged() →
+  # set_recommended_min_free_kbytes() in mm/khugepaged.c), so this ends up
+  # where `transparent_hugepage=madvise` on the command line would.
+  thpAutoScript = pkgs.writeShellScript "transparent-hugepage-auto" ''
+    total=0
+    while read -r key value _; do
+      if [ "$key" = MemTotal: ]; then
+        total=$value
+        break
+      fi
+    done < /proc/meminfo
+    if [ "$total" -ge ${toString thpMadviseMinKiB} ]; then
+      echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
+    fi
+  '';
+
   # Attributes runaway `shmem` growth back to the process holding it.
   #
   # Sessions were being destroyed by global OOM kills in which ~100% of
@@ -71,15 +100,40 @@ in
 {
   config = {
     boot = {
+      kernelParams = [
+        # Memory allocation profiling (CONFIG_MEM_ALLOC_PROFILING) is on by
+        # default in the NixOS kernel: every allocation site in the kernel is
+        # tagged and counted, for /proc/allocinfo. That costs about 6 MB of
+        # tracking tables plus a little work on every kernel allocation, all
+        # for a debugging aid. "never" rather than 0, because 0 only stops the
+        # counting and the tables are already allocated by then. The sysctl.
+        # prefix is required: bare `mem_profiling=` is not a kernel parameter,
+        # and the kernel passes it to init without any effect.
+        "sysctl.vm.mem_profiling=never"
+        # KFENCE, a sampling memory-safety debugger. Its 2 MB pool is
+        # reserved at boot whether or not anything ever trips it.
+        "kfence.sample_interval=0"
+        # Boot with THP off under every setting except "madvise". See
+        # thpAutoScript above for how "auto" turns it back on.
+        "transparent_hugepage=${if cfg.transparentHugepages == "madvise" then "madvise" else "never"}"
+      ];
       kernel = {
         sysctl = {
           # Stop the kernel compacting memory speculatively in the background.
           # Compaction exists to produce contiguous high-order pages, and with
-          # transparent_hugepage=madvise on the kernel command line almost
-          # nothing here asks for them — so proactive compaction is CPU and
-          # page migration spent on a supply nobody is drawing from. On-demand
+          # transparent hugepages off or limited to madvise, almost nothing
+          # here asks for them, so proactive compaction is CPU and page
+          # migration spent on a supply nobody is drawing from. On-demand
           # compaction still happens when an allocation actually needs it.
           "vm.compaction_proactiveness" = mkDefault 0;
+          # Same reasoning, applied to reclaim. After a fragmentation event the
+          # kernel temporarily raises the watermarks (by 150% at the default
+          # 15000) so that kswapd reclaims extra memory, giving compaction
+          # whole pageblocks to rebuild. On a desktop that shows up as bursts
+          # of reclaim and swap-out that nothing asked for, and it is the same
+          # supply of high-order pages compaction_proactiveness = 0 stops
+          # producing.
+          "vm.watermark_boost_factor" = mkDefault 0;
           "vm.dirty_background_ratio" = mkDefault 5; # Start background writeback early
           "vm.dirty_ratio" = mkDefault 10; # default; elevated values increase unreclaimable memory pressure
           # zswap benefits from eager swapping: a page sent to swap lands in
@@ -140,6 +194,18 @@ in
             Type = "oneshot";
             User = "root";
           };
+        };
+
+        transparent-hugepage-auto = mkIf (cfg.transparentHugepages == "auto") {
+          before = [ "sysinit.target" ];
+          description = "Enable transparent hugepages when RAM allows";
+          serviceConfig = {
+            ExecStart = thpAutoScript;
+            RemainAfterExit = true;
+            Type = "oneshot";
+          };
+          unitConfig.DefaultDependencies = false;
+          wantedBy = [ "sysinit.target" ];
         };
 
         # Lower the floor under the whole user session.

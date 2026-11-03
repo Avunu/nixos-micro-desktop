@@ -275,6 +275,41 @@ with lib;
         description = "System timezone";
         type = types.str;
       };
+      transparentHugepages = mkOption {
+        default = "auto";
+        description = ''
+          Transparent hugepage (THP) policy.
+
+          The cost of THP is not the huge pages themselves. While THP is
+          enabled, the kernel raises `vm.min_free_kbytes` so that it always
+          has free pageblocks to build huge pages from, and that reserve can
+          never be used by anything else. It barely scales with RAM: about
+          66 MB on an 8 GB laptop, against about 11 MB with THP off. That is
+          a large share of a 4 GB machine and a rounding error on a 32 GB
+          one. The return is small on either: very few desktop applications
+          ask for huge pages with madvise(MADV_HUGEPAGE).
+
+          - `auto`: `never` on machines with less than 10 GiB of usable RAM
+            (every 8 GB machine and below), `madvise` from 12 GB up. Decided
+            at boot, because evaluation cannot see the hardware: the kernel
+            starts with THP off, and an early oneshot turns it on where the
+            RAM is there.
+          - `madvise`: huge pages for applications that ask for them, with
+            the reserve. Fedora's and Ubuntu's default. The kernel's own
+            default is `always`, which leaves khugepaged compacting memory in
+            the background for processes that never asked, and is felt as
+            latency on a desktop, so it is not offered here.
+          - `never`: no THP and no reserve.
+        '';
+        type = types.enum [
+          "auto"
+          "madvise"
+          "never"
+        ];
+        # A tuning knob with a default that fits the hardware, not a question
+        # for the installer wizard.
+        visible = false;
+      };
       upgradeFlake = mkOption {
         default = null;
         example = "github:Owner/host-repo#default";
