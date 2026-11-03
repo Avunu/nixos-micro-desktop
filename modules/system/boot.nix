@@ -56,6 +56,9 @@ in
       };
       kernelPackages = mkDefault pkgs.linuxPackages_latest;
       kernelParams = [
+        # Nothing here consumes kernel audit records: no auditd, no AppArmor.
+        # Without this, kauditd runs anyway and buffers them for nobody.
+        "audit=0"
         "boot.shell_on_fail"
         "console=tty0"
         "fbcon=vc:2-6"
@@ -65,19 +68,22 @@ in
         "i915.enable_fbc=1" # Framebuffer compression for power savings
         "loglevel=3"
         "mem_sleep_default=deep"
+        # The soft- and hard-lockup detectors. The hard one keeps a perf
+        # counter firing an NMI on every CPU every few seconds, which holds
+        # cores out of their deep idle states. That costs battery, and the
+        # only return is a backtrace after a kernel hang. powertop flags it
+        # for the same reason. Hardware watchdog drivers (iTCO_wdt and the
+        # like) are separate and unaffected.
+        "nmi_watchdog=0"
+        "nowatchdog"
         "pcie_aspm.policy=powersupersave"
         "quiet"
         "rd.systemd.show_status=false"
         "systemd.show_status=false"
         "rd.udev.log_level=3"
         "splash"
-        # The kernel default is "always", which leaves khugepaged compacting
-        # memory in the background to keep huge pages available for processes
-        # that never asked for them. On an interactive desktop that background
-        # compaction is felt as latency, which is why Fedora and Ubuntu both
-        # ship "madvise" instead: applications that benefit still get huge
-        # pages by asking for them.
-        "transparent_hugepage=madvise"
+        # transparent_hugepage= lives in system/memory.nix, set from
+        # microDesktop.transparentHugepages.
         "udev.log_priority=3"
       ];
       loader = mkMerge [

@@ -64,6 +64,10 @@ in
           PasswordAuthentication = cfg.sshPasswordAuth;
           PermitRootLogin = cfg.sshRootLogin;
         };
+        # Socket-activate sshd, like cupsd below. SSH into a desktop is
+        # occasional, and the listening daemon (about 4 MB) only needs to
+        # exist while someone is connected.
+        startWhenNeeded = mkDefault true;
       };
       printing = {
         browsed = {

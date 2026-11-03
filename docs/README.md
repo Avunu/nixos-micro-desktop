@@ -9,7 +9,8 @@ A modular NixOS configuration for modern, lean, self-maintaining Wayland desktop
 -   **Self-updating.** A daily `nix flake update` and rebuild runs only when the lock changed and is throttled so it doesn't disturb the session. Weekly GC and store optimisation run alongside it, and the nix profile upgrades hourly. A [CI-fed binary cache](#updates-and-binary-cache) keeps most of this to downloads.
 -   **Software through GNOME Software.** Its PackageKit backend installs to the user's nix profile, so nobody has to touch Nix to add an app.
 -   **Tuned for responsiveness on modest hardware:**
-    -   Latest kernel, tmpfs `/tmp`, `transparent_hugepage=madvise`, BFQ on SATA/eMMC.
+    -   Latest kernel, tmpfs `/tmp`, BFQ on SATA/eMMC.
+    -   Transparent hugepages off below 10 GiB of RAM (`madvise` above), kernel allocation profiling and KFENCE off, and no watermark boosting.
     -   `systemd-oomd` with per-slice policy, so a runaway app is chosen before the compositor.
     -   `thermald` and `power-profiles-daemon`.
     -   Bounded journald, and CPU/IO/memory limits on the background rebuild.
@@ -102,6 +103,7 @@ Everything is under `microDesktop.*`. See [modules/options.nix](modules/options.
 | enableVpn | false | NetworkManager OpenVPN, vpnc, OpenConnect and L2TP plugins |
 | extraPackages | [ ] | System packages for this machine |
 | enableAppImage, enableFileIndexing, enableFingerprint, enableScanning | false | Closure trims, hidden from the installer wizard (about 220–400 MB each) |
+| transparentHugepages | auto | auto, madvise or never. `auto` picks at boot from installed RAM. Hidden from the installer wizard |
 
 Anything else is plain NixOS. The module sets its defaults with `mkDefault`, so ordinary assignments in your flake override them.
 
