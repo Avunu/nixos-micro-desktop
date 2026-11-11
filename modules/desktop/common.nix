@@ -231,6 +231,9 @@ in
         # Greeter/shell fonts (Dux Shell and Noctalia both want these)
         inter
         material-symbols
+
+        # Postscript fonts (for legacy apps)
+        gyre-fonts
       ];
     };
 
