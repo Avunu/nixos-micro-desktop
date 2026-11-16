@@ -21,6 +21,6 @@ jobs:
   docs:
     permissions:
       contents: read # checkout
-    uses: Avunu/site-docs/.github/workflows/check-docs.yml@3f342fe388ecb93a860adfc3ad97a06cced0bf9e # 2026-10-16
+    uses: Avunu/site-docs/.github/workflows/check-docs.yml@553beddd09942e6485ce363e15cff30888f618bf # 2026-10-16
     with:
       path: nixos-micro-desktop
