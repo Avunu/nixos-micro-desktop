@@ -1,0 +1,42 @@
+# Checks the actions lockfile (gh-actions-lock) against the workflows in this
+# repository. It is a workflow of its own, not a job in ci.yml, so a lock
+# failure never turns the `ci` check that gates main red.
+#
+# It only reads: the workflows and the lockfile are checked, nothing is written.
+
+name: actions-lock
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  lockfile:
+    name: actions lockfile
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install gh-actions-lock
+        run: |
+          set -euo pipefail
+          if ! gh extension list | grep -F 'github/gh-actions-lock' > /dev/null; then
+            gh extension install github/gh-actions-lock --pin v0.5.1
+          fi
+
+      - name: Verify the actions lockfile
+        run: gh actions-lock --verify
