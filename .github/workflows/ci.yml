@@ -101,7 +101,7 @@ jobs:
     steps:
       # Full history: a push's `before` commit has to be reachable to diff
       # against. The repository is small.
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -164,9 +164,9 @@ jobs:
     runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","nixos"]') }}
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
 
-      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+      - uses: DeterminateSystems/nix-installer-action@v23
         if: runner.environment == 'github-hosted'
         with:
           determinate: false
@@ -188,12 +188,12 @@ jobs:
         narinfo-cache-negative-ttl = 0
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
 
       # `determinate: false` — nothing here needs Determinate Nix, and with it
       # on, determinate-nixd tries to log into FlakeHub on every run and
       # annotates green builds with the failure.
-      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+      - uses: DeterminateSystems/nix-installer-action@v23
         if: runner.environment == 'github-hosted'
         with:
           determinate: false
@@ -217,7 +217,7 @@ jobs:
       # runs is what was BUILT here last time and has not changed.
       # `use-flakehub: false` — this isn't a FlakeHub flake, and without it
       # the action logs an authentication-failure annotation on every run.
-      - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
         if: runner.environment == 'github-hosted'
         with:
           diagnostic-endpoint: ""
@@ -239,7 +239,7 @@ jobs:
       # instead, which is also the smaller set — build-time-only inputs (the
       # 1.8 GB upstream linux-firmware the trim is cut from, for one) are
       # paths no installed machine ever asks for.
-      - uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
+      - uses: cachix/cachix-action@v17
         with:
           name: nixos-micro-desktop
           skipPush: true

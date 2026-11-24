@@ -37,9 +37,10 @@ updates:
       nix:
         patterns: ["*"]
 
-  # The CI in .github/workflows/ci.yml. Every action there is pinned to a
-  # commit SHA (a tag can be moved; a SHA cannot), and Dependabot updates the
-  # SHA and its `# vX` comment together. Without this the pins silently rot.
+  # The CI in .github/workflows/ci.yml. Every action there is pinned to an
+  # exact release tag. The commit each tag resolves to is recorded in the
+  # actions lock, which .github/workflows/actions-lock.yml checks. Dependabot
+  # moves the tags to newer releases, so without this the pins silently rot.
   # The cooldown is the supply-chain control: these actions run with the
   # repository's tokens, and a malicious release is usually caught and yanked
   # within days. Security updates are separate and are not delayed.
