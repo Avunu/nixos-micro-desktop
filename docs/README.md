@@ -1,6 +1,18 @@
+---
+title: NixOS Micro Desktop
+description: "A modular NixOS configuration for lean, self-maintaining Wayland desktops with three shells, declarative disks and automatic updates."
+nav_title: Overview
+order: 0
+tags: [overview, desktop]
+updated: 2026-11-24
+---
+
 # NixOS Micro Desktop
 
 A modular NixOS configuration for modern, lean, self-maintaining Wayland desktops. One flake input and a short block of `microDesktop.*` options give you a disk layout, a tuned base system and your choice of desktop shell. The system then keeps itself current.
+
+> [!TIP]
+> Choosing a shell and storage layout, installing and keeping the machine updated are covered step by step. See [Install and run the micro desktop](getting-started.md).
 
 ## What you get
 
